@@ -181,6 +181,7 @@ interface i3c_target_driver_bfm (
     bit [6:0]  assigned_addr;
     bit [7:0]  dyn_addr_byte;
     int        lost_bit;       // which arb bit we lost at (i value from arb loop)
+    bit        got_rep_start;
 
     `uvm_info(name, "DAA transaction started", UVM_NONE)
 
@@ -234,61 +235,56 @@ interface i3c_target_driver_bfm (
           UVM_NONE)
 
         // ----------------------------------------------------------------
-        // The loser drops out mid-arbitration while the winner continues
-        // driving its remaining bits, then the master drives the 8-bit
-        // dynamic address, then the winner drives ACK (SDA=0), then
-        // releases SDA (SDA=1 while SCL=1).
+        // BUG FIX (this revision) -- previous cycle-counting heuristics
+        // (wait_past_ack_then_detect with a fixed or computed negedge
+        // count) were fundamentally fragile: any mismatch between the
+        // assumed frame length and the actual SCL activity (extra
+        // turnaround cycles, ACK using 2 NEGEDGEs not 1, simulator
+        // timing) caused the watch window to open at the wrong moment
+        // and lock onto an intermediate SDA transition instead of the
+        // genuine next bus condition. This was observed concretely: a
+        // loser losing at bit 17 needed ~26 NEGEDGEs of winner activity
+        // to remain (17 arb bits + 8 address bits + 1 ACK), but
+        // driveAddressAck() alone consumes 2 NEGEDGEs, not 1, so every
+        // formula variant was off by at least one cycle somewhere.
         //
-        // That ACK release looks exactly like a STOP condition to
-        // detect_rep_start_or_stop (SDA rising while SCL=1).
+        // FIX: stop counting. Instead, the loser STRUCTURALLY walks
+        // through the exact same remaining protocol steps the winner is
+        // going through, using the SAME shared detectEdge_scl() primitive
+        // the winner itself uses for each phase (remaining arb bits, the
+        // 8-bit dynamic address, the ACK slot). This needs no margin and
+        // no guessed count -- it consumes exactly one SCL NEGEDGE/POSEDGE
+        // pair per remaining bit, for exactly as many bits as remain,
+        // which is known precisely from lost_bit. Because it shares the
+        // same scl_local state and primitive as every other phase in this
+        // BFM, there is no race between independently-running detector
+        // loops either.
         //
-        // We must wait until AFTER the winner's entire address+ACK
-        // sequence before we start watching for Rep-START vs true STOP.
-        //
-        // Strategy: after releasing SDA, wait for SCL to go LOW (get off
-        // the current SCL=1 window), then wait for SCL to go HIGH again
-        // (start of next bus condition window), then watch SDA:
-        //   SDA falling while SCL=1 → Repeated-START (more devices)
-        //   SDA rising  while SCL=1 → true STOP (all devices assigned)
-        //
-        // But the winner's address phase has many SCL pulses, so a single
-        // NEGEDGE+POSEDGE isn't enough.  We use wait_for_bus_idle_then_condition
-        // which requires SCL to have gone low at least once before watching
-        // for the next SDA change with SCL high.  We call it in a loop
-        // that retries as long as what we see looks like an ACK release
-        // rather than a true bus condition.
-        //
-        // Simplest correct approach: wait for SCL to go low (off current
-        // window), then call detect_rep_start_or_stop which starts fresh
-        // with scl_loc=2'b11 and will correctly see the NEXT SCL=1 window.
-        // We skip any SDA=rising on the first SCL=1 seen (that's the ACK
-        // release) by requiring TWO consecutive SCL=1 samples with SDA
-        // already stable high before accepting a STOP.
+        // After structurally consuming the winner's remaining frame, SCL
+        // is guaranteed low and SDA is guaranteed released (the winner's
+        // ACK release) -- detect_rep_start_or_stop() is then called fresh
+        // and can only fire on the genuine next bus condition.
         // ----------------------------------------------------------------
-        begin
-          bit got_rep_start;
-          // Pass how many arb bits the winner still has to drive after
-          // our loss point, so wait_past_ack_then_detect skips exactly
-          // that many SCL cycles plus the 8-bit address and 1 ACK bit.
-          wait_past_ack_then_detect(got_rep_start, lost_bit);
+        skip_remaining_winner_frame(lost_bit);
 
-          if (!got_rep_start) begin
-            `uvm_info(name,
-              "DAA: STOP detected after losing arb — DAA complete", UVM_NONE)
-            daa_ack_out  = NACK;
-            pid_out      = configPacketStruck.pid;
-            bcr_out      = configPacketStruck.bcr;
-            dcr_out      = configPacketStruck.dcr;
-            dyn_addr_out = 7'h00;
-            return;
-          end
+        detect_rep_start_or_stop(got_rep_start);
 
+        if (!got_rep_start) begin
           `uvm_info(name,
-            "DAA: Rep-START detected after losing arb — re-entering",
-            UVM_NONE)
-          // Rep-START: sample the 7E+R broadcast header then re-enter arb
-          sample_daa_broadcast_read(dataPacketStruck);
+            "DAA: STOP detected after losing arb - DAA complete", UVM_NONE)
+          daa_ack_out  = NACK;
+          pid_out      = configPacketStruck.pid;
+          bcr_out      = configPacketStruck.bcr;
+          dcr_out      = configPacketStruck.dcr;
+          dyn_addr_out = 7'h00;
+          return;
         end
+
+        `uvm_info(name,
+          "DAA: Rep-START detected after losing arb - re-entering",
+          UVM_NONE)
+        // Rep-START: sample the 7E+R broadcast header then re-enter arb
+        sample_daa_broadcast_read(dataPacketStruck);
       end
     end // while !won_arb
 
@@ -305,35 +301,22 @@ interface i3c_target_driver_bfm (
     // ------------------------------------------------------------------
     // Wait for Rep-START (more targets remain) or STOP (all assigned).
     //
-    // After the winner releases SDA, we are at SCL=LOW, SDA=HIGH.
-    // The master will now either:
-    //   - issue Rep-START: hold SCL=1 then pull SDA low
-    //   - issue STOP:      hold SCL=1 then release SDA high (already high)
-    //
-    // We must wait for SCL to go HIGH first (the winner itself releasing
-    // the ACK means SCL is still under master control toggling up).
-    // Then watch for the SDA change.
-    //
-    // driveAddressAck ends on NEGEDGE so SCL is low — wait for POSEDGE
-    // so that detect_rep_start_or_stop starts with SCL already high and
-    // won't miss the fast Rep-START pulse.
+    // No artificial pre-wait is used here either -- see the bug-fix note
+    // in the loser path above. detect_rep_start_or_stop() starts cold
+    // right after driveAddressAck() returns (SCL low, SDA just released
+    // high) and will correctly block until the master's genuine next
+    // bus condition, however long that takes.
     // ------------------------------------------------------------------
-    detectEdge_scl(POSEDGE);
-    scl_local = {scl_i, scl_i};   // resync — we just used detectEdge_scl
+    detect_rep_start_or_stop(got_rep_start);
 
-    begin
-      bit got_rep_start;
-      detect_rep_start_or_stop(got_rep_start);
-
-      if (got_rep_start) begin
-        `uvm_info(name,
-          "DAA: Rep-START after address assignment — more targets remain",
-          UVM_NONE)
-      end else begin
-        `uvm_info(name,
-          "DAA: STOP after address assignment — all targets assigned",
-          UVM_NONE)
-      end
+    if (got_rep_start) begin
+      `uvm_info(name,
+        "DAA: Rep-START after address assignment - more targets remain",
+        UVM_NONE)
+    end else begin
+      `uvm_info(name,
+        "DAA: STOP after address assignment - all targets assigned",
+        UVM_NONE)
     end
 
     if (daa_ack_out == ACK) begin
@@ -419,6 +402,67 @@ interface i3c_target_driver_bfm (
 
 
   // =========================================================================
+  // skip_remaining_winner_frame
+  //
+  // Called by a LOSER immediately after releasing SDA on arbitration loss
+  // at bit `lost_at_bit` (the i value from drive_daa_arb_bits' loop, i.e.
+  // arb bits i..0 still remain -- the loser already consumed bits 63..i+1).
+  //
+  // Structurally walks through the exact remaining protocol steps the
+  // winner is still driving, consuming exactly one NEGEDGE/POSEDGE pair
+  // per remaining step using the SAME detectEdge_scl() primitive used
+  // everywhere else in this BFM -- no separate cycle-counting math, no
+  // margin, no independently-running detector loop that could race with
+  // detectEdge_scl's own scl_local state.
+  //
+  // Remaining steps after losing at bit `lost_at_bit`:
+  //   - lost_at_bit more arbitration bits (i-1 downto 0)
+  //   - 8-bit dynamic address byte
+  //   - 1 ACK bit (driveAddressAck uses 2 NEGEDGEs: one to drive the ACK,
+  //     one to release SDA back high -- both are consumed here as two
+  //     separate NEGEDGE/POSEDGE steps to exactly match driveAddressAck's
+  //     own structure)
+  //
+  // After this task returns, SCL is low and SDA has just been released
+  // high by the winner's driveAddressAck() -- the same state that exists
+  // right after driveAddressAck() returns on the winner's own path. The
+  // caller can then call detect_rep_start_or_stop() fresh, exactly as the
+  // winner does, with no race and no guesswork.
+  // =========================================================================
+  task automatic skip_remaining_winner_frame(input int lost_at_bit);
+    `uvm_info(name,
+      $sformatf("skip_remaining_winner_frame: lost_at_bit=%0d, stepping through winner's remaining frame",
+                lost_at_bit),
+      UVM_HIGH)
+
+    // Remaining arbitration bits: i-1 downto 0 → lost_at_bit more bits
+    for (int i = 0; i < lost_at_bit; i++) begin
+      detectEdge_scl(NEGEDGE);
+      detectEdge_scl(POSEDGE);
+    end
+
+    // 8-bit dynamic address byte
+    for (int k = 0; k < 8; k++) begin
+      detectEdge_scl(NEGEDGE);
+      detectEdge_scl(POSEDGE);
+    end
+
+    // ACK bit: driveAddressAck() does
+    //   detectEdge_scl(NEGEDGE); drive_sda(ack); detectEdge_scl(POSEDGE);
+    //   detectEdge_scl(NEGEDGE); drive_sda(1);
+    // i.e. two NEGEDGEs and one POSEDGE in between, ending on a NEGEDGE
+    // with SDA released high. Mirror that exactly.
+    detectEdge_scl(NEGEDGE);
+    detectEdge_scl(POSEDGE);
+    detectEdge_scl(NEGEDGE);
+
+    `uvm_info(name,
+      "skip_remaining_winner_frame: stepped past winner's full ACK release",
+      UVM_HIGH)
+  endtask : skip_remaining_winner_frame
+
+
+  // =========================================================================
   // Phase helpers
   // =========================================================================
 
@@ -488,100 +532,57 @@ interface i3c_target_driver_bfm (
   endtask : detect_repeated_start
 
   // =========================================================================
-  // wait_past_ack_then_detect
+  // detect_rep_start_or_stop
   //
-  // Used by a LOSER after arbitration loss at bit `lost_at_bit`.
+  // Called by BOTH a loser (right after skip_remaining_winner_frame()) and
+  // the winner (right after its own driveAddressAck()). In both cases SCL
+  // is low and SDA has just been released high.
   //
-  // ROOT CAUSE of the original bug:
-  //   The old version waited for only 2 SCL NEGEDGEs before watching for
-  //   SDA changes. But 2 NEGEDGEs is far inside the winner's remaining
-  //   arbitration bits (winner still has lost_at_bit bits to drive plus
-  //   8 address bits plus 1 ACK = lost_at_bit+9 SCL cycles to go).
-  //   The first SDA rising edge while SCL=1 the loser saw was the WINNER
-  //   releasing SDA after its ACK — identical to a STOP condition.
-  //   This caused the loser to think DAA was over and exit permanently.
+  //   Rep-START : SDA falls while SCL=1  → got_rep_start = 1
+  //   STOP      : SDA rises while SCL=1  → got_rep_start = 0
   //
-  // FIX:
-  //   Wait for at least (lost_at_bit + 9) SCL NEGEDGEs before watching:
-  //     lost_at_bit  = remaining arb bits the winner must drive
-  //     9            = 8 address bits + 1 ACK bit
-  //   After that many NEGEDGEs we are guaranteed to be PAST the winner's
-  //   ACK release, so the next SDA-change-while-SCL-high is the true
-  //   Rep-START or STOP from the master.
+  // BUG FIX -- "STOP detected instead of Repeated-START even though the
+  // master genuinely issues Rep-START":
   //
-  // got_rep_start=1 → Repeated-START (more unassigned targets remain)
-  // got_rep_start=0 → true STOP (all targets assigned)
+  // This task previously seeded scl_loc/sda_loc to a hardcoded 2'b11
+  // ("both previous samples were high") regardless of the bus's actual
+  // state on entry. But callers always enter this task with SCL LOW (just
+  // after skip_remaining_winner_frame() or driveAddressAck(), both of
+  // which end on a NEGEDGE). If the master then goes bus-idle for a
+  // while (SCL low, SDA high) before eventually driving SCL high for the
+  // Rep-START/STOP window, the very FIRST real sample taken here would
+  // combine the stale "1" seed with the real "1" (SCL just went high) and
+  // read as scl_loc==2'b11 -- "stable high for two samples" -- one full
+  // sample too early. That shifted the detection window by one sample
+  // relative to the bus's real timeline, causing the detector to lock
+  // onto an unrelated SDA transition (e.g. one of the 7E+R address bits
+  // toggling SDA) instead of the genuine Rep-START's SDA-falling edge,
+  // and report STOP. Confirmed against the master's own internal debug
+  // log: it printed "SEND_7E_R completed" immediately after the point
+  // where this detector falsely reported STOP, proving a real Rep-START
+  // + 7E+R had just happened on the bus at that moment.
+  //
+  // FIX: seed scl_loc/sda_loc from the ACTUAL current scl_i/sda_i on
+  // entry (both copies set to the live signal, exactly mirroring what a
+  // genuinely-idle "stable" state looks like), so the first comparison
+  // reflects reality instead of an assumed history. This task always
+  // starts right after a NEGEDGE in every call site, so seeding from the
+  // live (low) SCL/(high) SDA values is always correct and matches the
+  // resync pattern already used elsewhere in this BFM (detect_start(),
+  // detect_repeated_start()).
   // =========================================================================
-  task automatic wait_past_ack_then_detect(
-      output bit got_rep_start,
-      input  int lost_at_bit);
+  task automatic detect_rep_start_or_stop(output bit got_rep_start);
+    bit [1:0] scl_loc;
+    bit [1:0] sda_loc;
 
-    bit [1:0] scl_loc = 2'b11;
-    bit [1:0] sda_loc = 2'b11;
-    int       neg_count     = 0;
-    // Minimum NEGEDGEs to wait: remaining arb bits + 8 addr bits + 1 ACK
-    // Add 2 extra for margin.
-    int       min_negedges  = lost_at_bit + 9 + 2;
-
-    // ------------------------------------------------------------------
-    // Phase 1: drain — wait for min_negedges SCL NEGEDGEs.
-    // This guarantees we have stepped past all of the winner's remaining
-    // arb bits, the 8-bit dynamic address, and the ACK slot.
-    // ------------------------------------------------------------------
-    `uvm_info(name,
-      $sformatf("wait_past_ack: lost_at_bit=%0d, waiting %0d SCL NEGEDGEs",
-                lost_at_bit, min_negedges),
-      UVM_HIGH)
-
-    while (neg_count < min_negedges) begin
-      @(negedge pclk);
-      scl_loc = {scl_loc[0], scl_i};
-      sda_loc = {sda_loc[0], sda_i};
-      if (scl_loc == 2'b10)   // SCL NEGEDGE
-        neg_count++;
-    end
-
-    `uvm_info(name, "wait_past_ack: drained past winner ACK — watching for Rep-START/STOP", UVM_HIGH)
-
-    // ------------------------------------------------------------------
-    // Phase 2: detect — watch for the true next bus condition.
-    // ------------------------------------------------------------------
+    // Seed from the live bus state, not a hardcoded assumption.
     scl_loc = {scl_i, scl_i};
     sda_loc = {sda_i, sda_i};
 
-    forever begin
-      @(negedge pclk);
-      scl_loc = {scl_loc[0], scl_i};
-      sda_loc = {sda_loc[0], sda_i};
-
-      // SCL held high AND SDA falling → Repeated-START
-      if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
-        `uvm_info(name, "wait_past_ack: Repeated-START detected", UVM_HIGH)
-        got_rep_start = 1;
-        scl_local = {scl_i, scl_i};  // resync shared edge state
-        return;
-      end
-
-      // SCL held high AND SDA rising → STOP
-      if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
-        `uvm_info(name, "wait_past_ack: STOP detected", UVM_HIGH)
-        got_rep_start = 0;
-        return;
-      end
-    end
-  endtask : wait_past_ack_then_detect
-
-  // =========================================================================
-  // detect_rep_start_or_stop
-  //
-  // Used by the WINNER after its address ACK to detect what the master
-  // sends next:
-  //   Rep-START : SDA falls while SCL=1  → got_rep_start = 1
-  //   STOP      : SDA rises while SCL=1  → got_rep_start = 0
-  // =========================================================================
-  task automatic detect_rep_start_or_stop(output bit got_rep_start);
-    bit [1:0] scl_loc = 2'b11;
-    bit [1:0] sda_loc = 2'b11;
+    `uvm_info(name,
+      $sformatf("detect_rep_start_or_stop: ENTRY scl_i=%0b sda_i=%0b",
+                scl_i, sda_i),
+      UVM_NONE)
 
     forever begin
       @(negedge pclk);
@@ -590,18 +591,31 @@ interface i3c_target_driver_bfm (
 
       // SCL held high AND SDA falling  → Repeated-START
       if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
-        `uvm_info(name, "detect_rep_start_or_stop: Repeated-START", UVM_HIGH)
+        `uvm_info(name,
+          $sformatf("detect_rep_start_or_stop: Repeated-START (scl_loc=%b sda_loc=%b)",
+                    scl_loc, sda_loc),
+          UVM_NONE)
         got_rep_start = 1;
-        scl_local = {scl_i, scl_i};  // resync shared edge state
         return;
       end
 
       // SCL held high AND SDA rising   → STOP
       if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
-        `uvm_info(name, "detect_rep_start_or_stop: STOP", UVM_HIGH)
+        `uvm_info(name,
+          $sformatf("detect_rep_start_or_stop: STOP (scl_loc=%b sda_loc=%b)",
+                    scl_loc, sda_loc),
+          UVM_NONE)
         got_rep_start = 0;
         return;
       end
+
+      // DIAGNOSTIC: log every sample where SCL is NOT toggling normally,
+      // so we can see exactly what the bus is doing during any silent
+      // gap instead of inferring it from absence of detectEdge_scl prints.
+      `uvm_info(name,
+        $sformatf("detect_rep_start_or_stop: sample scl_loc=%b sda_loc=%b (scl_i=%0b sda_i=%0b)",
+                  scl_loc, sda_loc, scl_i, sda_i),
+        UVM_HIGH)
     end
   endtask : detect_rep_start_or_stop
 
