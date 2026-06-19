@@ -180,6 +180,7 @@ interface i3c_target_driver_bfm (
     bit        won_arb;
     bit [6:0]  assigned_addr;
     bit [7:0]  dyn_addr_byte;
+    int        lost_bit;       // which arb bit we lost at (i value from arb loop)
 
     `uvm_info(name, "DAA transaction started", UVM_NONE)
 
@@ -223,7 +224,7 @@ interface i3c_target_driver_bfm (
       // ----------------------------------------------------------------
       // ARB PHASE: drive 64 bits, sample bus each SCL cycle
       // ----------------------------------------------------------------
-      drive_daa_arb_bits(my_id, won_arb);
+      drive_daa_arb_bits(my_id, won_arb, lost_bit);
 
       if (!won_arb) begin
         // LOST arbitration this round — release SDA immediately.
@@ -266,7 +267,10 @@ interface i3c_target_driver_bfm (
         // ----------------------------------------------------------------
         begin
           bit got_rep_start;
-          wait_past_ack_then_detect(got_rep_start);
+          // Pass how many arb bits the winner still has to drive after
+          // our loss point, so wait_past_ack_then_detect skips exactly
+          // that many SCL cycles plus the 8-bit address and 1 ACK bit.
+          wait_past_ack_then_detect(got_rep_start, lost_bit);
 
           if (!got_rep_start) begin
             `uvm_info(name,
@@ -364,12 +368,14 @@ interface i3c_target_driver_bfm (
   // =========================================================================
   task drive_daa_arb_bits(
       input  bit [63:0] my_id,
-      output bit        won_arb);
+      output bit        won_arb,
+      output int        lost_bit_out);
 
     bit my_bit;
     bit bus_bit;
 
-    won_arb = 1;  // assume win until proven otherwise
+    won_arb      = 1;
+    lost_bit_out = 0;
 
     for (int i = 63; i >= 0; i--) begin
       my_bit = my_id[i];
@@ -398,7 +404,8 @@ interface i3c_target_driver_bfm (
             $sformatf("DAA ARB: Lost at bit %0d (drove 1, bus=0)", i),
             UVM_NONE)
           drive_sda(1);   // release bus immediately
-          won_arb = 0;
+          won_arb      = 0;
+          lost_bit_out = i;
           return;
         end
       end
@@ -483,40 +490,62 @@ interface i3c_target_driver_bfm (
   // =========================================================================
   // wait_past_ack_then_detect
   //
-  // Used by a LOSER after arbitration loss.  The winner still has to:
-  //   - finish transmitting its remaining arbitration bits
-  //   - sample the 8-bit dynamic address from master
-  //   - drive ACK (SDA=0) then release (SDA=1 while SCL=1)
+  // Used by a LOSER after arbitration loss at bit `lost_at_bit`.
   //
-  // That ACK release (SDA rising while SCL=1) is indistinguishable from
-  // a STOP to a simple detect_rep_start_or_stop.
+  // ROOT CAUSE of the original bug:
+  //   The old version waited for only 2 SCL NEGEDGEs before watching for
+  //   SDA changes. But 2 NEGEDGEs is far inside the winner's remaining
+  //   arbitration bits (winner still has lost_at_bit bits to drive plus
+  //   8 address bits plus 1 ACK = lost_at_bit+9 SCL cycles to go).
+  //   The first SDA rising edge while SCL=1 the loser saw was the WINNER
+  //   releasing SDA after its ACK — identical to a STOP condition.
+  //   This caused the loser to think DAA was over and exit permanently.
   //
-  // This task waits for SCL to toggle at least TWICE (one complete SCL
-  // cycle) after the current SCL=1 window to ensure we are past the ACK,
-  // then watches for the true next bus condition:
-  //   SDA falling while SCL=1 → Repeated-START  (got_rep_start=1)
-  //   SDA rising  while SCL=1 → true STOP       (got_rep_start=0)
+  // FIX:
+  //   Wait for at least (lost_at_bit + 9) SCL NEGEDGEs before watching:
+  //     lost_at_bit  = remaining arb bits the winner must drive
+  //     9            = 8 address bits + 1 ACK bit
+  //   After that many NEGEDGEs we are guaranteed to be PAST the winner's
+  //   ACK release, so the next SDA-change-while-SCL-high is the true
+  //   Rep-START or STOP from the master.
+  //
+  // got_rep_start=1 → Repeated-START (more unassigned targets remain)
+  // got_rep_start=0 → true STOP (all targets assigned)
   // =========================================================================
-  task automatic wait_past_ack_then_detect(output bit got_rep_start);
+  task automatic wait_past_ack_then_detect(
+      output bit got_rep_start,
+      input  int lost_at_bit);
+
     bit [1:0] scl_loc = 2'b11;
     bit [1:0] sda_loc = 2'b11;
-    int       scl_negedge_count = 0;
+    int       neg_count     = 0;
+    // Minimum NEGEDGEs to wait: remaining arb bits + 8 addr bits + 1 ACK
+    // Add 2 extra for margin.
+    int       min_negedges  = lost_at_bit + 9 + 2;
 
-    // Phase 1: wait for at least 2 SCL NEGEDGEs — this guarantees we
-    // have moved past the winner's current ACK window (which is one
-    // SCL cycle: NEGEDGE → POSEDGE → NEGEDGE).  After 2 NEGEDGEs we
-    // are at least one full SCL period beyond the current bus state.
-    while (scl_negedge_count < 2) begin
+    // ------------------------------------------------------------------
+    // Phase 1: drain — wait for min_negedges SCL NEGEDGEs.
+    // This guarantees we have stepped past all of the winner's remaining
+    // arb bits, the 8-bit dynamic address, and the ACK slot.
+    // ------------------------------------------------------------------
+    `uvm_info(name,
+      $sformatf("wait_past_ack: lost_at_bit=%0d, waiting %0d SCL NEGEDGEs",
+                lost_at_bit, min_negedges),
+      UVM_HIGH)
+
+    while (neg_count < min_negedges) begin
       @(negedge pclk);
       scl_loc = {scl_loc[0], scl_i};
       sda_loc = {sda_loc[0], sda_i};
-      if (scl_loc == 2'b10)   // NEGEDGE
-        scl_negedge_count++;
+      if (scl_loc == 2'b10)   // SCL NEGEDGE
+        neg_count++;
     end
 
-    `uvm_info(name, "wait_past_ack: past ACK window, watching for Rep-START/STOP", UVM_HIGH)
+    `uvm_info(name, "wait_past_ack: drained past winner ACK — watching for Rep-START/STOP", UVM_HIGH)
 
-    // Phase 2: now watch for the true bus condition
+    // ------------------------------------------------------------------
+    // Phase 2: detect — watch for the true next bus condition.
+    // ------------------------------------------------------------------
     scl_loc = {scl_i, scl_i};
     sda_loc = {sda_i, sda_i};
 
