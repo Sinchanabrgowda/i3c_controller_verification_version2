@@ -1,5 +1,5 @@
 # vsim -vopt work.hvl_top work.hdl_top -voptargs="+acc=npr" -sv_seed random -assertdebug "+UVM_TESTNAME=i3c_daa_write_8b_test" "+UVM_VERBOSITY=UVM_HIGH" "+define+" -l i3c_daa_write_8b_test/i3c_daa_write_8b_test.log -sva -coverage -c -do "log -r /*; add wave -r /*; coverage save -onexit -assert -directive -cvg -codeAll -testname i3c_daa_write_8b_test_seedrandom  i3c_daa_write_8b_test/i3c_daa_write_8b_test_coverage.ucdb; run -all; exit" -wlf i3c_daa_write_8b_test/waveform.wlf 
-# Start time: 15:42:18 on Jun 19,2026
+# Start time: 16:01:30 on Jun 19,2026
 # ** Note: (vsim-3812) Design is being optimized...
 # ** Note: (vopt-143) Recognized 1 FSM in module "i3c_bit_engine(fast)".
 # ** Note: (vopt-143) Recognized 1 FSM in module "i3c_sdr_fsm(fast)".
@@ -77,7 +77,7 @@
 # ** Warning: (vsim-3015) ../../rtl_dev/src/I3C_TOP.v(509): [PCDPC] - Port size (8) does not match connection size (1) for port 'rx_data'. The port definition is at: ../../rtl_dev/src/i3c_hdr_fsm.v(14).
 #    Time: 0 ns  Iteration: 0  Instance: /hdl_top/dut/x13 File: ../../rtl_dev/src/i3c_hdr_fsm.v
 # Loading /tools/mentor/questasim_10.6c/questasim/uvm-1.1d/linux/uvm_dpi.so
-# Sv_Seed = 2772645373
+# Sv_Seed = 2453765460
 # log -r /*
 #  add wave -r /*
 #  coverage save -onexit -assert -directive -cvg -codeAll -testname i3c_daa_write_8b_test_seedrandom  i3c_daa_write_8b_test/i3c_daa_write_8b_test_coverage.ucdb
@@ -342,15 +342,15 @@
 # UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(83) @ 90: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=2] Got item from sequencer, txn_type=DAA
 # UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(94) @ 90: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=2] DAA transaction
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(176) @ 90: reporter [I3C_TARGET_DRIVER_BFM] DAA transaction started
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(570) @ 90: reporter [I3C_TARGET_DRIVER_BFM] detect_start waiting
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(562) @ 90: reporter [I3C_TARGET_DRIVER_BFM] detect_start waiting
 # UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(83) @ 90: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=1] Got item from sequencer, txn_type=DAA
 # UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(94) @ 90: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=1] DAA transaction
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(176) @ 90: reporter [I3C_TARGET_DRIVER_BFM] DAA transaction started
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(570) @ 90: reporter [I3C_TARGET_DRIVER_BFM] detect_start waiting
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(562) @ 90: reporter [I3C_TARGET_DRIVER_BFM] detect_start waiting
 # UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(83) @ 90: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] Got item from sequencer, txn_type=DAA
 # UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(94) @ 90: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] DAA transaction
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(176) @ 90: reporter [I3C_TARGET_DRIVER_BFM] DAA transaction started
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(570) @ 90: reporter [I3C_TARGET_DRIVER_BFM] detect_start waiting
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(562) @ 90: reporter [I3C_TARGET_DRIVER_BFM] detect_start waiting
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_driver_proxy.sv(108) @ 90: uvm_test_top.i3c_env_h.apb_master_agent_h.apb_master_drv_proxy_h [apb_master_driver_proxy] REQ-MASTER_TX 
 #  -------------------------------------------------------------
 # Name                          Type           Size  Value     
@@ -687,520 +687,520 @@
 # 
 # UVM_INFO @ 250: reporter [RegModel] Read  register via map regmodel.default_map: regmodel.ctrl_inst=0
 # UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv(96) @ 250: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@daaSeq [i3c_daa_virtual_seq] Waiting 150000 ns for all 3 slaves to complete DAA
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(576) @ 280: reporter [I3C_TARGET_DRIVER_BFM] Start condition detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(198) @ 280: reporter [I3C_TARGET_DRIVER_BFM] DAA: START detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(403) @ 280: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+W broadcast
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(576) @ 280: reporter [I3C_TARGET_DRIVER_BFM] Start condition detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(198) @ 280: reporter [I3C_TARGET_DRIVER_BFM] DAA: START detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(403) @ 280: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+W broadcast
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(576) @ 280: reporter [I3C_TARGET_DRIVER_BFM] Start condition detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(198) @ 280: reporter [I3C_TARGET_DRIVER_BFM] DAA: START detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(403) @ 280: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+W broadcast
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(416) @ 1560: reporter [I3C_TARGET_DRIVER_BFM] DAA: 7E+W = 0xfc (expect 0xFC)
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(416) @ 1560: reporter [I3C_TARGET_DRIVER_BFM] DAA: 7E+W = 0xfc (expect 0xFC)
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(416) @ 1560: reporter [I3C_TARGET_DRIVER_BFM] DAA: 7E+W = 0xfc (expect 0xFC)
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(569) @ 281: reporter [I3C_TARGET_DRIVER_BFM] Start condition detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(198) @ 281: reporter [I3C_TARGET_DRIVER_BFM] DAA: START detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(408) @ 281: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+W broadcast
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(569) @ 281: reporter [I3C_TARGET_DRIVER_BFM] Start condition detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(198) @ 281: reporter [I3C_TARGET_DRIVER_BFM] DAA: START detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(408) @ 281: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+W broadcast
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(569) @ 281: reporter [I3C_TARGET_DRIVER_BFM] Start condition detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(198) @ 281: reporter [I3C_TARGET_DRIVER_BFM] DAA: START detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(408) @ 281: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+W broadcast
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(421) @ 1560: reporter [I3C_TARGET_DRIVER_BFM] DAA: 7E+W = 0xfc (expect 0xFC)
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(421) @ 1560: reporter [I3C_TARGET_DRIVER_BFM] DAA: 7E+W = 0xfc (expect 0xFC)
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(421) @ 1560: reporter [I3C_TARGET_DRIVER_BFM] DAA: 7E+W = 0xfc (expect 0xFC)
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
 # [1790] SEND_7E_W completed, NACK=0
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(428) @ 1800: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling ENTDAA CCC byte
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(428) @ 1800: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling ENTDAA CCC byte
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(428) @ 1800: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling ENTDAA CCC byte
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 1880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 2840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(436) @ 3000: reporter [I3C_TARGET_DRIVER_BFM] DAA: CCC byte = 0x7 (expect 0x07)
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(436) @ 3000: reporter [I3C_TARGET_DRIVER_BFM] DAA: CCC byte = 0x7 (expect 0x07)
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(436) @ 3000: reporter [I3C_TARGET_DRIVER_BFM] DAA: CCC byte = 0x7 (expect 0x07)
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(431) @ 1800: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling ENTDAA CCC byte
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(431) @ 1800: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling ENTDAA CCC byte
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(431) @ 1800: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling ENTDAA CCC byte
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 1880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 2840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(439) @ 3000: reporter [I3C_TARGET_DRIVER_BFM] DAA: CCC byte = 0x7 (expect 0x07)
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(439) @ 3000: reporter [I3C_TARGET_DRIVER_BFM] DAA: CCC byte = 0x7 (expect 0x07)
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(439) @ 3000: reporter [I3C_TARGET_DRIVER_BFM] DAA: CCC byte = 0x7 (expect 0x07)
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
 # [3230] SEND_ENTDAA completed, NACK=0
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
 # [3250] REP_START completed
 # [3270] REP_START completed
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(455) @ 3340: reporter [I3C_TARGET_DRIVER_BFM] DAA: Repeated START detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(210) @ 3340: reporter [I3C_TARGET_DRIVER_BFM] DAA: initial Repeated-START detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(465) @ 3340: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+R broadcast
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(455) @ 3340: reporter [I3C_TARGET_DRIVER_BFM] DAA: Repeated START detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(210) @ 3340: reporter [I3C_TARGET_DRIVER_BFM] DAA: initial Repeated-START detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(465) @ 3340: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+R broadcast
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(455) @ 3340: reporter [I3C_TARGET_DRIVER_BFM] DAA: Repeated START detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(210) @ 3340: reporter [I3C_TARGET_DRIVER_BFM] DAA: initial Repeated-START detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(465) @ 3340: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+R broadcast
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 3960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(457) @ 3341: reporter [I3C_TARGET_DRIVER_BFM] DAA: Repeated START detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(210) @ 3341: reporter [I3C_TARGET_DRIVER_BFM] DAA: initial Repeated-START detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(466) @ 3341: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+R broadcast
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(457) @ 3341: reporter [I3C_TARGET_DRIVER_BFM] DAA: Repeated START detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(210) @ 3341: reporter [I3C_TARGET_DRIVER_BFM] DAA: initial Repeated-START detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(466) @ 3341: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+R broadcast
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(457) @ 3341: reporter [I3C_TARGET_DRIVER_BFM] DAA: Repeated START detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(210) @ 3341: reporter [I3C_TARGET_DRIVER_BFM] DAA: initial Repeated-START detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(466) @ 3341: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling 7E+R broadcast
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 3960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(481) @ 4600: reporter [I3C_TARGET_DRIVER_BFM] DAA: 7E+R = 0xfd (expect 0xFD)
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(481) @ 4600: reporter [I3C_TARGET_DRIVER_BFM] DAA: 7E+R = 0xfd (expect 0xFD)
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(481) @ 4600: reporter [I3C_TARGET_DRIVER_BFM] DAA: 7E+R = 0xfd (expect 0xFD)
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
 # [4810] SEND_7E_R completed, NACK=0
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 4840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 5960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 6920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 7960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 8920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 9960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 10920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 11960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(516) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA ARB: Lost at bit 17 (drove 1, bus=0)
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 4840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 5960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 6920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 7960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 8920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 9960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 10920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11240: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11400: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11560: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11720: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11880: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 11960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12360: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(509) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA ARB: Lost at bit 17 (drove 1, bus=0)
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(269) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA: Lost arbitration - releasing SDA, waiting for Rep-START or STOP
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(331) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA loser watching bus: scl_i=1 sda_i=0
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(516) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA ARB: Lost at bit 17 (drove 1, bus=0)
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(336) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA loser watching bus: scl_i=1 sda_i=0
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(509) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA ARB: Lost at bit 17 (drove 1, bus=0)
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(269) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA: Lost arbitration - releasing SDA, waiting for Rep-START or STOP
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(331) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA loser watching bus: scl_i=1 sda_i=0
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 12920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 13960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 14920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 15000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(336) @ 12440: reporter [I3C_TARGET_DRIVER_BFM] DAA loser watching bus: scl_i=1 sda_i=0
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12760: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12840: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 12920: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13000: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13080: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13160: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13240: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13320: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13400: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13480: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13560: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13640: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13720: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13800: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13880: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 13960: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14040: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14120: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14200: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14280: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14360: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14440: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14520: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14600: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14680: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 14920: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 15000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
 # [15030] ARB_BITS completed, Captured Data = 80555de600008061
 # [15070] ASSIGN completed : PID=80555de60000 BCR=80 DCR=61 DYN_ADDR=08
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 15080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 15080: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
 # [15090] LOOP completed : Next Dynamic Address = 0x9
 # [15110] REP_START completed
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 15160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(524) @ 15160: reporter [I3C_TARGET_DRIVER_BFM] DAA ARB: WON all 64 bits
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(536) @ 15160: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling dynamic address
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 15320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 15480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 15640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 15800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 15960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 16120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 16280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 16440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(552) @ 16440: reporter [I3C_TARGET_DRIVER_BFM] DAA: dynamic addr=0x10 parity OK -> ACK
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(623) @ 16440: reporter [I3C_TARGET_DRIVER_BFM] driveAddressAck = 0
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(349) @ 16480: reporter [I3C_TARGET_DRIVER_BFM] DAA loser: STOP detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(276) @ 16480: reporter [I3C_TARGET_DRIVER_BFM] DAA: STOP detected after losing arb - DAA complete
-# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(119) @ 16480: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=2] DAA done: PID=0xaabbcc0003 BCR=0x0 DCR=0xc4 DynAddr=0x0 ACK=1
-# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(154) @ 16480: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=2] item_done
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(349) @ 16480: reporter [I3C_TARGET_DRIVER_BFM] DAA loser: STOP detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(276) @ 16480: reporter [I3C_TARGET_DRIVER_BFM] DAA: STOP detected after losing arb - DAA complete
-# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(119) @ 16480: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=1] DAA done: PID=0xaabbcc0002 BCR=0x0 DCR=0xc3 DynAddr=0x0 ACK=1
-# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(154) @ 16480: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=1] item_done
-# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(111) @ 16480: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_seqr_h@@tgt_daa_seq_2 [i3c_target_daa_seq] DAA session ended (STOP) without this target winning arbitration
-# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(116) @ 16480: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_seqr_h@@tgt_daa_seq_2 [i3c_target_daa_seq] DAA sequence complete. daa_ack=1 dynamic_addr=0x0
-# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(111) @ 16480: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_seqr_h@@tgt_daa_seq_1 [i3c_target_daa_seq] DAA session ended (STOP) without this target winning arbitration
-# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(116) @ 16480: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_seqr_h@@tgt_daa_seq_1 [i3c_target_daa_seq] DAA sequence complete. daa_ack=1 dynamic_addr=0x0
-# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv(64) @ 16480: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@daaSeq [i3c_daa_virtual_seq] DAA seq DONE for target[2]
-# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv(64) @ 16480: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@daaSeq [i3c_daa_virtual_seq] DAA seq DONE for target[1]
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 15160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(517) @ 15160: reporter [I3C_TARGET_DRIVER_BFM] DAA ARB: WON all 64 bits
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(528) @ 15160: reporter [I3C_TARGET_DRIVER_BFM] DAA: sampling dynamic address
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 15320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 15480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 15640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 15800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 15960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 16120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 16280: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 16440: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(544) @ 16440: reporter [I3C_TARGET_DRIVER_BFM] DAA: dynamic addr=0x10 parity OK -> ACK
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(616) @ 16440: reporter [I3C_TARGET_DRIVER_BFM] driveAddressAck = 0
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(354) @ 16481: reporter [I3C_TARGET_DRIVER_BFM] DAA loser: STOP detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(276) @ 16481: reporter [I3C_TARGET_DRIVER_BFM] DAA: STOP detected after losing arb - DAA complete
+# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(119) @ 16481: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=2] DAA done: PID=0xaabbcc0003 BCR=0x0 DCR=0xc4 DynAddr=0x0 ACK=1
+# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(154) @ 16481: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=2] item_done
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(354) @ 16481: reporter [I3C_TARGET_DRIVER_BFM] DAA loser: STOP detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(276) @ 16481: reporter [I3C_TARGET_DRIVER_BFM] DAA: STOP detected after losing arb - DAA complete
+# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(119) @ 16481: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=1] DAA done: PID=0xaabbcc0002 BCR=0x0 DCR=0xc3 DynAddr=0x0 ACK=1
+# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(154) @ 16481: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=1] item_done
+# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(111) @ 16481: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_seqr_h@@tgt_daa_seq_2 [i3c_target_daa_seq] DAA session ended (STOP) without this target winning arbitration
+# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(116) @ 16481: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_seqr_h@@tgt_daa_seq_2 [i3c_target_daa_seq] DAA sequence complete. daa_ack=1 dynamic_addr=0x0
+# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(111) @ 16481: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_seqr_h@@tgt_daa_seq_1 [i3c_target_daa_seq] DAA session ended (STOP) without this target winning arbitration
+# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(116) @ 16481: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_seqr_h@@tgt_daa_seq_1 [i3c_target_daa_seq] DAA sequence complete. daa_ack=1 dynamic_addr=0x0
+# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv(64) @ 16481: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@daaSeq [i3c_daa_virtual_seq] DAA seq DONE for target[2]
+# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv(64) @ 16481: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@daaSeq [i3c_daa_virtual_seq] DAA seq DONE for target[1]
 # [16510] REP_START completed
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 16520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 16600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 16680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(385) @ 18080: reporter [I3C_TARGET_DRIVER_BFM] detect_rep_start_or_stop: STOP
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(237) @ 18080: reporter [I3C_TARGET_DRIVER_BFM] DAA: STOP after winning - all slaves assigned
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(245) @ 18080: reporter [I3C_TARGET_DRIVER_BFM] DAA: slave assigned dynamic address 0x10
-# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(119) @ 18080: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] DAA done: PID=0xaabbcc0001 BCR=0x0 DCR=0xc2 DynAddr=0x10 ACK=0
-# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(128) @ 18080: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] Dynamic address 0x10 stored in config
-# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(154) @ 18080: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] item_done
-# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(107) @ 18080: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_seqr_h@@tgt_daa_seq_0 [i3c_target_daa_seq] Address assigned: dynamic_addr=0x10
-# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(116) @ 18080: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_seqr_h@@tgt_daa_seq_0 [i3c_target_daa_seq] DAA sequence complete. daa_ack=0 dynamic_addr=0x10
-# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv(64) @ 18080: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@daaSeq [i3c_daa_virtual_seq] DAA seq DONE for target[0]
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 16520: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 16600: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 16680: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(391) @ 18081: reporter [I3C_TARGET_DRIVER_BFM] detect_rep_start_or_stop: STOP
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(237) @ 18081: reporter [I3C_TARGET_DRIVER_BFM] DAA: STOP after winning - all slaves assigned
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(245) @ 18081: reporter [I3C_TARGET_DRIVER_BFM] DAA: slave assigned dynamic address 0x10
+# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(119) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] DAA done: PID=0xaabbcc0001 BCR=0x0 DCR=0xc2 DynAddr=0x10 ACK=0
+# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(128) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] Dynamic address 0x10 stored in config
+# UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(154) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] item_done
 # UVM_INFO ../../src/hvl_top/target//i3c_target_monitor_proxy.sv(120) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_mon_proxy_h [i3c_target_monitor_proxy] [target_id=0] Sampled transaction – writing to analysis port
-# UVM_INFO ../../src/hvl_top/target//i3c_target_coverage.sv(142) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_cov_h [DEBUG_m_coverage] I3C_target_TX {i3c_target_tx} 1865 1 1869 @uvm_status_container@1 @uvm_object_string_pool__1@157 @uvm_event@58 @uvm_event@59 -1 18446744073709551615 18446744073709551615 18446744073709551615 null 0 0 0 null -1 0 -1 null null 0 {} null null 0 0 {} ACK {} WRITE 0 {} {} 0 SDR 141104135929856 128 97 8 0 {i3c_target_tx}
+# UVM_INFO ../../src/hvl_top/target//i3c_target_coverage.sv(142) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_cov_h [DEBUG_m_coverage] I3C_target_TX {i3c_target_tx} 1864 1 1868 @uvm_status_container@1 @uvm_object_string_pool__1@157 @uvm_event@57 @uvm_event@58 -1 18446744073709551615 18446744073709551615 18446744073709551615 null 0 0 0 null -1 0 -1 null null 0 {} null null 0 0 {} ACK {} WRITE 0 {} {} 0 SDR 141104135929856 128 97 8 0 {i3c_target_tx}
 # UVM_INFO ../../src/hvl_top/target//i3c_target_coverage.sv(151) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_cov_h [DEBUG_m_coverage] SDR: skipping coverage sample for reserved/broadcast addr=0x0
 # UVM_INFO ../../src/hvl_top/target//i3c_target_monitor_proxy.sv(102) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_mon_proxy_h [i3c_target_monitor_proxy] [target_id=0] Waiting to sample DAA transaction
 # UVM_INFO ../../src/hvl_top/target//i3c_target_monitor_proxy.sv(120) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_mon_proxy_h [i3c_target_monitor_proxy] [target_id=1] Sampled transaction – writing to analysis port
-# UVM_INFO ../../src/hvl_top/target//i3c_target_coverage.sv(142) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_cov_h [DEBUG_m_coverage] I3C_target_TX {i3c_target_tx} 1873 1 1877 @uvm_status_container@1 @uvm_object_string_pool__1@159 @uvm_event@62 @uvm_event@63 -1 18446744073709551615 18446744073709551615 18446744073709551615 null 0 0 0 null -1 0 -1 null null 0 {} null null 0 0 {} ACK {} WRITE 0 {} {} 0 SDR 141104135929856 128 97 8 0 {i3c_target_tx}
+# UVM_INFO ../../src/hvl_top/target//i3c_target_coverage.sv(142) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_cov_h [DEBUG_m_coverage] I3C_target_TX {i3c_target_tx} 1872 1 1876 @uvm_status_container@1 @uvm_object_string_pool__1@159 @uvm_event@61 @uvm_event@62 -1 18446744073709551615 18446744073709551615 18446744073709551615 null 0 0 0 null -1 0 -1 null null 0 {} null null 0 0 {} ACK {} WRITE 0 {} {} 0 SDR 141104135929856 128 97 8 0 {i3c_target_tx}
 # UVM_INFO ../../src/hvl_top/target//i3c_target_coverage.sv(151) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_cov_h [DEBUG_m_coverage] SDR: skipping coverage sample for reserved/broadcast addr=0x0
 # UVM_INFO ../../src/hvl_top/target//i3c_target_monitor_proxy.sv(102) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[1].i3c_target_mon_proxy_h [i3c_target_monitor_proxy] [target_id=1] Waiting to sample DAA transaction
 # UVM_INFO ../../src/hvl_top/target//i3c_target_monitor_proxy.sv(120) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_mon_proxy_h [i3c_target_monitor_proxy] [target_id=2] Sampled transaction – writing to analysis port
-# UVM_INFO ../../src/hvl_top/target//i3c_target_coverage.sv(142) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_cov_h [DEBUG_m_coverage] I3C_target_TX {i3c_target_tx} 1881 1 1885 @uvm_status_container@1 @uvm_object_string_pool__1@161 @uvm_event@66 @uvm_event@67 -1 18446744073709551615 18446744073709551615 18446744073709551615 null 0 0 0 null -1 0 -1 null null 0 {} null null 0 0 {} ACK {} WRITE 0 {} {} 0 SDR 141104135929856 128 97 8 0 {i3c_target_tx}
+# UVM_INFO ../../src/hvl_top/target//i3c_target_coverage.sv(142) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_cov_h [DEBUG_m_coverage] I3C_target_TX {i3c_target_tx} 1880 1 1884 @uvm_status_container@1 @uvm_object_string_pool__1@161 @uvm_event@65 @uvm_event@66 -1 18446744073709551615 18446744073709551615 18446744073709551615 null 0 0 0 null -1 0 -1 null null 0 {} null null 0 0 {} ACK {} WRITE 0 {} {} 0 SDR 141104135929856 128 97 8 0 {i3c_target_tx}
 # UVM_INFO ../../src/hvl_top/target//i3c_target_coverage.sv(151) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_cov_h [DEBUG_m_coverage] SDR: skipping coverage sample for reserved/broadcast addr=0x0
 # UVM_INFO ../../src/hvl_top/target//i3c_target_monitor_proxy.sv(102) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[2].i3c_target_mon_proxy_h [i3c_target_monitor_proxy] [target_id=2] Waiting to sample DAA transaction
+# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(107) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_seqr_h@@tgt_daa_seq_0 [i3c_target_daa_seq] Address assigned: dynamic_addr=0x10
+# UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv(116) @ 18081: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_seqr_h@@tgt_daa_seq_0 [i3c_target_daa_seq] DAA sequence complete. daa_ack=0 dynamic_addr=0x10
+# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv(64) @ 18081: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@daaSeq [i3c_daa_virtual_seq] DAA seq DONE for target[0]
 # UVM_INFO ../../src/hvl_top/env/i3c_scoreboard.sv(274) @ 18082: uvm_test_top.i3c_env_h.i3c_scoreboard_h [SB_DAA] Got DAA result from target[0]: PID=0x80555de60000 BCR=0x80  DCR=0x61 dynAddr=0x8 daa_ack=0
 # UVM_ERROR ../../src/hvl_top/env/i3c_scoreboard.sv(280) @ 18082: uvm_test_top.i3c_env_h.i3c_scoreboard_h [SB_DAA_TXN_TYPE] [target 0] Expected DAA txn but got txn_type=SDR
 # UVM_INFO ../../src/hvl_top/env/i3c_scoreboard.sv(301) @ 18082: uvm_test_top.i3c_env_h.i3c_scoreboard_h [SB_DAA_DYNADDR] [target 0] Dynamic address 0x8 PASS
@@ -1331,7 +1331,7 @@
 # UVM_INFO ../../src/hvl_top/test/i3c_daa_write_8b_test.sv(49) @ 150250: uvm_test_top [i3c_daa_write_8b_test]   target[1] dynamic addr = 0x6c
 # UVM_INFO ../../src/hvl_top/test/i3c_daa_write_8b_test.sv(49) @ 150250: uvm_test_top [i3c_daa_write_8b_test]   target[2] dynamic addr = 0x7c
 # UVM_INFO ../../src/hvl_top/test/i3c_daa_write_8b_test.sv(56) @ 150250: uvm_test_top [i3c_daa_write_8b_test] Starting SDR WRITE with dynamic address of target[0]
-# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv(54) @ 150250: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@sdrWriteSeq [i3c_sdr_write_virtual_seq] Randomized: wdata=0x7c len=1
+# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv(54) @ 150250: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@sdrWriteSeq [i3c_sdr_write_virtual_seq] Randomized: wdata=0x68 len=1
 # UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv(61) @ 150250: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@sdrWriteSeq [i3c_sdr_write_virtual_seq] Starting SDR WRITE to target[0] addr=0x10
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_adapter.sv(60) @ 150250: reporter [apb_master_adapter] The converted reg2bus packet is -----------------------------------------------------------
 # Name                          Type           Size  Value   
@@ -1340,7 +1340,7 @@
 #   pselx                       string         7     SLAVE_0 
 #   paddr                       integral       32    'h30    
 #   pwrite                      string         5     WRITE   
-#   pwdata                      integral       32    'h7c    
+#   pwdata                      integral       32    'h68    
 #   transfer_size               string         0     ""      
 #   pstrb                       integral       4     'b1111  
 #   pprot                       string         0     ""      
@@ -1433,7 +1433,7 @@
 # UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(83) @ 150250: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] Got item from sequencer, txn_type=SDR
 # UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(144) @ 150250: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] SDR transaction
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(68) @ 150250: reporter [I3C_TARGET_DRIVER_BFM] target txn started
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(570) @ 150250: reporter [I3C_TARGET_DRIVER_BFM] detect_start waiting
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(562) @ 150250: reporter [I3C_TARGET_DRIVER_BFM] detect_start waiting
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_driver_proxy.sv(108) @ 150250: uvm_test_top.i3c_env_h.apb_master_agent_h.apb_master_drv_proxy_h [apb_master_driver_proxy] REQ-MASTER_TX 
 #  -----------------------------------------------------------
 # Name                          Type           Size  Value   
@@ -1442,7 +1442,7 @@
 #   pselx                       string         7     SLAVE_0 
 #   paddr                       integral       32    'h30    
 #   pwrite                      string         5     WRITE   
-#   pwdata                      integral       32    'h7c    
+#   pwdata                      integral       32    'h68    
 #   transfer_size               string         0     ""      
 #   pstrb                       integral       4     'b1111  
 #   pprot                       string         0     ""      
@@ -1456,7 +1456,7 @@
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(47) @ 150250: reporter [apb_master_seq_item_conv_class] After randomize pselx =  1
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(50) @ 150250: reporter [apb_master_seq_item_conv_class] After randomizing pwrite =  1
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(53) @ 150250: reporter [apb_master_seq_item_conv_class] after writnig addr =  30
-# UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(56) @ 150250: reporter [apb_master_seq_item_conv_class] after randomizing pwdata =  7c
+# UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(56) @ 150250: reporter [apb_master_seq_item_conv_class] after randomizing pwdata =  68
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(59) @ 150250: reporter [apb_master_seq_item_conv_class] After randomize pstrb =  1111
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(63) @ 150250: reporter [apb_master_seq_item_conv_class] After randomize pslverr =  0
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(66) @ 150250: reporter [apb_master_seq_item_conv_class] Before randomize prdata =  0
@@ -1465,7 +1465,7 @@
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_cfg_converter.sv(38) @ 150250: reporter [apb_master_cfg_converter] after randomizing addr = 
 #  0
 # UVM_INFO ../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv(79) @ 150250: reporter [APB_MASTER_DRIVER_BFM] data_packet=
-# '{pwrite:1, pslverr:0, pprot:0, pselx:1, pstrb:15, prdata:0, paddr:48, pwdata:124, no_of_wait_states:0}
+# '{pwrite:1, pslverr:0, pprot:0, pselx:1, pstrb:15, prdata:0, paddr:48, pwdata:104, no_of_wait_states:0}
 # UVM_INFO ../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv(80) @ 150250: reporter [APB_MASTER_DRIVER_BFM] cfg_packet=
 # '{min_address:0, max_address:0, paddr:0, slave_id:0}
 # UVM_INFO ../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv(81) @ 150250: reporter [APB_MASTER_DRIVER_BFM] DRIVE TO BFM TASK
@@ -1476,13 +1476,13 @@
 # UVM_INFO ../../src/hdl_top/apb_master_agent_bfm/apb_master_monitor_bfm.sv(85) @ 150300: reporter [APB_MASTER_MONITOR_BFM] Inside while loop: penable =1, pready=0, pselx=1
 # UVM_INFO ../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv(171) @ 150310: reporter [APB_MASTER_DRIVER_BFM] DETECT_WAIT_STATE
 # UVM_INFO ../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv(174) @ 150310: reporter [APB_MASTER_DRIVER_BFM] WAIT_STATE_DETECTED
-# UVM_INFO ../../src/hdl_top/apb_master_agent_bfm/apb_master_monitor_bfm.sv(104) @ 150320: reporter [APB_MASTER_MONITOR_BFM] MASTER_SAMPLE_DATA='{pwrite:1, pslverr:0, pprot:0, pselx:1, pstrb:15, prdata:0, paddr:48, pwdata:124, no_of_wait_states:3}
+# UVM_INFO ../../src/hdl_top/apb_master_agent_bfm/apb_master_monitor_bfm.sv(104) @ 150320: reporter [APB_MASTER_MONITOR_BFM] MASTER_SAMPLE_DATA='{pwrite:1, pslverr:0, pprot:0, pselx:1, pstrb:15, prdata:0, paddr:48, pwdata:104, no_of_wait_states:3}
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(85) @ 150320: reporter [apb_master_seq_item_conv] -------------------------------------------------------------------
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(88) @ 150320: reporter [apb_master_seq_item_conv_class] After randomize pprot =  000
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(91) @ 150320: reporter [apb_master_seq_item_conv_class] After randomize pselx =  0000000000000001
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(94) @ 150320: reporter [apb_master_seq_item_conv_class] After randomize pwrite =  1
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(97) @ 150320: reporter [apb_master_seq_item_conv_class] After randomize paddr =  30
-# UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(100) @ 150320: reporter [apb_master_seq_item_conv_class] After randomize pwdata =  7c
+# UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(100) @ 150320: reporter [apb_master_seq_item_conv_class] After randomize pwdata =  68
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(103) @ 150320: reporter [apb_master_seq_item_conv_class] After randomize pwdta =  1111
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(106) @ 150320: reporter [apb_master_seq_item_conv_class] After randomize pslverr =  0
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(109) @ 150320: reporter [apb_master_seq_item_conv_class] After randomize prdata =  0
@@ -1496,7 +1496,7 @@
 #   pselx                       string         7     SLAVE_0           
 #   paddr                       integral       32    'h30              
 #   pwrite                      string         5     WRITE             
-#   pwdata                      integral       32    'h7c              
+#   pwdata                      integral       32    'h68              
 #   transfer_size               string         0     ""                
 #   pstrb                       integral       4     'b1111            
 #   pprot                       string         18    NORMAL_SECURE_DATA
@@ -1513,7 +1513,7 @@
 #   pselx                       string         7     SLAVE_0           
 #   paddr                       integral       32    'h30              
 #   pwrite                      string         5     WRITE             
-#   pwdata                      integral       32    'h7c              
+#   pwdata                      integral       32    'h68              
 #   transfer_size               string         0     ""                
 #   pstrb                       integral       4     'b1111            
 #   pprot                       string         18    NORMAL_SECURE_DATA
@@ -1531,7 +1531,7 @@
 #   pselx                       string         7     SLAVE_0           
 #   paddr                       integral       32    'h30              
 #   pwrite                      string         5     WRITE             
-#   pwdata                      integral       32    'h7c              
+#   pwdata                      integral       32    'h68              
 #   transfer_size               string         0     ""                
 #   pstrb                       integral       4     'b1111            
 #   pprot                       string         18    NORMAL_SECURE_DATA
@@ -1541,17 +1541,17 @@
 # ---------------------------------------------------------------------
 # 
 # 
-# UVM_INFO verilog_src/uvm-1.1d/src/reg/uvm_reg_predictor.svh(221) @ 150320: uvm_test_top.i3c_env_h.topPredictor [REG_PREDICT] Observed WRITE transaction to register regmodel.wdatab_inst: value='h7c : updated value = 'h7c
+# UVM_INFO verilog_src/uvm-1.1d/src/reg/uvm_reg_predictor.svh(221) @ 150320: uvm_test_top.i3c_env_h.topPredictor [REG_PREDICT] Observed WRITE transaction to register regmodel.wdatab_inst: value='h68 : updated value = 'h68
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_cfg_converter.sv(38) @ 150320: reporter [apb_master_cfg_converter] after randomizing addr = 
 #  0
-# UVM_INFO ../../src/hvl_top/env/i3c_scoreboard.sv(189) @ 150320: uvm_test_top.i3c_env_h.i3c_scoreboard_h [SB] WDATAB collected = 0x7c
+# UVM_INFO ../../src/hvl_top/env/i3c_scoreboard.sv(189) @ 150320: uvm_test_top.i3c_env_h.i3c_scoreboard_h [SB] WDATAB collected = 0x68
 # UVM_INFO ../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv(179) @ 150330: reporter [APB_MASTER_DRIVER_BFM] DATA READY TO TRANSFER
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(85) @ 150330: reporter [apb_master_seq_item_conv] -------------------------------------------------------------------
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(88) @ 150330: reporter [apb_master_seq_item_conv_class] After randomize pprot =  000
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(91) @ 150330: reporter [apb_master_seq_item_conv_class] After randomize pselx =  0000000000000001
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(94) @ 150330: reporter [apb_master_seq_item_conv_class] After randomize pwrite =  1
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(97) @ 150330: reporter [apb_master_seq_item_conv_class] After randomize paddr =  30
-# UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(100) @ 150330: reporter [apb_master_seq_item_conv_class] After randomize pwdata =  7c
+# UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(100) @ 150330: reporter [apb_master_seq_item_conv_class] After randomize pwdata =  68
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(103) @ 150330: reporter [apb_master_seq_item_conv_class] After randomize pwdta =  1111
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(106) @ 150330: reporter [apb_master_seq_item_conv_class] After randomize pslverr =  0
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv(109) @ 150330: reporter [apb_master_seq_item_conv_class] After randomize prdata =  0
@@ -1565,7 +1565,7 @@
 #   pselx                       string         7     SLAVE_0           
 #   paddr                       integral       32    'h30              
 #   pwrite                      string         5     WRITE             
-#   pwdata                      integral       32    'h7c              
+#   pwdata                      integral       32    'h68              
 #   transfer_size               string         0     ""                
 #   pstrb                       integral       4     'b1111            
 #   pprot                       string         18    NORMAL_SECURE_DATA
@@ -1581,7 +1581,7 @@
 #   pselx                       string         7     SLAVE_0           
 #   paddr                       integral       32    'h30              
 #   pwrite                      string         5     WRITE             
-#   pwdata                      integral       32    'h7c              
+#   pwdata                      integral       32    'h68              
 #   transfer_size               string         0     ""                
 #   pstrb                       integral       4     'b1111            
 #   pprot                       string         18    NORMAL_SECURE_DATA
@@ -1591,7 +1591,7 @@
 # ---------------------------------------------------------------------
 # 
 # 
-# UVM_INFO @ 150330: reporter [RegModel] Wrote register via map regmodel.default_map: regmodel.wdatab_inst=0x7c
+# UVM_INFO @ 150330: reporter [RegModel] Wrote register via map regmodel.default_map: regmodel.wdatab_inst=0x68
 # UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv(87) @ 150330: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@sdrWriteSeq [CTRL_DEBUG] CTRL before SDR write = 0x80070090
 # UVM_INFO ../../src/hvl_top/apb_master//apb_master_adapter.sv(60) @ 150330: reporter [apb_master_adapter] The converted reg2bus packet is -------------------------------------------------------------
 # Name                          Type           Size  Value     
@@ -1958,7 +1958,7 @@
 # 
 # 
 # UVM_INFO @ 150490: reporter [RegModel] Read  register via map regmodel.default_map: regmodel.ctrl_inst=0
-# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv(99) @ 150490: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@sdrWriteSeq [WDATAB_DEBUG] WDATAB mirrored = 0x7c
+# UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv(99) @ 150490: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@sdrWriteSeq [WDATAB_DEBUG] WDATAB mirrored = 0x68
 # [150890] SEND_7E_R completed, NACK=0
 # UVM_INFO ../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv(104) @ 155490: uvm_test_top.i3c_env_h.top_virtual_seqr_h@@sdrWriteSeq [i3c_sdr_write_virtual_seq] SDR WRITE to target[0] complete
 # [161110] ARB_BITS completed, Captured Data = ffffffffffffffff
@@ -1966,30 +1966,30 @@
 # [161170] LOOP completed : Next Dynamic Address = 0x14
 # [161190] REP_START completed
 # [162590] REP_START completed
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(576) @ 162700: reporter [I3C_TARGET_DRIVER_BFM] Start condition detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(585) @ 162700: reporter [I3C_TARGET_DRIVER_BFM] sample_target_address started
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 162760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 162840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 163000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 163160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 163320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 163480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 163640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 163800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(597) @ 163800: reporter [I3C_TARGET_DRIVER_BFM] DEBUG :: local_addr = 0x7e
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 163960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(618) @ 163960: reporter [I3C_TARGET_DRIVER_BFM] operation = READ
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(623) @ 163960: reporter [I3C_TARGET_DRIVER_BFM] driveAddressAck = 1
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 164040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 164120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(569) @ 162701: reporter [I3C_TARGET_DRIVER_BFM] Start condition detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(578) @ 162701: reporter [I3C_TARGET_DRIVER_BFM] sample_target_address started
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 162760: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 162840: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 163000: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 163160: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 163320: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 163480: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 163640: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 163800: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(590) @ 163800: reporter [I3C_TARGET_DRIVER_BFM] DEBUG :: local_addr = 0x7e
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 163960: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(611) @ 163960: reporter [I3C_TARGET_DRIVER_BFM] operation = READ
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(616) @ 163960: reporter [I3C_TARGET_DRIVER_BFM] driveAddressAck = 1
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 164040: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 164120: reporter [TARGET_DRIVER_BFM] scl POSEDGE detected
 # [164170] SEND_7E_R completed, NACK=0
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(734) @ 164200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(727) @ 164200: reporter [TARGET_DRIVER_BFM] scl NEGEDGE detected
 # UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(81) @ 164200: reporter [I3C_TARGET_DRIVER_BFM] targetAddressStatus is NACK
 # [174390] ARB_BITS completed, Captured Data = ffffffffffffffff
 # [174430] ASSIGN completed : PID=ffffffffffff BCR=ff DCR=ff DYN_ADDR=14
 # [174450] LOOP completed : Next Dynamic Address = 0x15
 # [174470] REP_START completed
-# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(709) @ 175841: reporter [I3C_TARGET_DRIVER_BFM] Stop condition detected
+# UVM_INFO ../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv(702) @ 175841: reporter [I3C_TARGET_DRIVER_BFM] Stop condition detected
 # UVM_INFO ../../src/hvl_top/target//i3c_target_driver_proxy.sv(154) @ 175841: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_drv_proxy_h [TGT_DRV_PROXY] [target_id=0] item_done
 # UVM_INFO ../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith8bitsData_seq.sv(41) @ 175841: uvm_test_top.i3c_env_h.i3c_target_agent_h[0].i3c_target_seqr_h@@target_seq_write [i3c_target_writeOperationWith8bitsData_seq] finish_item returned - item sent to driver
 # [175870] REP_START completed
@@ -2117,5 +2117,5 @@
 # ** Note: $finish    : /tools/mentor/questasim_10.6c/questasim/linux/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
 #    Time: 208490 ns  Iteration: 53  Instance: /hvl_top
 # Saving coverage database on exit...
-# End time: 15:42:23 on Jun 19,2026, Elapsed time: 0:00:05
+# End time: 16:01:36 on Jun 19,2026, Elapsed time: 0:00:06
 # Errors: 0, Warnings: 3
