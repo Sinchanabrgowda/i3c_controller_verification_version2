@@ -94,9 +94,7 @@ always @* begin
                         ? LOOP
                         : ASSIGN;
 
-    LOOP        : next = nack
-                        ? STOP
-                        : REP_START;
+    LOOP        : next = nack ? STOP : REP_START;                      //next=REP_START;     
 
     STOP        : next = IDLE;
 

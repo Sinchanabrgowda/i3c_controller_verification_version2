@@ -1,14 +1,4 @@
-// ============================================================================
-// FILE: i3c_target_driver_proxy.sv  (MULTI-SLAVE VERSION)
-//
-// Key changes vs single-slave:
-//   * Looks up the BFM from config_db using a per-target key:
-//       "i3c_target_driver_bfm_<target_id>"
-//     where target_id comes from i3c_target_agent_config.target_id.
-//   * For DAA: to_class() is NOT called after drive_daa_data() because
-//     to_class() creates a new object that would clobber the pid/bcr/dcr/
-//     daa_ack/dynamic_address outputs written back into req.
-// ============================================================================
+
 `ifndef I3C_TARGET_DRIVER_PROXY_INCLUDED_
 `define I3C_TARGET_DRIVER_PROXY_INCLUDED_
 
@@ -17,6 +7,7 @@ class i3c_target_driver_proxy extends uvm_driver #(i3c_target_tx);
 
   i3c_target_agent_config  i3c_target_agent_cfg_h;
   virtual i3c_target_driver_bfm i3c_target_drv_bfm_h;
+    static int daa_count = 0;
 
   extern function new(string name = "i3c_target_driver_proxy",
                       uvm_component parent = null);

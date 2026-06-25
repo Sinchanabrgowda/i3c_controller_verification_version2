@@ -1,20 +1,3 @@
-// ============================================================================
-// FILE: i3c_target_driver_bfm.sv  (MULTI-SLAVE VERSION)
-//
-// Key changes vs single-slave:
-//   * drive_daa_data() implements full bit-level open-drain arbitration.
-//     During the 64-bit PID+BCR+DCR phase each slave drives its bit onto
-//     SDA, then samples the bus at SCL rising-edge.
-//     - If it drove 1 but bus is 0  → another slave drove 0 (dominant).
-//       This slave LOST arbitration:  release SDA, stop driving for this
-//       round, wait for the next Repeated-START.
-//     - If it drove 0 and bus is 0  → consistent, keep going.
-//     - If it drove 0 and bus is 1  → impossible with pull-up; treat as win.
-//   * A target that has already been assigned a dynamic address ignores
-//     subsequent DAA rounds (has_address flag).
-//   * The driver loops: after receiving a Repeated-START it re-enters
-//     arbitration so every unassigned slave eventually wins a round.
-// ============================================================================
 `ifndef I3C_TARGET_DRIVER_BFM_INCLUDED_
 `define I3C_TARGET_DRIVER_BFM_INCLUDED_
 
@@ -34,7 +17,7 @@ interface i3c_target_driver_bfm (
   i3c_fsm_state_e state;
   bit [7:0]  rdata;
   bit [1:0]  scl_local = 2'b11;
-
+  static int count=0;
   import uvm_pkg::*;
   `include "uvm_macros.svh"
   import i3c_target_pkg::i3c_target_driver_proxy;
@@ -145,24 +128,7 @@ interface i3c_target_driver_bfm (
 
   // =========================================================================
   // DAA TRANSACTION  (multi-slave arbitration)
-  //
-  // Protocol flow per MIPI I3C spec:
-  //   START → {7'h7E, W} → ACK → ENTDAA(0x07) → ACK →
-  //   Rep-START → {7'h7E, R} → ACK →
-  //   [64-bit arb: each slave drives PID+BCR+DCR bit-by-bit; loser drops out]
-  //   → master assigns 8-bit dynamic address → winner ACKs
-  //   → if more slaves: Rep-START again … → STOP when all assigned
-  //
-  // This task handles ONE complete DAA round for this slave:
-  //   1. Phases 1-4 (7E+W, ENTDAA, Rep-START, 7E+R) are common for all
-  //      slaves; every slave participates (all must ACK the broadcast).
-  //   2. In the ARB phase each slave drives and monitors.  If it loses it
-  //      releases SDA and waits for the next Rep-START to re-enter.
-  //   3. The winner receives and ACKs the dynamic address.
-  //   4. After ACK the winner sets has_address=1 and stops.
-  //   5. Losers loop back to detect_repeated_start() so they can re-enter
-  //      the next arbitration round.
-  // =========================================================================
+
 
   // Flag: once set this target has an address and ignores further DAA rounds
   bit has_address = 0;
@@ -201,11 +167,6 @@ interface i3c_target_driver_bfm (
              configPacketStruck.bcr,
              configPacketStruck.dcr};
 
-    // ------------------------------------------------------------------
-    // Phase 1: Common preamble – START, 7E+W, ENTDAA, Rep-START, 7E+R
-    // Every participating slave ACKs these phases on the shared bus
-    // (open-drain: any slave asserting 0 wins the ACK slot).
-    // ------------------------------------------------------------------
     detect_start();
     `uvm_info(name, "DAA: START detected", UVM_NONE)
 
@@ -214,10 +175,7 @@ interface i3c_target_driver_bfm (
     detect_repeated_start();
     sample_daa_broadcast_read(dataPacketStruck);
 
-    // ------------------------------------------------------------------
-    // Arbitration loop:  keep re-entering until this slave wins or the
-    // master sends STOP (bus goes to STOP condition during SCL=1, SDA 0→1).
-    // ------------------------------------------------------------------
+
     won_arb = 0;
 
     while (!won_arb) begin
@@ -234,37 +192,6 @@ interface i3c_target_driver_bfm (
           "DAA: Lost arbitration - waiting for next Rep-START or STOP",
           UVM_NONE)
 
-        // ----------------------------------------------------------------
-        // BUG FIX (this revision) -- previous cycle-counting heuristics
-        // (wait_past_ack_then_detect with a fixed or computed negedge
-        // count) were fundamentally fragile: any mismatch between the
-        // assumed frame length and the actual SCL activity (extra
-        // turnaround cycles, ACK using 2 NEGEDGEs not 1, simulator
-        // timing) caused the watch window to open at the wrong moment
-        // and lock onto an intermediate SDA transition instead of the
-        // genuine next bus condition. This was observed concretely: a
-        // loser losing at bit 17 needed ~26 NEGEDGEs of winner activity
-        // to remain (17 arb bits + 8 address bits + 1 ACK), but
-        // driveAddressAck() alone consumes 2 NEGEDGEs, not 1, so every
-        // formula variant was off by at least one cycle somewhere.
-        //
-        // FIX: stop counting. Instead, the loser STRUCTURALLY walks
-        // through the exact same remaining protocol steps the winner is
-        // going through, using the SAME shared detectEdge_scl() primitive
-        // the winner itself uses for each phase (remaining arb bits, the
-        // 8-bit dynamic address, the ACK slot). This needs no margin and
-        // no guessed count -- it consumes exactly one SCL NEGEDGE/POSEDGE
-        // pair per remaining bit, for exactly as many bits as remain,
-        // which is known precisely from lost_bit. Because it shares the
-        // same scl_local state and primitive as every other phase in this
-        // BFM, there is no race between independently-running detector
-        // loops either.
-        //
-        // After structurally consuming the winner's remaining frame, SCL
-        // is guaranteed low and SDA is guaranteed released (the winner's
-        // ACK release) -- detect_rep_start_or_stop() is then called fresh
-        // and can only fire on the genuine next bus condition.
-        // ----------------------------------------------------------------
         skip_remaining_winner_frame(lost_bit);
 
         detect_rep_start_or_stop(got_rep_start);
@@ -293,20 +220,11 @@ interface i3c_target_driver_bfm (
     // ------------------------------------------------------------------
     sample_daa_dynamic_address(assigned_addr, dyn_addr_byte, daa_ack_out);
 
-    // Drive ACK/NACK on the bus.
-    // driveAddressAck ends: detectEdge_scl(NEGEDGE) → drive_sda(1).
-    // So when it returns: SCL just went LOW, SDA released HIGH.
     driveAddressAck(daa_ack_out);
 
     // ------------------------------------------------------------------
     // Wait for Rep-START (more targets remain) or STOP (all assigned).
-    //
-    // No artificial pre-wait is used here either -- see the bug-fix note
-    // in the loser path above. detect_rep_start_or_stop() starts cold
-    // right after driveAddressAck() returns (SCL low, SDA just released
-    // high) and will correctly block until the master's genuine next
-    // bus condition, however long that takes.
-    // ------------------------------------------------------------------
+
     detect_rep_start_or_stop(got_rep_start);
 
     if (got_rep_start) begin
@@ -339,32 +257,28 @@ interface i3c_target_driver_bfm (
 
   // =========================================================================
   // ARB PHASE – drive 64-bit PID+BCR+DCR with open-drain arbitration
-  //
-  // For each bit (MSB first):
-  //   1.  Wait for SCL falling edge  → safe to change SDA
-  //   2.  Drive SDA = my_id[bit]
-  //   3.  Wait for SCL rising edge   → master samples here
-  //   4.  Sample bus SDA value
-  //   5.  If my_id[bit]=1 AND bus=0  → another slave won this bit;
-  //       we LOST: release SDA, set won_arb=0, return immediately
-  //   6.  Otherwise continue to next bit
-  // =========================================================================
-  task drive_daa_arb_bits(
+
+  task automatic drive_daa_arb_bits(
       input  bit [63:0] my_id,
       output bit        won_arb,
       output int        lost_bit_out);
 
     bit my_bit;
     bit bus_bit;
-
+    bit[63:0] all_bits=0;
+  bit first_bit=0;
+bit[63:0] bus_val=0;
     won_arb      = 1;
     lost_bit_out = 0;
-
+      first_bit= sda_i;
+   `uvm_info("DRIVE_DAA_BITS",$sformatf("first bus bit =%b",first_bit),UVM_LOW)
     for (int i = 63; i >= 0; i--) begin
       my_bit = my_id[i];
-
+      all_bits[i]=my_id[i];
+     //`uvm_info("DRIVE_DAA_BITS",$sformatf("sent bit =%b  before detect negedge",my_id[i]),UVM_LOW)
       // Step 1: wait for falling SCL → safe window
       detectEdge_scl(NEGEDGE);
+
 
       // Step 2: drive our bit
       drive_sda(my_bit);
@@ -374,13 +288,9 @@ interface i3c_target_driver_bfm (
 
       // Step 4: sample the bus
       bus_bit = sda_i;
+      bus_val[i]=sda_i;
+      `uvm_info("DRIVE_DAA_BITS",$sformatf("curretn bus bit=%b",bus_val[i]),UVM_LOW)
 
-      // Step 5: arbitration check.
-      // Skip at i==0 (DCR[0], last bit): after surviving bits 63..1,
-      // the master starts driving SDA for the address byte immediately
-      // after bit 0. A sole survivor with DCR[0]=1 would see bus=0
-      // (master dominant) and falsely report a loss. Surviving to i==0
-      // means this slave has won the arbitration.
       if (i > 0) begin
         if (my_bit == 1'b1 && bus_bit == 1'b0) begin
           `uvm_info(name,
@@ -395,41 +305,77 @@ interface i3c_target_driver_bfm (
 
       // Consistent: either both-0 (dominant) or both-1 (recessive)
     end
-
+    `uvm_info("DRIVE_DAA_BITS",$sformatf("all 64 bits =%h",all_bits),UVM_LOW)
+    `uvm_info("DRIVE_DAA_BITS",$sformatf("all total bus bit=%h",bus_val),UVM_LOW)
     `uvm_info(name, "DAA ARB: WON all 64 bits", UVM_NONE)
 
   endtask : drive_daa_arb_bits
+/*
+task automatic drive_daa_arb_bits(
+    input  bit [63:0] my_id,
+    output bit        won_arb,
+    output int        lost_bit_out);
 
+  bit my_bit;
+  bit bus_bit;
+  bit [63:0] all_bits = 0;
+  bit [63:0] bus_val  = 0;
 
-  // =========================================================================
-  // skip_remaining_winner_frame
-  //
-  // Called by a LOSER immediately after releasing SDA on arbitration loss
-  // at bit `lost_at_bit` (the i value from drive_daa_arb_bits' loop, i.e.
-  // arb bits i..0 still remain -- the loser already consumed bits 63..i+1).
-  //
-  // Structurally walks through the exact remaining protocol steps the
-  // winner is still driving, consuming exactly one NEGEDGE/POSEDGE pair
-  // per remaining step using the SAME detectEdge_scl() primitive used
-  // everywhere else in this BFM -- no separate cycle-counting math, no
-  // margin, no independently-running detector loop that could race with
-  // detectEdge_scl's own scl_local state.
-  //
-  // Remaining steps after losing at bit `lost_at_bit`:
-  //   - lost_at_bit more arbitration bits (i-1 downto 0)
-  //   - 8-bit dynamic address byte
-  //   - 1 ACK bit (driveAddressAck uses 2 NEGEDGEs: one to drive the ACK,
-  //     one to release SDA back high -- both are consumed here as two
-  //     separate NEGEDGE/POSEDGE steps to exactly match driveAddressAck's
-  //     own structure)
-  //
-  // After this task returns, SCL is low and SDA has just been released
-  // high by the winner's driveAddressAck() -- the same state that exists
-  // right after driveAddressAck() returns on the winner's own path. The
-  // caller can then call detect_rep_start_or_stop() fresh, exactly as the
-  // winner does, with no race and no guesswork.
-  // =========================================================================
-  task automatic skip_remaining_winner_frame(input int lost_at_bit);
+  won_arb      = 1;
+  lost_bit_out = 0;
+
+  // ─────────────────────────────────────────────────────────────────
+  // CRITICAL: resync scl_local to actual bus state on entry.
+  // sample_daa_broadcast_read() exits with SCL already LOW.
+  // Without this resync, detectEdge_scl(NEGEDGE) below will skip
+  // the current low and wait for the *next* negedge, causing bit 63
+  // to never be driven → SDA stays high (pull-up) for that bit.
+  // ─────────────────────────────────────────────────────────────────
+  scl_local = {scl_i, scl_i};   // seed both history slots from live bus
+
+  for (int i = 63; i >= 0; i--) begin
+    my_bit      = my_id[i];
+    all_bits[i] = my_id[i];
+
+    // Step 1: SCL low → safe window to change SDA
+    detectEdge_scl(NEGEDGE);
+
+    // Step 2: drive our bit
+    drive_sda(my_bit);
+    `uvm_info("DRIVE_DAA_BITS",
+      $sformatf("sent bit =%b", my_bit), UVM_LOW)
+
+    // Step 3: SCL rising → master samples
+    detectEdge_scl(POSEDGE);
+
+    // Step 4: sample the bus
+    bus_bit    = sda_i;
+    bus_val[i] = sda_i;
+    `uvm_info("DRIVE_DAA_BITS",
+      $sformatf("current bus bit=%b", bus_val[i]), UVM_LOW)
+
+    // Step 5: arbitration check
+    if (i > 0) begin
+      if (my_bit == 1'b1 && bus_bit == 1'b0) begin
+        `uvm_info(name,
+          $sformatf("DAA ARB: Lost at bit %0d (drove 1, bus=0)", i),
+          UVM_NONE)
+        drive_sda(1);
+        won_arb      = 0;
+        lost_bit_out = i;
+        return;
+      end
+    end
+  end
+
+  `uvm_info("DRIVE_DAA_BITS",
+    $sformatf("all 64 bits =%h", all_bits), UVM_LOW)
+  `uvm_info("DRIVE_DAA_BITS",
+    $sformatf("all bus bits =%h", bus_val), UVM_LOW)
+  `uvm_info(name, "DAA ARB: WON all 64 bits", UVM_NONE)
+
+*/
+ task automatic skip_remaining_winner_frame(input int lost_at_bit);
     `uvm_info(name,
       $sformatf("skip_remaining_winner_frame: lost_at_bit=%0d, stepping through winner's remaining frame",
                 lost_at_bit),
@@ -528,49 +474,10 @@ interface i3c_target_driver_bfm (
       sda_loc = {sda_loc[0], sda_i};
       end while (!(sda_loc == NEGEDGE && scl_loc == 2'b11));
     `uvm_info(name, "DAA: Repeated START detected", UVM_HIGH)
-    scl_local = {scl_i, scl_i};  // resync shared edge state
+    scl_local = {scl_i, scl_i};
   endtask : detect_repeated_start
 
-  // =========================================================================
-  // detect_rep_start_or_stop
-  //
-  // Called by BOTH a loser (right after skip_remaining_winner_frame()) and
-  // the winner (right after its own driveAddressAck()). In both cases SCL
-  // is low and SDA has just been released high.
-  //
-  //   Rep-START : SDA falls while SCL=1  → got_rep_start = 1
-  //   STOP      : SDA rises while SCL=1  → got_rep_start = 0
-  //
-  // BUG FIX -- "STOP detected instead of Repeated-START even though the
-  // master genuinely issues Rep-START":
-  //
-  // This task previously seeded scl_loc/sda_loc to a hardcoded 2'b11
-  // ("both previous samples were high") regardless of the bus's actual
-  // state on entry. But callers always enter this task with SCL LOW (just
-  // after skip_remaining_winner_frame() or driveAddressAck(), both of
-  // which end on a NEGEDGE). If the master then goes bus-idle for a
-  // while (SCL low, SDA high) before eventually driving SCL high for the
-  // Rep-START/STOP window, the very FIRST real sample taken here would
-  // combine the stale "1" seed with the real "1" (SCL just went high) and
-  // read as scl_loc==2'b11 -- "stable high for two samples" -- one full
-  // sample too early. That shifted the detection window by one sample
-  // relative to the bus's real timeline, causing the detector to lock
-  // onto an unrelated SDA transition (e.g. one of the 7E+R address bits
-  // toggling SDA) instead of the genuine Rep-START's SDA-falling edge,
-  // and report STOP. Confirmed against the master's own internal debug
-  // log: it printed "SEND_7E_R completed" immediately after the point
-  // where this detector falsely reported STOP, proving a real Rep-START
-  // + 7E+R had just happened on the bus at that moment.
-  //
-  // FIX: seed scl_loc/sda_loc from the ACTUAL current scl_i/sda_i on
-  // entry (both copies set to the live signal, exactly mirroring what a
-  // genuinely-idle "stable" state looks like), so the first comparison
-  // reflects reality instead of an assumed history. This task always
-  // starts right after a NEGEDGE in every call site, so seeding from the
-  // live (low) SCL/(high) SDA values is always correct and matches the
-  // resync pattern already used elsewhere in this BFM (detect_start(),
-  // detect_repeated_start()).
-  // =========================================================================
+
   task automatic detect_rep_start_or_stop(output bit got_rep_start);
     bit [1:0] scl_loc;
     bit [1:0] sda_loc;
@@ -609,9 +516,6 @@ interface i3c_target_driver_bfm (
         return;
       end
 
-      // DIAGNOSTIC: log every sample where SCL is NOT toggling normally,
-      // so we can see exactly what the bus is doing during any silent
-      // gap instead of inferring it from absence of detectEdge_scl prints.
       `uvm_info(name,
         $sformatf("detect_rep_start_or_stop: sample scl_loc=%b sda_loc=%b (scl_i=%0b sda_i=%0b)",
                   scl_loc, sda_loc, scl_i, sda_i),
@@ -647,8 +551,8 @@ interface i3c_target_driver_bfm (
     detectEdge_scl(NEGEDGE);
     drive_sda(1'b0);
     detectEdge_scl(POSEDGE);
-    detectEdge_scl(NEGEDGE);
-    drive_sda(1'b1);
+    //detectEdge_scl(NEGEDGE);
+    //drive_sda(1'b1);
 
   endtask : sample_daa_broadcast_read
 
@@ -660,6 +564,7 @@ interface i3c_target_driver_bfm (
     bit [7:0] addr_byte;
     bit       parity_received;
     bit       parity_calc;
+    count++;     //added                                                                      /////////////////////////////////
 
     `uvm_info(name, "DAA: sampling dynamic address", UVM_HIGH)
 
@@ -674,13 +579,21 @@ interface i3c_target_driver_bfm (
     full_byte_out    = addr_byte;
 
     parity_calc = ~^addr_byte[7:1];
-
+    `uvm_info("COUNT_SLAVE",$sformatf("Slave addr assignment done count=%d",count),UVM_NONE)
     if (parity_calc == parity_received) begin
+      if(count==3)   //added
+      begin
+         ack_out=NACK;
+         `uvm_info(name,$sformatf("DAA: dynamic addr=%0h dyn_add+parity=%0h parity OK =%0b→ ACK",dyn_addr_out,addr_byte,parity_received),UVM_NONE)
+      end
+      else
+      begin
       ack_out = ACK;
       `uvm_info(name,
-        $sformatf("DAA: dynamic addr=0x%0x parity OK → ACK", dyn_addr_out),
-        UVM_NONE)
-    end else begin
+        $sformatf("DAA: dynamic addr=%0h dyn_add+parity=%0h parity OK =%0b→ ACK",dyn_addr_out,addr_byte,parity_received),UVM_NONE)
+        end
+    end    //till here added
+    else begin
       ack_out = NACK;
       `uvm_info(name,
         $sformatf("DAA: dynamic addr=0x%0x parity FAIL → NACK", dyn_addr_out),
