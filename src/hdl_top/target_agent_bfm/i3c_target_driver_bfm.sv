@@ -153,7 +153,7 @@ interface i3c_target_driver_bfm (
 
     // Bail out early if already assigned
     if (has_address) begin
-      `uvm_info(name, "Already has dynamic address - ignoring DAA", UVM_NONE)
+      `uvm_info("HAS_ADDR", "Already has dynamic address - ignoring DAA", UVM_NONE)
       daa_ack_out  = NACK;
       pid_out      = configPacketStruck.pid;
       bcr_out      = configPacketStruck.bcr;
@@ -222,9 +222,17 @@ interface i3c_target_driver_bfm (
 
     driveAddressAck(daa_ack_out);
 
-    // ------------------------------------------------------------------
-    // Wait for Rep-START (more targets remain) or STOP (all assigned).
-
+      if(i3c_target_driver_proxy::daa_count==3)   //added
+      begin
+      `uvm_info(name,"DAA count=3 entered", UVM_NONE)
+      detect_repeated_start();
+      sample_daa_broadcast_read(dataPacketStruck);  
+      
+      driveAddressAck(1);
+      detect_stop();
+      end
+else
+begin
     detect_rep_start_or_stop(got_rep_start);
 
     if (got_rep_start) begin
@@ -236,7 +244,7 @@ interface i3c_target_driver_bfm (
         "DAA: STOP after address assignment - all targets assigned",
         UVM_NONE)
     end
-
+end
     if (daa_ack_out == ACK) begin
       has_address = 1;
       `uvm_info(name,
@@ -564,7 +572,7 @@ task automatic drive_daa_arb_bits(
     bit [7:0] addr_byte;
     bit       parity_received;
     bit       parity_calc;
-    count++;     //added                                                                      /////////////////////////////////
+    i3c_target_driver_proxy::daa_count++;     //added                                                                      /////////////////////////////////
 
     `uvm_info(name, "DAA: sampling dynamic address", UVM_HIGH)
 
@@ -579,20 +587,12 @@ task automatic drive_daa_arb_bits(
     full_byte_out    = addr_byte;
 
     parity_calc = ~^addr_byte[7:1];
-    `uvm_info("COUNT_SLAVE",$sformatf("Slave addr assignment done count=%d",count),UVM_NONE)
+    `uvm_info("COUNT_SLAVE",$sformatf("Slave addr assignment done count=%d",i3c_target_driver_proxy::daa_count),UVM_NONE)
     if (parity_calc == parity_received) begin
-      if(count==3)   //added
-      begin
-         ack_out=NACK;
-         `uvm_info(name,$sformatf("DAA: dynamic addr=%0h dyn_add+parity=%0h parity OK =%0b→ ACK",dyn_addr_out,addr_byte,parity_received),UVM_NONE)
-      end
-      else
-      begin
       ack_out = ACK;
       `uvm_info(name,
         $sformatf("DAA: dynamic addr=%0h dyn_add+parity=%0h parity OK =%0b→ ACK",dyn_addr_out,addr_byte,parity_received),UVM_NONE)
         end
-    end    //till here added
     else begin
       ack_out = NACK;
       `uvm_info(name,
