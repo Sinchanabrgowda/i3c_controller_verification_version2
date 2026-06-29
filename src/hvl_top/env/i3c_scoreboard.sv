@@ -1,4 +1,3 @@
-
 `ifndef I3C_SCOREBOARD_INCLUDED_
 `define I3C_SCOREBOARD_INCLUDED_
 
@@ -290,6 +289,7 @@ task i3c_scoreboard::compare_with_daa_target();
 
         // -- Sequential dynamic address check
         exp_dyn_addr = daa_next_exp_addr;
+        daa_next_exp_addr++;   // always advance so later slaves get the right expected address
         if (tgt.dynamic_address !== exp_dyn_addr) begin
           `uvm_error("SB_DAA_DYNADDR",
             $sformatf("[target %0d] Dynamic address: expected 0x%0h got 0x%0h",
@@ -300,7 +300,6 @@ task i3c_scoreboard::compare_with_daa_target();
             $sformatf("[target %0d] Dynamic address 0x%0h PASS",
                       i, tgt.dynamic_address), UVM_MEDIUM)
           daa_addr_pass++;
-          daa_next_exp_addr++;
         end
 
         // -- Parity / ACK check
@@ -640,4 +639,3 @@ function void i3c_scoreboard::check_phase(uvm_phase phase);
 endfunction : check_phase
 
 `endif
-

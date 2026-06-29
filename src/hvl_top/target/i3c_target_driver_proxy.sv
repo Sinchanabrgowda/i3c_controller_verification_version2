@@ -119,17 +119,8 @@ task i3c_target_driver_proxy::run_phase(uvm_phase phase);
           UVM_LOW)
       end
 
-      // FIX: Do NOT call to_class() for DAA transactions.
-      // to_class() constructs a brand-new i3c_target_tx object (new()),
-      // which would overwrite the pid/bcr/dcr/daa_ack/dynamic_address
-      // outputs that drive_daa_data() just wrote back into req above.
-      // The sequence's body() checks req.daa_ack after finish_item()
-      // returns, so those fields must remain intact.
-
     end else begin
-      // -----------------------------------------------------------------------
       // SDR TRANSACTION
-      // -----------------------------------------------------------------------
       `uvm_info("TGT_DRV_PROXY",
         $sformatf("[target_id=%0d] SDR transaction",
                   i3c_target_agent_cfg_h.target_id), UVM_NONE)

@@ -1,4 +1,3 @@
-
 `ifndef I3C_TARGET_MONITOR_PROXY_INCLUDED_
 `define I3C_TARGET_MONITOR_PROXY_INCLUDED_
 
@@ -103,6 +102,9 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
 
       i3c_target_mon_bfm_h.sample_daa_data(struct_packet, struct_cfg);
 
+      i3c_target_seq_item_converter::to_class(struct_packet, tx);
+      tx.txn_type = i3c_target_tx::DAA;
+
     end else begin
 
       `uvm_info(get_type_name(),
@@ -111,9 +113,9 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
 
       i3c_target_mon_bfm_h.sample_data(struct_packet, struct_cfg);
 
-    end
+      i3c_target_seq_item_converter::to_class(struct_packet, tx);
 
-    i3c_target_seq_item_converter::to_class(struct_packet, tx);
+    end
 
     `uvm_info(get_type_name(),
       $sformatf("[target_id=%0d] Sampled transaction – writing to analysis port",
@@ -126,4 +128,3 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
 endtask : run_phase
 
 `endif
-

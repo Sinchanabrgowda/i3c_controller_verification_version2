@@ -32,9 +32,6 @@ interface i3c_target_driver_bfm (
     $display(name);
   end
 
-  // =========================================================================
-  // Reset / Idle helpers
-  // =========================================================================
   task wait_for_system_reset();
     state = RESET_DEACTIVATED;
     @(negedge areset);
@@ -60,9 +57,7 @@ interface i3c_target_driver_bfm (
     `uvm_info(name, "I3C bus is free state detected", UVM_NONE)
   endtask : wait_for_idle_state
 
-  // =========================================================================
   // SDR (non-DAA) transaction
-  // =========================================================================
   task drive_data(inout i3c_transfer_bits_s dataPacketStruck,
                   input i3c_transfer_cfg_s  configPacketStruck);
     `uvm_info(name, "target txn started", UVM_HIGH)
@@ -126,11 +121,9 @@ interface i3c_target_driver_bfm (
     disable fork;
   endtask : driveReadDataAndSampleACK
 
-  // =========================================================================
   // DAA TRANSACTION  (multi-slave arbitration)
 
 
-  // Flag: once set this target has an address and ignores further DAA rounds
   bit has_address = 0;
 
   task drive_daa_data(
@@ -146,12 +139,11 @@ interface i3c_target_driver_bfm (
     bit        won_arb;
     bit [6:0]  assigned_addr;
     bit [7:0]  dyn_addr_byte;
-    int        lost_bit;       // which arb bit we lost at (i value from arb loop)
+    int        lost_bit;
     bit        got_rep_start;
 
     `uvm_info(name, "DAA transaction started", UVM_NONE)
 
-    // Bail out early if already assigned
     if (has_address) begin
       `uvm_info("HAS_ADDR", "Already has dynamic address - ignoring DAA", UVM_NONE)
       daa_ack_out  = NACK;
@@ -162,7 +154,7 @@ interface i3c_target_driver_bfm (
       return;
     end
 
-    // Build the 64-bit value to drive: PID[47:0] | BCR[7:0] | DCR[7:0]
+    // Build 64-bit arb value: PID[47:0] | BCR[7:0] | DCR[7:0]
     my_id = {configPacketStruck.pid,
              configPacketStruck.bcr,
              configPacketStruck.dcr};
@@ -170,35 +162,31 @@ interface i3c_target_driver_bfm (
     detect_start();
     `uvm_info(name, "DAA: START detected", UVM_NONE)
 
-    sample_daa_broadcast_address(dataPacketStruck);
-    sample_daa_ccc_byte(dataPacketStruck);
-    detect_repeated_start();
-    sample_daa_broadcast_read(dataPacketStruck);
+    sample_daa_broadcast_address(dataPacketStruck);   // 7E+W + ACK
+    sample_daa_ccc_byte(dataPacketStruck);            // ENTDAA + ACK
+    detect_repeated_start();                          // first REP_START
+    sample_daa_broadcast_read(dataPacketStruck);      // 7E+R + ACK (unassigned pulls low)
 
-
+    // ARBITRATION LOOP
+    
     won_arb = 0;
 
     while (!won_arb) begin
 
-      // ----------------------------------------------------------------
-      // ARB PHASE: drive 64 bits, sample bus each SCL cycle
-      // ----------------------------------------------------------------
       drive_daa_arb_bits(my_id, won_arb, lost_bit);
 
       if (!won_arb) begin
-        // LOST arbitration this round — release SDA immediately.
         drive_sda(1);
-        `uvm_info(name,
-          "DAA: Lost arbitration - waiting for next Rep-START or STOP",
-          UVM_NONE)
+        `uvm_info(name, "DAA: Lost arbitration", UVM_NONE)
 
         skip_remaining_winner_frame(lost_bit);
 
+    
         detect_rep_start_or_stop(got_rep_start);
 
         if (!got_rep_start) begin
-          `uvm_info(name,
-            "DAA: STOP detected after losing arb - DAA complete", UVM_NONE)
+          // STOP seen — DAA is fully complete; this slave never won.
+          `uvm_info(name, "DAA: STOP after losing arb - DAA complete without winning", UVM_NONE)
           daa_ack_out  = NACK;
           pid_out      = configPacketStruck.pid;
           bcr_out      = configPacketStruck.bcr;
@@ -207,44 +195,16 @@ interface i3c_target_driver_bfm (
           return;
         end
 
-        `uvm_info(name,
-          "DAA: Rep-START detected after losing arb - re-entering",
-          UVM_NONE)
-        // Rep-START: sample the 7E+R broadcast header then re-enter arb
+        `uvm_info(name, "DAA: REP_START - re-entering arb with 7E+R header", UVM_NONE)
         sample_daa_broadcast_read(dataPacketStruck);
       end
+
     end // while !won_arb
 
-    // ------------------------------------------------------------------
-    // Phase 3: Winner samples the dynamic address byte from master
-    // ------------------------------------------------------------------
+    // WON arbitration: receive dynamic address from master
     sample_daa_dynamic_address(assigned_addr, dyn_addr_byte, daa_ack_out);
-
     driveAddressAck(daa_ack_out);
 
-      if(i3c_target_driver_proxy::daa_count==3)   //added
-      begin
-      `uvm_info(name,"DAA count=3 entered", UVM_NONE)
-      detect_repeated_start();
-      sample_daa_broadcast_read(dataPacketStruck);  
-      
-      driveAddressAck(1);
-      detect_stop();
-      end
-else
-begin
-    detect_rep_start_or_stop(got_rep_start);
-
-    if (got_rep_start) begin
-      `uvm_info(name,
-        "DAA: Rep-START after address assignment - more targets remain",
-        UVM_NONE)
-    end else begin
-      `uvm_info(name,
-        "DAA: STOP after address assignment - all targets assigned",
-        UVM_NONE)
-    end
-end
     if (daa_ack_out == ACK) begin
       has_address = 1;
       `uvm_info(name,
@@ -252,7 +212,6 @@ end
         UVM_NONE)
     end
 
-    // Return results
     pid_out      = configPacketStruck.pid;
     bcr_out      = configPacketStruck.bcr;
     dcr_out      = configPacketStruck.dcr;
@@ -261,9 +220,28 @@ end
     dataPacketStruck.targetAddress       = 7'h7E;
     dataPacketStruck.targetAddressStatus = ACK;
 
+   
+    forever begin
+
+      detect_rep_start_or_stop(got_rep_start);
+
+      if (!got_rep_start) begin
+        `uvm_info(name, "DAA: STOP detected - all devices assigned, exiting", UVM_NONE)
+        return;
+      end
+
+      `uvm_info(name,
+        "DAA: REP_START after assignment - consuming 7E+R, driving NACK",
+        UVM_NONE)
+      sample_daa_broadcast_read(dataPacketStruck);
+
+      // After NACK the master will issue STOP → caught on next iteration.
+     
+
+    end // forever
+
   endtask : drive_daa_data
 
-  // =========================================================================
   // ARB PHASE – drive 64-bit PID+BCR+DCR with open-drain arbitration
 
   task automatic drive_daa_arb_bits(
@@ -401,11 +379,6 @@ task automatic drive_daa_arb_bits(
       detectEdge_scl(POSEDGE);
     end
 
-    // ACK bit: driveAddressAck() does
-    //   detectEdge_scl(NEGEDGE); drive_sda(ack); detectEdge_scl(POSEDGE);
-    //   detectEdge_scl(NEGEDGE); drive_sda(1);
-    // i.e. two NEGEDGEs and one POSEDGE in between, ending on a NEGEDGE
-    // with SDA released high. Mirror that exactly.
     detectEdge_scl(NEGEDGE);
     detectEdge_scl(POSEDGE);
     detectEdge_scl(NEGEDGE);
@@ -416,9 +389,6 @@ task automatic drive_daa_arb_bits(
   endtask : skip_remaining_winner_frame
 
 
-  // =========================================================================
-  // Phase helpers
-  // =========================================================================
 
   task sample_daa_broadcast_address(inout i3c_transfer_bits_s pkt);
     bit [6:0] addr_bits;
@@ -494,10 +464,6 @@ task automatic drive_daa_arb_bits(
     scl_loc = {scl_i, scl_i};
     sda_loc = {sda_i, sda_i};
 
-    `uvm_info(name,
-      $sformatf("detect_rep_start_or_stop: ENTRY scl_i=%0b sda_i=%0b",
-                scl_i, sda_i),
-      UVM_NONE)
 
     forever begin
       @(negedge pclk);
@@ -507,7 +473,7 @@ task automatic drive_daa_arb_bits(
       // SCL held high AND SDA falling  → Repeated-START
       if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
         `uvm_info(name,
-          $sformatf("detect_rep_start_or_stop: Repeated-START (scl_loc=%b sda_loc=%b)",
+          $sformatf("detect_rep_start_or_stop(REPEATED START): Repeated-START (scl_loc=%b sda_loc=%b)",
                     scl_loc, sda_loc),
           UVM_NONE)
         got_rep_start = 1;
@@ -517,17 +483,13 @@ task automatic drive_daa_arb_bits(
       // SCL held high AND SDA rising   → STOP
       if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
         `uvm_info(name,
-          $sformatf("detect_rep_start_or_stop: STOP (scl_loc=%b sda_loc=%b)",
+          $sformatf("detect_rep_start_or_stop(STOP): STOP (scl_loc=%b sda_loc=%b)",
                     scl_loc, sda_loc),
           UVM_NONE)
         got_rep_start = 0;
         return;
       end
 
-      `uvm_info(name,
-        $sformatf("detect_rep_start_or_stop: sample scl_loc=%b sda_loc=%b (scl_i=%0b sda_i=%0b)",
-                  scl_loc, sda_loc, scl_i, sda_i),
-        UVM_HIGH)
     end
   endtask : detect_rep_start_or_stop
 
@@ -555,11 +517,11 @@ task automatic drive_daa_arb_bits(
       $sformatf("DAA: broadcast read addr = 0x%0x (expect 0xFD)", full_byte),
       UVM_NONE)
 
-    // ACK (open-drain: all remaining unassigned slaves pull low together)
+   
     detectEdge_scl(NEGEDGE);
-    drive_sda(1'b0);
+    drive_sda(has_address ? 1'b1 : 1'b0);
     detectEdge_scl(POSEDGE);
-    //detectEdge_scl(NEGEDGE);
+    //detectEdge_scl(NEGEDGE);  //had one issue
     //drive_sda(1'b1);
 
   endtask : sample_daa_broadcast_read
@@ -602,9 +564,6 @@ task automatic drive_daa_arb_bits(
 
   endtask : sample_daa_dynamic_address
 
-  // =========================================================================
-  // SDR helpers (unchanged)
-  // =========================================================================
 
   task detect_start();
     bit [1:0] scl_local_d;
@@ -753,13 +712,8 @@ task automatic drive_daa_arb_bits(
     `uvm_info(name, "Stop condition detected", UVM_HIGH)
   endtask : detect_stop
 
-  // =========================================================================
-  // Low-level drive/edge helpers
-  // =========================================================================
 
   task drive_sda(input bit value);
-    // TRISTATE_BUF_ON  = 1 (driving)
-    // TRISTATE_BUF_OFF = 0 (high-Z)
     sda_oen <= value ? TRISTATE_BUF_OFF : TRISTATE_BUF_ON;
     sda_o   <= value;
   endtask : drive_sda
