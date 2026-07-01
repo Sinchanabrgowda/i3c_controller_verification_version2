@@ -78,7 +78,7 @@ interface i3c_target_driver_bfm (
     end
   endtask : drive_data
 
-  task sampleWriteDataAndDriveACK(
+task sampleWriteDataAndDriveACK(
       inout i3c_transfer_bits_s dataPacketStruck,
       input i3c_transfer_cfg_s  configPacketStruck);
     `uvm_info(name, "sampleWriteDataAndDriveACK started", UVM_HIGH)
@@ -86,7 +86,14 @@ interface i3c_target_driver_bfm (
       begin
         for (int i = 0; i < MAXIMUM_BYTES; i++) begin
           sample_write_data(configPacketStruck, dataPacketStruck, i);
-          driveWdataAck(dataPacketStruck.writeDataStatus[i]);
+`uvm_info(name,
+          $sformatf("Sampled WDATA[%0d] = 0x%02h (%08b)",
+                    i,
+                    dataPacketStruck.writeData[i],
+                    dataPacketStruck.writeData[i]),
+          UVM_HIGH)
+          
+driveWdataAck(dataPacketStruck.writeDataStatus[i]);
           if (dataPacketStruck.writeDataStatus[i] == NACK)
             break;
         end
@@ -185,7 +192,6 @@ interface i3c_target_driver_bfm (
         detect_rep_start_or_stop(got_rep_start);
 
         if (!got_rep_start) begin
-          // STOP seen — DAA is fully complete; this slave never won.
           `uvm_info(name, "DAA: STOP after losing arb - DAA complete without winning", UVM_NONE)
           daa_ack_out  = NACK;
           pid_out      = configPacketStruck.pid;
@@ -201,7 +207,7 @@ interface i3c_target_driver_bfm (
 
     end // while !won_arb
 
-    // WON arbitration: receive dynamic address from master
+    // WON arbitration
     sample_daa_dynamic_address(assigned_addr, dyn_addr_byte, daa_ack_out);
     driveAddressAck(daa_ack_out);
 
@@ -261,18 +267,12 @@ bit[63:0] bus_val=0;
     for (int i = 63; i >= 0; i--) begin
       my_bit = my_id[i];
       all_bits[i]=my_id[i];
-     //`uvm_info("DRIVE_DAA_BITS",$sformatf("sent bit =%b  before detect negedge",my_id[i]),UVM_LOW)
-      // Step 1: wait for falling SCL → safe window
       detectEdge_scl(NEGEDGE);
 
-
-      // Step 2: drive our bit
       drive_sda(my_bit);
 
-      // Step 3: wait for rising SCL → master samples
       detectEdge_scl(POSEDGE);
 
-      // Step 4: sample the bus
       bus_bit = sda_i;
       bus_val[i]=sda_i;
       `uvm_info("DRIVE_DAA_BITS",$sformatf("curretn bus bit=%b",bus_val[i]),UVM_LOW)
@@ -289,7 +289,6 @@ bit[63:0] bus_val=0;
         end
       end
 
-      // Consistent: either both-0 (dominant) or both-1 (recessive)
     end
     `uvm_info("DRIVE_DAA_BITS",$sformatf("all 64 bits =%h",all_bits),UVM_LOW)
     `uvm_info("DRIVE_DAA_BITS",$sformatf("all total bus bit=%h",bus_val),UVM_LOW)
@@ -310,13 +309,6 @@ task automatic drive_daa_arb_bits(
   won_arb      = 1;
   lost_bit_out = 0;
 
-  // ─────────────────────────────────────────────────────────────────
-  // CRITICAL: resync scl_local to actual bus state on entry.
-  // sample_daa_broadcast_read() exits with SCL already LOW.
-  // Without this resync, detectEdge_scl(NEGEDGE) below will skip
-  // the current low and wait for the *next* negedge, causing bit 63
-  // to never be driven → SDA stays high (pull-up) for that bit.
-  // ─────────────────────────────────────────────────────────────────
   scl_local = {scl_i, scl_i};   // seed both history slots from live bus
 
   for (int i = 63; i >= 0; i--) begin
@@ -367,13 +359,11 @@ task automatic drive_daa_arb_bits(
                 lost_at_bit),
       UVM_HIGH)
 
-    // Remaining arbitration bits: i-1 downto 0 → lost_at_bit more bits
     for (int i = 0; i < lost_at_bit; i++) begin
       detectEdge_scl(NEGEDGE);
       detectEdge_scl(POSEDGE);
     end
 
-    // 8-bit dynamic address byte
     for (int k = 0; k < 8; k++) begin
       detectEdge_scl(NEGEDGE);
       detectEdge_scl(POSEDGE);
@@ -412,7 +402,6 @@ task automatic drive_daa_arb_bits(
       $sformatf("DAA: broadcast addr = 0x%0x (expect 0xFC)", full_byte),
       UVM_NONE)
 
-    // ACK the broadcast (drive 0 for one SCL cycle)
     detectEdge_scl(NEGEDGE);
     drive_sda(1'b0);
     detectEdge_scl(POSEDGE);
@@ -460,7 +449,6 @@ task automatic drive_daa_arb_bits(
     bit [1:0] scl_loc;
     bit [1:0] sda_loc;
 
-    // Seed from the live bus state, not a hardcoded assumption.
     scl_loc = {scl_i, scl_i};
     sda_loc = {sda_i, sda_i};
 
@@ -470,7 +458,6 @@ task automatic drive_daa_arb_bits(
       scl_loc = {scl_loc[0], scl_i};
       sda_loc = {sda_loc[0], sda_i};
 
-      // SCL held high AND SDA falling  → Repeated-START
       if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
         `uvm_info(name,
           $sformatf("detect_rep_start_or_stop(REPEATED START): Repeated-START (scl_loc=%b sda_loc=%b)",
@@ -480,7 +467,6 @@ task automatic drive_daa_arb_bits(
         return;
       end
 
-      // SCL held high AND SDA rising   → STOP
       if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
         `uvm_info(name,
           $sformatf("detect_rep_start_or_stop(STOP): STOP (scl_loc=%b sda_loc=%b)",
@@ -519,6 +505,8 @@ task automatic drive_daa_arb_bits(
 
    
     detectEdge_scl(NEGEDGE);
+`uvm_info("DAA_ACK_DEBUG",$sformatf("[target_id=%0d] has_address=%0b -> driving %s on 7E+R ACK slot",i3c_target_drv_proxy_h.i3c_target_agent_cfg_h.target_id,has_address,has_address ? "NACK" : "ACK"),UVM_NONE)
+
     drive_sda(has_address ? 1'b1 : 1'b0);
     detectEdge_scl(POSEDGE);
     //detectEdge_scl(NEGEDGE);  //had one issue
@@ -564,7 +552,6 @@ task automatic drive_daa_arb_bits(
 
   endtask : sample_daa_dynamic_address
 
-
   task detect_start();
     bit [1:0] scl_local_d;
     bit [1:0] sda_local_d;
@@ -592,18 +579,25 @@ task automatic drive_daa_arb_bits(
     for (int k = TARGET_ADDRESS_WIDTH-1; k >= 0; k--) begin
       detectEdge_scl(POSEDGE);
       local_addr[k] = sda_i;
+    `uvm_info(name,
+      $sformatf("sampled bit %0d = %0d", k, sda_i), UVM_HIGH)
       drive_sda(1);
     end
 
     `uvm_info(name,
       $sformatf("DEBUG :: local_addr = 0x%0x", local_addr[6:0]), UVM_NONE)
     pkt.targetAddress = local_addr;
+ `uvm_info(name,
+    $sformatf("DEBUG :: cfg target_addr = 0x%0x",
+              cfg_pkt.targetAddress), UVM_NONE)
 
-    if (local_addr != cfg_pkt.targetAddress)
+    if (local_addr != cfg_pkt.targetAddress) begin
       pkt.targetAddressStatus = NACK;
-    else
+`uvm_info(name, "address mismatch NACK", UVM_HIGH)
+   end else begin
       pkt.targetAddressStatus = ACK;
-
+`uvm_info(name, "address match ACK", UVM_HIGH)
+end
   endtask : sample_target_address
 
   task sample_operation(output operationType_e wr_rd);
