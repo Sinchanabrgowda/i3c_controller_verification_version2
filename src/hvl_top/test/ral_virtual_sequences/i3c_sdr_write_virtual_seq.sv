@@ -18,7 +18,7 @@ class i3c_sdr_write_virtual_seq extends top_virtual_base_seq;
   uvm_reg_data_t ctrl_mirror;
   uvm_reg_data_t wdatab_mirror;
 
-  rand bit [7:0] wdata;
+  bit [7:0] wdata;
   rand bit [7:0] transfer_len;
 
   // Which target slave to use for the SDR side (default: 0)
@@ -72,7 +72,7 @@ class i3c_sdr_write_virtual_seq extends top_virtual_base_seq;
     join_none
 
     // Write data byte
-    i3c_env_cfg_h.regBlockHandle.wdatab_inst.write(status, wdata);
+    i3c_env_cfg_h.regBlockHandle.wdatab_inst.write(status, 8'h44);
 
     // Program CTRL register: SDR write to the dynamic address of target[target_idx]
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_addr.set(
@@ -80,7 +80,9 @@ class i3c_sdr_write_virtual_seq extends top_virtual_base_seq;
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_len.set(transfer_len);
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_dir.set(1'b0);   // WRITE
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_type.set(2'd0);  // SDR
-    i3c_env_cfg_h.regBlockHandle.ctrl_inst.start.set(1'b1);
+     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_ccc.set(8'd0); 
+   i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_mode.set(1'b0);  
+  i3c_env_cfg_h.regBlockHandle.ctrl_inst.start.set(1'b1);
 
     ctrl_val = i3c_env_cfg_h.regBlockHandle.ctrl_inst.get();
     `uvm_info("CTRL_DEBUG",

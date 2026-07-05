@@ -33,7 +33,6 @@ endfunction : new
 
 
 function void i3c_target_monitor_proxy::build_phase(uvm_phase phase);
-
   super.build_phase(phase);
 endfunction : build_phase
 
@@ -48,7 +47,6 @@ function void i3c_target_monitor_proxy::end_of_elaboration_phase(
   string mon_key;
   super.end_of_elaboration_phase(phase);
 
-  // Build the per-target key that i3c_target_agent_bfm registered
   mon_key = $sformatf("i3c_target_monitor_bfm_%0d",
                        i3c_target_agent_cfg_h.target_id);
 
@@ -89,9 +87,21 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
 
     tx = i3c_target_tx::type_id::create("tx");
 
-    // Build cfg struct
     i3c_target_cfg_converter::from_class(i3c_target_agent_cfg_h, struct_cfg);
     i3c_target_seq_item_converter::from_class(tx, struct_packet);
+
+    // ----------------------------------------------------------------
+    // DEBUG: log what cfg the monitor is using before sampling
+    // ----------------------------------------------------------------
+    `uvm_info(get_type_name(),
+      $sformatf("[target_id=%0d] cfg snapshot -> targetAddress=0x%0h  pid=0x%0h  bcr=0x%0h  dcr=0x%0h  has_daa=%0b",
+                i3c_target_agent_cfg_h.target_id,
+                struct_cfg.targetAddress,
+                struct_cfg.pid,
+                struct_cfg.bcr,
+                struct_cfg.dcr,
+                i3c_target_agent_cfg_h.has_daa),
+      UVM_NONE)
 
     if (i3c_target_agent_cfg_h != null &&
         i3c_target_agent_cfg_h.has_daa) begin
@@ -102,8 +112,35 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
 
       i3c_target_mon_bfm_h.sample_daa_data(struct_packet, struct_cfg);
 
+      // ----------------------------------------------------------------
+      // DEBUG: log raw struct fields returned by BFM after DAA sampling
+      // ----------------------------------------------------------------
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] DAA BFM returned struct -> pid=0x%0h  bcr=0x%0h  dcr=0x%0h  daa_ack=%0b  dynamic_address=0x%0h",
+                  i3c_target_agent_cfg_h.target_id,
+                  struct_packet.pid,
+                  struct_packet.bcr,
+                  struct_packet.dcr,
+                  struct_packet.daa_ack,
+                  struct_packet.dynamic_address),
+        UVM_NONE)
+
       i3c_target_seq_item_converter::to_class(struct_packet, tx);
       tx.txn_type = i3c_target_tx::DAA;
+
+      // ----------------------------------------------------------------
+      // DEBUG: log the tx object that will be written to analysis port
+      // ----------------------------------------------------------------
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] DAA tx -> txn_type=%s  pid=0x%0h  bcr=0x%0h  dcr=0x%0h  daa_ack=%0b  dynamic_address=0x%0h",
+                  i3c_target_agent_cfg_h.target_id,
+                  tx.txn_type.name(),
+                  tx.pid,
+                  tx.bcr,
+                  tx.dcr,
+                  tx.daa_ack,
+                  tx.dynamic_address),
+        UVM_NONE)
 
     end else begin
 
@@ -113,13 +150,55 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
 
       i3c_target_mon_bfm_h.sample_data(struct_packet, struct_cfg);
 
+      // ----------------------------------------------------------------
+      // DEBUG: log raw struct fields returned by BFM after SDR sampling
+      // ----------------------------------------------------------------
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] SDR BFM returned struct -> targetAddress=0x%0h  targetAddressStatus=%0b  operation=%0s  no_of_bits=%0d",
+                  i3c_target_agent_cfg_h.target_id,
+                  struct_packet.targetAddress,
+                  struct_packet.targetAddressStatus,
+                  struct_packet.operation ? "READ" : "WRITE",
+                  struct_packet.no_of_i3c_bits_transfer),
+        UVM_NONE)
+
+      // Log write data bytes if it was a write operation
+      if (struct_packet.operation == WRITE) begin
+        for (int b = 0; b < MAXIMUM_BYTES; b++) begin
+          if (b * DATA_WIDTH < struct_packet.no_of_i3c_bits_transfer) begin
+            `uvm_info(get_type_name(),
+              $sformatf("[target_id=%0d] SDR write data[%0d] = 0x%0h",
+                        i3c_target_agent_cfg_h.target_id, b,
+                        struct_packet.writeData[b]),
+              UVM_NONE)
+          end
+        end
+      end
+
       i3c_target_seq_item_converter::to_class(struct_packet, tx);
+
+      // ----------------------------------------------------------------
+      // DEBUG: log the final tx object going to scoreboard
+      // ----------------------------------------------------------------
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] SDR tx -> txn_type=%s  targetAddress=0x%0h  targetAddressStatus=%0b  operation=%0s",
+                  i3c_target_agent_cfg_h.target_id,
+                  tx.txn_type.name(),
+                  tx.targetAddress,
+                  tx.targetAddressStatus,
+                  tx.operation.name()),
+        UVM_NONE)
 
     end
 
+    // ----------------------------------------------------------------
+    // DEBUG: confirm the exact object being written to analysis port
+    // ----------------------------------------------------------------
     `uvm_info(get_type_name(),
-      $sformatf("[target_id=%0d] Sampled transaction – writing to analysis port",
-                i3c_target_agent_cfg_h.target_id), UVM_HIGH)
+      $sformatf("[target_id=%0d] --> writing to analysis port (scoreboard): txn_type=%s",
+                i3c_target_agent_cfg_h.target_id,
+                tx.txn_type.name()),
+      UVM_NONE)
 
     target_analysis_port.write(tx);
 

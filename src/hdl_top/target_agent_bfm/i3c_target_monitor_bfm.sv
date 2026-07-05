@@ -96,120 +96,220 @@ interface i3c_target_monitor_bfm (
     disable fork;
   endtask : sampleReadDataAndAck
 
-  // DAA monitoring  (passive – captures one ARB round per call)
-
-  // Module-level counter: incremented after each completed round
-  int unsigned mon_round = 0;
-
-  // Lightweight REP_START / STOP detector used inside sample_daa_data
-  task automatic detect_rep_start_or_stop_mon(output bit got_rep_start);
-    bit [1:0] scl_loc;
-    bit [1:0] sda_loc;
-    scl_loc = {scl_i, scl_i};
-    sda_loc = {sda_i, sda_i};
-    forever begin
-      @(negedge pclk);
-      scl_loc = {scl_loc[0], scl_i};
-      sda_loc = {sda_loc[0], sda_i};
-      // REP_START: SDA falls while SCL is high
-      if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
-        got_rep_start = 1; return;
-      end
-      // STOP: SDA rises while SCL is high
-      if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
-        got_rep_start = 0; return;
-      end
-    end
-  endtask : detect_rep_start_or_stop_mon
-
+  // -------------------------------------------------------------------------
+  // DAA monitoring
+  //
+  // KEY DESIGN DECISION:
+  //   Open-drain arbitration means the bus wire-ANDs all drivers. Every
+  //   monitor instance therefore sees ONLY the winner's PID/BCR/DCR bits
+  //   in each round, not its own target's bits. Reading arb bits off the
+  //   bus and reporting them as "this target's PID" is always wrong for
+  //   losers — they all see round-1 winner's identity, as confirmed by
+  //   the debug log showing pid=0xaabbcc0001 for all 4 targets.
+  //
+  //   The driver proxy already correctly updates
+  //   i3c_target_agent_cfg_h.targetAddress with the assigned dynamic
+  //   address (dyn_addr_out) after DAA. The cfg struct passed into this
+  //   task via sample_daa_data() already contains the correct per-target
+  //   pid/bcr/dcr from agent config.
+  //
+  //   Correct approach:
+  //     1. Loop through ALL DAA rounds (START → preamble → Rep-START →
+  //        arb → address → ACK → Rep-START/STOP repeat).
+  //     2. In each round, read the 64 arb bits off the bus to find the
+  //        winning PID/BCR/DCR for THAT round.
+  //     3. Compare the winning PID against THIS target's cfg.pid.
+  //        If they match, THIS target won this round: record dynamic_address
+  //        and daa_ack from the bus, and return.
+  //        If they don't match, this target lost this round: continue to
+  //        the next Rep-START.
+  //     4. If the bus sends STOP without this target winning, it was never
+  //        assigned: return with daa_ack=NACK and dynamic_address=0.
+  //
+  //   This guarantees each monitor reports the correct per-target result
+  //   regardless of which round its target won arbitration.
+  // -------------------------------------------------------------------------
   task sample_daa_data(inout i3c_transfer_bits_s pkt,
                        inout i3c_transfer_cfg_s  cfg);
     bit [63:0] arb_shift;
     bit [7:0]  dyn_byte;
+    bit [47:0] round_pid;
+    bit [7:0]  round_bcr;
+    bit [7:0]  round_dcr;
     bit [1:0]  scl_loc;
     bit [1:0]  sda_loc;
     bit        got_rep_start;
+    int        round;
+
+    // Default: not assigned
+    pkt.pid             = cfg.pid;
+    pkt.bcr             = cfg.bcr;
+    pkt.dcr             = cfg.dcr;
+    pkt.daa_ack         = NACK;
+    pkt.dynamic_address = 7'h00;
+
+    round = 0;
 
     // ------------------------------------------------------------------
-    // Round 0 only: START + 7E+W + ACK + ENTDAA + ACK + REP_START + 7E+R + ACK
+    // Steps 1-3: START + 7E+W + ENTDAA (common preamble, once only)
     // ------------------------------------------------------------------
-    if (mon_round == 0) begin
+    detect_start();
+    `uvm_info(name, "DAA MON: START detected", UVM_HIGH)
 
-      detect_start();
-
-      // 7E+W (8 bits) + ACK
-      for (int k = 7; k >= 0; k--)
-        detectEdge_scl(POSEDGE);
-      detectEdge_scl(NEGEDGE);
-      detectEdge_scl(POSEDGE);   // ACK
-      detectEdge_scl(NEGEDGE);
-
-      // ENTDAA CCC byte (8 bits) + ACK
-      for (int k = 7; k >= 0; k--)
-        detectEdge_scl(POSEDGE);
-      detectEdge_scl(NEGEDGE);
-      detectEdge_scl(POSEDGE);   // ACK
-      detectEdge_scl(NEGEDGE);
-
-      // First REP_START
-      do begin
-        @(negedge pclk);
-        scl_loc = {scl_loc[0], scl_i};
-        sda_loc = {sda_loc[0], sda_i};
-      end while (!(sda_loc == 2'b10 && scl_loc == 2'b11));
-
-      // 7E+R header (8 bits) + ACK
-      detectEdge_scl(NEGEDGE);
-      for (int k = 7; k >= 0; k--)
-        detectEdge_scl(POSEDGE);
-      detectEdge_scl(NEGEDGE);
-      detectEdge_scl(POSEDGE);   // ACK
-      detectEdge_scl(NEGEDGE);
-
-    end
-    else begin
-
-      // 7E+R header (8 bits) + ACK
-      detectEdge_scl(NEGEDGE);
-      for (int k = 7; k >= 0; k--)
-        detectEdge_scl(POSEDGE);
-      detectEdge_scl(NEGEDGE);
-      detectEdge_scl(POSEDGE);   // ACK
-      detectEdge_scl(NEGEDGE);
-
-    end
-
-    // ARB phase: sample 64 bits (winner's PID|BCR|DCR on the wire)
-    for (int k = 63; k >= 0; k--) begin
+    // Consume 7E+W byte (8 POSEDGEs) + ACK slot
+    for (int k = 7; k >= 0; k--)
       detectEdge_scl(POSEDGE);
-      arb_shift[k] = sda_i;
-      detectEdge_scl(NEGEDGE);
-    end
-
-    pkt.pid = arb_shift[63:16];
-    pkt.bcr = arb_shift[15:8];
-    pkt.dcr = arb_shift[7:0];
-
-    // Dynamic address byte (8 bits) driven by master
-    for (int k = 7; k >= 0; k--) begin
-      detectEdge_scl(POSEDGE);
-      dyn_byte[k] = sda_i;
-    end
-    pkt.dynamic_address = dyn_byte[7:1];
-
-    // ACK from winning slave
     detectEdge_scl(NEGEDGE);
-    detectEdge_scl(POSEDGE);
-    pkt.daa_ack = sda_i;
+    detectEdge_scl(POSEDGE);   // ACK
     detectEdge_scl(NEGEDGE);
 
-  
-    detect_rep_start_or_stop_mon(got_rep_start);
+    // Consume ENTDAA byte (8 POSEDGEs) + ACK slot
+    for (int k = 7; k >= 0; k--)
+      detectEdge_scl(POSEDGE);
+    detectEdge_scl(NEGEDGE);
+    detectEdge_scl(POSEDGE);   // ACK
+    detectEdge_scl(NEGEDGE);
 
-    mon_round++;
+    // ------------------------------------------------------------------
+    // Steps 4-11: Loop per round until STOP
+    // ------------------------------------------------------------------
+    // Detect first Rep-START (SDA falls while SCL=1)
+    detect_rep_start(scl_loc, sda_loc);
+    `uvm_info(name, "DAA MON: initial Rep-START detected", UVM_HIGH)
+
+    forever begin
+      round++;
+      `uvm_info(name, $sformatf("DAA MON: starting round %0d", round), UVM_HIGH)
+
+      // Step 5: consume 7E+R byte (need NEGEDGE first after Rep-START)
+      detectEdge_scl(NEGEDGE);
+      for (int k = 7; k >= 0; k--)
+        detectEdge_scl(POSEDGE);
+      detectEdge_scl(NEGEDGE);
+      detectEdge_scl(POSEDGE);   // ACK
+      detectEdge_scl(NEGEDGE);
+
+      // Steps 6-7: sample 64 arb bits (bus wire-AND = winner's bits)
+      arb_shift = '0;
+      for (int k = 63; k >= 0; k--) begin
+        detectEdge_scl(POSEDGE);
+        arb_shift[k] = sda_i;
+        detectEdge_scl(NEGEDGE);
+      end
+
+      round_pid = arb_shift[63:16];
+      round_bcr = arb_shift[15:8];
+      round_dcr = arb_shift[7:0];
+
+      `uvm_info(name,
+        $sformatf("DAA MON [round %0d] bus winner PID=0x%0h BCR=0x%0h DCR=0x%0h | my PID=0x%0h",
+                  round, round_pid, round_bcr, round_dcr, cfg.pid),
+        UVM_NONE)
+
+      // Steps 9: sample dynamic address byte from master (8 bits)
+      for (int k = 7; k >= 0; k--) begin
+        detectEdge_scl(POSEDGE);
+        dyn_byte[k] = sda_i;
+      end
+
+      // Step 10: sample winner's ACK (slave drives SDA low = ACK=0)
+      detectEdge_scl(NEGEDGE);
+      detectEdge_scl(POSEDGE);
+      // daa_ack on bus: 0=winner ACKed, 1=NACK (no winner or rejected)
+      // We read it but only store it if this round's winner is our target
+
+      // Step 11: detect Rep-START or STOP
+      detect_rep_start_or_stop(scl_loc, sda_loc, got_rep_start);
+      detectEdge_scl(NEGEDGE);  // consume trailing NEGEDGE
+
+      // Does this round's winner match THIS target?
+      if (round_pid == cfg.pid &&
+          round_bcr == cfg.bcr &&
+          round_dcr == cfg.dcr) begin
+        // This target won this round
+        pkt.pid             = cfg.pid;
+        pkt.bcr             = cfg.bcr;
+        pkt.dcr             = cfg.dcr;
+        pkt.dynamic_address = dyn_byte[7:1];
+        pkt.daa_ack         = ACK;
+        `uvm_info(name,
+          $sformatf("DAA MON [round %0d] THIS TARGET WON: dyn_addr=0x%0h",
+                    round, pkt.dynamic_address),
+          UVM_NONE)
+        return;
+      end
+
+      if (!got_rep_start) begin
+        // STOP: DAA complete, this target was never assigned
+        `uvm_info(name,
+          $sformatf("DAA MON: STOP detected after round %0d — target not assigned (pid=0x%0h)",
+                    round, cfg.pid),
+          UVM_NONE)
+        // pkt already defaulted to NACK/0 at top
+        return;
+      end
+
+      `uvm_info(name,
+        $sformatf("DAA MON [round %0d] this target did not win, continuing to round %0d",
+                  round, round+1),
+        UVM_HIGH)
+      // Rep-START: loop to next round
+    end
 
   endtask : sample_daa_data
 
+
+  // -------------------------------------------------------------------------
+  // Detect Repeated-START: SDA falls while SCL=1
+  // -------------------------------------------------------------------------
+  task automatic detect_rep_start(ref bit [1:0] scl_loc, ref bit [1:0] sda_loc);
+    scl_loc = {scl_i, scl_i};
+    sda_loc = {sda_i, sda_i};
+    do begin
+      @(negedge pclk);
+      scl_loc = {scl_loc[0], scl_i};
+      sda_loc = {sda_loc[0], sda_i};
+    end while (!(sda_loc == 2'b10 && scl_loc == 2'b11));
+    `uvm_info(name, "DAA MON: Rep-START detected", UVM_HIGH)
+  endtask : detect_rep_start
+
+
+  // -------------------------------------------------------------------------
+  // Detect Rep-START (SDA falls, SCL=1) or STOP (SDA rises, SCL=1)
+  // -------------------------------------------------------------------------
+  task automatic  detect_rep_start_or_stop(
+      ref  bit [1:0] scl_loc,
+      ref  bit [1:0] sda_loc,
+      output bit     got_rep_start);
+
+    scl_loc = {scl_i, scl_i};
+    sda_loc = {sda_i, sda_i};
+
+    forever begin
+      @(negedge pclk);
+      scl_loc = {scl_loc[0], scl_i};
+      sda_loc = {sda_loc[0], sda_i};
+
+      // SDA falls while SCL=1 → Rep-START
+      if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
+        `uvm_info(name, "DAA MON: Rep-START detected", UVM_HIGH)
+        got_rep_start = 1;
+        return;
+      end
+
+      // SDA rises while SCL=1 → STOP
+      if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
+        `uvm_info(name, "DAA MON: STOP detected", UVM_HIGH)
+        got_rep_start = 0;
+        return;
+      end
+    end
+  endtask : detect_rep_start_or_stop
+
+
+  // -------------------------------------------------------------------------
+  // Helpers
+  // -------------------------------------------------------------------------
   task detect_start();
     bit [1:0] scl_d;
     bit [1:0] sda_d;
@@ -306,7 +406,7 @@ interface i3c_target_monitor_bfm (
     detectEdge_scl(NEGEDGE);
   endtask : sampleReadAck
 
-  task automatic detectEdge_scl(input edge_detect_e edgeSCL);                         //made as automatic in driver bfm too
+  task automatic detectEdge_scl(input edge_detect_e edgeSCL);
     bit [1:0] scl_loc_m = 2'b11;
     do begin
       @(negedge pclk);

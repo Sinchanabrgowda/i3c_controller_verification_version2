@@ -85,17 +85,29 @@ task sampleWriteDataAndDriveACK(
     fork
       begin
         for (int i = 0; i < MAXIMUM_BYTES; i++) begin
+
+          // Step 1: sample 8 data bits + T-bit (parity)
+          // writeDataStatus[i] is set inside sample_write_data:
+          //   ACK  if parity OK
+          //   NACK if parity error
           sample_write_data(configPacketStruck, dataPacketStruck, i);
-`uvm_info(name,
-          $sformatf("Sampled WDATA[%0d] = 0x%02h (%08b)",
-                    i,
-                    dataPacketStruck.writeData[i],
-                    dataPacketStruck.writeData[i]),
-          UVM_HIGH)
-          
-driveWdataAck(dataPacketStruck.writeDataStatus[i]);
+
+          `uvm_info(name,
+            $sformatf("Sampled WDATA[%0d] = 0x%02h (%08b) status=%s",
+                      i,
+                      dataPacketStruck.writeData[i],
+                      dataPacketStruck.writeData[i],
+                      dataPacketStruck.writeDataStatus[i] == ACK ? "ACK" : "NACK"),
+            UVM_HIGH)
+
+          // Step 2: drive ACK (SDA=0) or NACK (SDA=1) to controller
+          // This tells the controller: byte received OK (ACK) or error (NACK)
+          driveWdataAck(dataPacketStruck.writeDataStatus[i]);
+
+          // Step 3: stop if parity error — NACK sent, controller will stop
           if (dataPacketStruck.writeDataStatus[i] == NACK)
             break;
+
         end
       end
     join_none
@@ -632,8 +644,13 @@ end
       input  int i);
 
     bit [DATA_WIDTH-1:0] wdata;
+    bit                  t_bit;  // T-bit: flow control driven by CONTROLLER
+                                 // 0 = more bytes coming
+                                 // 1 = last byte (STOP follows)
+
     state = WRITE_DATA;
 
+    // Step 1: sample 8 data bits on each POSEDGE
     for (int k = 0, bit_no = 0; k < DATA_WIDTH; k++) begin
       bit_no = (cfg_pkt.dataTransferDirection == MSB_FIRST) ?
                ((DATA_WIDTH - 1) - k) : k;
@@ -642,8 +659,31 @@ end
       pkt.no_of_i3c_bits_transfer++;
     end
 
+    // Step 2: sample T-bit on the 9th POSEDGE
+    // T-bit is driven by the CONTROLLER as flow control:
+    //   T=0 → controller has more bytes to send
+    //   T=1 → this was the last byte, STOP coming
+    // Target just reads it — no parity calculation needed here.
+    // The bit engine handles parity_error for the ADDRESS phase separately.
+    detectEdge_scl(POSEDGE);
+    t_bit = sda_i;
+
+    `uvm_info(name,
+      $sformatf("T-bit=%0b (%s)  data=0x%02h (%08b)",
+                t_bit,
+                t_bit ? "LAST BYTE" : "MORE BYTES",
+                wdata, wdata),
+      UVM_HIGH)
+
     targetFIFOMemory.push_back(wdata);
-    pkt.writeData[i] = wdata;
+    pkt.writeData[i]      = wdata;
+
+    // Step 3: always ACK — target received the byte successfully
+    // Target drives ACK (SDA=0) unconditionally after each data byte.
+    // NACK would only be driven if the target cannot accept data (buffer full etc.)
+    // which is not modelled here.
+    pkt.writeDataStatus[i] = ACK;
+
   endtask : sample_write_data
 
   task driveWdataAck(input bit ack);

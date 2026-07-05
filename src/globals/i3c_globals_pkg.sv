@@ -14,7 +14,7 @@ package i3c_globals_pkg;
   // Number of slaves – change this one constant to scale the testbench
   // -----------------------------------------------------------------------
   parameter int NO_OF_CONTROLLERS = 1;
-  parameter int NO_OF_TARGETS     = 3;   // <<< set to desired slave count
+  parameter int NO_OF_TARGETS     = 4;   // <<< set to desired slave count
 
   parameter int NO_OF_REG              = 1;
   parameter int DATA_WIDTH             = 8;
@@ -70,12 +70,16 @@ package i3c_globals_pkg;
   parameter bit [47:0] TARGET1_PID = 48'h00_AABB_CC00_02;
   parameter bit [47:0] TARGET2_PID = 48'h00_AABB_CC00_03;
   parameter bit [47:0] TARGET3_PID = 48'h00_AABB_CC00_04;
+  parameter bit [47:0] TARGET4_PID = 48'h00_AABB_CC00_05;
+
 
   parameter bit [7:0]  DEFAULT_BCR = 8'h00;
   parameter bit [7:0]  TARGET0_DCR = 8'hC2;
   parameter bit [7:0]  TARGET1_DCR = 8'hC3;
   parameter bit [7:0]  TARGET2_DCR = 8'hC4;
   parameter bit [7:0]  TARGET3_DCR = 8'hC5;
+  parameter bit [7:0]  TARGET4_DCR = 8'hC6;
+
 
   // -----------------------------------------------------------------------
   // Enumerations (unchanged)
