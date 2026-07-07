@@ -10,9 +10,6 @@ module i3c_target_agent_bfm
   `include "uvm_macros.svh"
   import i3c_globals_pkg::*;
 
-  // -------------------------------------------------------------------------
-  // Driver BFM – wired to the per-target slice of the interface arrays
-  // -------------------------------------------------------------------------
   i3c_target_driver_bfm i3c_target_drv_bfm_h (
     .pclk    (intf.pclk),
     .areset  (intf.areset),
@@ -24,9 +21,6 @@ module i3c_target_agent_bfm
     .sda_oen (intf.sda_oen[target_ID])
   );
 
-  // -------------------------------------------------------------------------
-  // Monitor BFM – passive; shares the same bus view
-  // -------------------------------------------------------------------------
   i3c_target_monitor_bfm i3c_target_mon_bfm_h (
     .pclk    (intf.pclk),
     .areset  (intf.areset),
@@ -38,11 +32,6 @@ module i3c_target_agent_bfm
     .sda_oen (intf.sda_oen[target_ID])
   );
 
-  // -------------------------------------------------------------------------
-  // Register BFM handles in config_db with per-target keys
-  //   Key format:  "i3c_target_driver_bfm_<ID>"
-  //   The driver proxy looks up the same key (see i3c_target_driver_proxy.sv)
-  // -------------------------------------------------------------------------
   initial begin
     static string drv_key = $sformatf("i3c_target_driver_bfm_%0d",  target_ID);
     static string mon_key = $sformatf("i3c_target_monitor_bfm_%0d", target_ID);

@@ -96,39 +96,7 @@ interface i3c_target_monitor_bfm (
     disable fork;
   endtask : sampleReadDataAndAck
 
-  // -------------------------------------------------------------------------
-  // DAA monitoring
-  //
-  // KEY DESIGN DECISION:
-  //   Open-drain arbitration means the bus wire-ANDs all drivers. Every
-  //   monitor instance therefore sees ONLY the winner's PID/BCR/DCR bits
-  //   in each round, not its own target's bits. Reading arb bits off the
-  //   bus and reporting them as "this target's PID" is always wrong for
-  //   losers — they all see round-1 winner's identity, as confirmed by
-  //   the debug log showing pid=0xaabbcc0001 for all 4 targets.
-  //
-  //   The driver proxy already correctly updates
-  //   i3c_target_agent_cfg_h.targetAddress with the assigned dynamic
-  //   address (dyn_addr_out) after DAA. The cfg struct passed into this
-  //   task via sample_daa_data() already contains the correct per-target
-  //   pid/bcr/dcr from agent config.
-  //
-  //   Correct approach:
-  //     1. Loop through ALL DAA rounds (START → preamble → Rep-START →
-  //        arb → address → ACK → Rep-START/STOP repeat).
-  //     2. In each round, read the 64 arb bits off the bus to find the
-  //        winning PID/BCR/DCR for THAT round.
-  //     3. Compare the winning PID against THIS target's cfg.pid.
-  //        If they match, THIS target won this round: record dynamic_address
-  //        and daa_ack from the bus, and return.
-  //        If they don't match, this target lost this round: continue to
-  //        the next Rep-START.
-  //     4. If the bus sends STOP without this target winning, it was never
-  //        assigned: return with daa_ack=NACK and dynamic_address=0.
-  //
-  //   This guarantees each monitor reports the correct per-target result
-  //   regardless of which round its target won arbitration.
-  // -------------------------------------------------------------------------
+ 
   task sample_daa_data(inout i3c_transfer_bits_s pkt,
                        inout i3c_transfer_cfg_s  cfg);
     bit [63:0] arb_shift;
@@ -150,9 +118,7 @@ interface i3c_target_monitor_bfm (
 
     round = 0;
 
-    // ------------------------------------------------------------------
     // Steps 1-3: START + 7E+W + ENTDAA (common preamble, once only)
-    // ------------------------------------------------------------------
     detect_start();
     `uvm_info(name, "DAA MON: START detected", UVM_HIGH)
 
@@ -170,9 +136,7 @@ interface i3c_target_monitor_bfm (
     detectEdge_scl(POSEDGE);   // ACK
     detectEdge_scl(NEGEDGE);
 
-    // ------------------------------------------------------------------
     // Steps 4-11: Loop per round until STOP
-    // ------------------------------------------------------------------
     // Detect first Rep-START (SDA falls while SCL=1)
     detect_rep_start(scl_loc, sda_loc);
     `uvm_info(name, "DAA MON: initial Rep-START detected", UVM_HIGH)
@@ -259,9 +223,7 @@ interface i3c_target_monitor_bfm (
   endtask : sample_daa_data
 
 
-  // -------------------------------------------------------------------------
   // Detect Repeated-START: SDA falls while SCL=1
-  // -------------------------------------------------------------------------
   task automatic detect_rep_start(ref bit [1:0] scl_loc, ref bit [1:0] sda_loc);
     scl_loc = {scl_i, scl_i};
     sda_loc = {sda_i, sda_i};
@@ -270,13 +232,11 @@ interface i3c_target_monitor_bfm (
       scl_loc = {scl_loc[0], scl_i};
       sda_loc = {sda_loc[0], sda_i};
     end while (!(sda_loc == 2'b10 && scl_loc == 2'b11));
-    `uvm_info(name, "DAA MON: Rep-START detected", UVM_HIGH)
-  endtask : detect_rep_start
+   `uvm_info(name,$sformatf(" repeated start detected@ time=%0t", $time),UVM_NONE)
+	endtask : detect_rep_start
 
 
-  // -------------------------------------------------------------------------
   // Detect Rep-START (SDA falls, SCL=1) or STOP (SDA rises, SCL=1)
-  // -------------------------------------------------------------------------
   task automatic  detect_rep_start_or_stop(
       ref  bit [1:0] scl_loc,
       ref  bit [1:0] sda_loc,
@@ -292,14 +252,15 @@ interface i3c_target_monitor_bfm (
 
       // SDA falls while SCL=1 → Rep-START
       if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
-        `uvm_info(name, "DAA MON: Rep-START detected", UVM_HIGH)
-        got_rep_start = 1;
+         `uvm_info(name,$sformatf("DAA repeated start detected@ time=%0t", $time),UVM_NONE)
+							got_rep_start = 1;
         return;
       end
 
       // SDA rises while SCL=1 → STOP
       if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
         `uvm_info(name, "DAA MON: STOP detected", UVM_HIGH)
+
         got_rep_start = 0;
         return;
       end
@@ -307,9 +268,7 @@ interface i3c_target_monitor_bfm (
   endtask : detect_rep_start_or_stop
 
 
-  // -------------------------------------------------------------------------
   // Helpers
-  // -------------------------------------------------------------------------
   task detect_start();
     bit [1:0] scl_d;
     bit [1:0] sda_d;
@@ -319,7 +278,10 @@ interface i3c_target_monitor_bfm (
       scl_d = {scl_d[0], scl_i};
       sda_d = {sda_d[0], sda_i};
     end while (!(sda_d == NEGEDGE && scl_d == 2'b11));
-  endtask : detect_start
+ 
+   //`uvm_info(name,$sformatf("[target_id=%0d] DAA MON: START detected @ time=%0t",i3c_target_drv_proxy_h.i3c_target_agent_cfg_h.target_id, $time),UVM_NONE)
+  `uvm_info(name,$sformatf(" start detected@ time=%0t", $time),UVM_NONE) 
+	endtask : detect_start
 
   task detect_stop();
     bit [1:0] scl_d;
@@ -331,6 +293,8 @@ interface i3c_target_monitor_bfm (
       scl_d = {scl_d[0], scl_i};
       sda_d = {sda_d[0], sda_i};
     end while (!(sda_d == POSEDGE && scl_d == 2'b11));
+
+  `uvm_info(name,$sformatf(" stop detected@ time=%0t", $time),UVM_NONE) 
   endtask : detect_stop
 
   task sample_target_address(inout i3c_transfer_bits_s pkt);
@@ -414,6 +378,50 @@ interface i3c_target_monitor_bfm (
     end while (!(scl_loc_m == edgeSCL));
   endtask : detectEdge_scl
 
+  // HOT JOIN monitoring — NEW, additive only.
+
+  task sample_hot_join_ibi(output bit [6:0] ibi_addr_out);
+    bit [7:0] full_byte;
+    bit       ack;
+
+    `uvm_info(name,
+      "HOT_JOIN MON: waiting for IBI request (SDA fall while SCL high)",
+      UVM_NONE)
+    detect_start();   // electrically identical pattern to an IBI request
+
+    `uvm_info(name, "HOT_JOIN MON: sampling IBI address byte", UVM_NONE)
+    detectEdge_scl(NEGEDGE);
+    for (int k = 7; k >= 0; k--) begin
+      detectEdge_scl(POSEDGE);
+      full_byte[k] = sda_i;
+    end
+
+    ibi_addr_out = full_byte[7:1];
+
+    // ACK slot — driven by the controller for this read-direction byte.
+    detectEdge_scl(NEGEDGE);
+    detectEdge_scl(POSEDGE);
+    ack = sda_i;
+    detectEdge_scl(NEGEDGE);
+
+    `uvm_info(name,
+      $sformatf("HOT_JOIN MON: ibi_addr=0x%0h ack=%0b (controller will restart ENTDAA)",
+                ibi_addr_out, ack),
+      UVM_NONE)
+  endtask : sample_hot_join_ibi
+
+  // Full hot-join monitor flow: sample the IBI address phase, then reuse
+  // the existing, unmodified DAA sampling task for the rest of the session.
+  task sample_hot_join_data(
+      inout  i3c_transfer_bits_s pkt,
+      inout  i3c_transfer_cfg_s  cfg,
+      output bit [6:0]           observed_ibi_addr);
+
+    sample_hot_join_ibi(observed_ibi_addr);
+    sample_daa_data(pkt, cfg);
+  endtask : sample_hot_join_data
+
 endinterface : i3c_target_monitor_bfm
 
 `endif
+

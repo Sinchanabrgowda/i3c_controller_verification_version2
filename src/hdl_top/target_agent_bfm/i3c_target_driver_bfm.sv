@@ -86,10 +86,6 @@ task sampleWriteDataAndDriveACK(
       begin
         for (int i = 0; i < MAXIMUM_BYTES; i++) begin
 
-          // Step 1: sample 8 data bits + T-bit (parity)
-          // writeDataStatus[i] is set inside sample_write_data:
-          //   ACK  if parity OK
-          //   NACK if parity error
           sample_write_data(configPacketStruck, dataPacketStruck, i);
 
           `uvm_info(name,
@@ -100,11 +96,8 @@ task sampleWriteDataAndDriveACK(
                       dataPacketStruck.writeDataStatus[i] == ACK ? "ACK" : "NACK"),
             UVM_HIGH)
 
-          // Step 2: drive ACK (SDA=0) or NACK (SDA=1) to controller
-          // This tells the controller: byte received OK (ACK) or error (NACK)
           driveWdataAck(dataPacketStruck.writeDataStatus[i]);
 
-          // Step 3: stop if parity error — NACK sent, controller will stop
           if (dataPacketStruck.writeDataStatus[i] == NACK)
             break;
 
@@ -252,8 +245,6 @@ task sampleWriteDataAndDriveACK(
         "DAA: REP_START after assignment - consuming 7E+R, driving NACK",
         UVM_NONE)
       sample_daa_broadcast_read(dataPacketStruck);
-
-      // After NACK the master will issue STOP → caught on next iteration.
      
 
     end // forever
@@ -471,19 +462,15 @@ task automatic drive_daa_arb_bits(
       sda_loc = {sda_loc[0], sda_i};
 
       if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
-        `uvm_info(name,
-          $sformatf("detect_rep_start_or_stop(REPEATED START): Repeated-START (scl_loc=%b sda_loc=%b)",
-                    scl_loc, sda_loc),
-          UVM_NONE)
+         `uvm_info(name,$sformatf("[target_id=%0d] start detected[REPEATED START]@ time=%0t",i3c_target_drv_proxy_h.i3c_target_agent_cfg_h.target_id, $time),UVM_NONE)
         got_rep_start = 1;
         return;
       end
 
       if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
-        `uvm_info(name,
-          $sformatf("detect_rep_start_or_stop(STOP): STOP (scl_loc=%b sda_loc=%b)",
-                    scl_loc, sda_loc),
-          UVM_NONE)
+       
+
+ `uvm_info(name,$sformatf("[target_id=%0d] detect_rep_start_or_stop(STOP): STOP  @ time=%0t",i3c_target_drv_proxy_h.i3c_target_agent_cfg_h.target_id, $time),UVM_NONE)
         got_rep_start = 0;
         return;
       end
@@ -574,7 +561,7 @@ task automatic drive_daa_arb_bits(
       scl_local_d = {scl_local_d[0], scl_i};
       sda_local_d = {sda_local_d[0], sda_i};
     end while (!(sda_local_d == NEGEDGE && scl_local_d == 2'b11));
-    `uvm_info(name, "Start condition detected", UVM_HIGH)
+     `uvm_info(name,$sformatf("[target_id=%0d] start detected@ time=%0t",i3c_target_drv_proxy_h.i3c_target_agent_cfg_h.target_id, $time),UVM_NONE)     ////addedd
     scl_local = {scl_i, scl_i};  // resync: uses local vars, never updates scl_local
   endtask : detect_start
 
@@ -659,12 +646,6 @@ end
       pkt.no_of_i3c_bits_transfer++;
     end
 
-    // Step 2: sample T-bit on the 9th POSEDGE
-    // T-bit is driven by the CONTROLLER as flow control:
-    //   T=0 → controller has more bytes to send
-    //   T=1 → this was the last byte, STOP coming
-    // Target just reads it — no parity calculation needed here.
-    // The bit engine handles parity_error for the ADDRESS phase separately.
     detectEdge_scl(POSEDGE);
     t_bit = sda_i;
 
@@ -678,10 +659,6 @@ end
     targetFIFOMemory.push_back(wdata);
     pkt.writeData[i]      = wdata;
 
-    // Step 3: always ACK — target received the byte successfully
-    // Target drives ACK (SDA=0) unconditionally after each data byte.
-    // NACK would only be driven if the target cannot accept data (buffer full etc.)
-    // which is not modelled here.
     pkt.writeDataStatus[i] = ACK;
 
   endtask : sample_write_data
@@ -743,7 +720,7 @@ end
       scl_d = {scl_d[0], scl_i};
       sda_d = {sda_d[0], sda_i};
     end while (!(sda_d == POSEDGE && scl_d == 2'b11));
-    `uvm_info(name, "Stop condition detected", UVM_HIGH)
+     `uvm_info(name,$sformatf("[target_id=%0d] stop detected@ time=%0t",i3c_target_drv_proxy_h.i3c_target_agent_cfg_h.target_id, $time),UVM_NONE)  //aded
   endtask : detect_stop
 
 
@@ -768,6 +745,101 @@ end
       $sformatf("scl %s detected", scl_edge_value.name()), UVM_HIGH)
   endtask : detectEdge_scl
 
+  // HOT JOIN (IBI-initiated DAA) 
+ 
+
+  task wait_for_stable_bus_idle();
+    int idle_cycles;
+    idle_cycles = 0;
+    forever begin
+      @(posedge pclk);
+      if (scl_i == 1'b1 && sda_i == 1'b1)
+        idle_cycles++;
+      else
+        idle_cycles = 0;
+
+      if (idle_cycles > 4)
+        return;
+    end
+  endtask : wait_for_stable_bus_idle
+
+  task automatic drive_hot_join_ibi(input bit [6:0] hotjoin_addr);
+    bit [7:0] full_byte;
+bit ibi_ack=0;
+bit bus_bit=0;
+    full_byte = {hotjoin_addr, 1'b1};  // 7-bit addr + RnW(=1, target->ctrl)
+
+    `uvm_info(name,
+      "HOT_JOIN: waiting for stable bus idle before asserting IBI request",
+      UVM_NONE)
+    wait_for_stable_bus_idle();
+
+    `uvm_info(name,
+      "HOT_JOIN: asserting IBI request (SDA 1->0 while SCL high)",
+      UVM_NONE)
+    drive_sda(1'b0);
+
+    //detectEdge_scl(NEGEDGE);
+
+    `uvm_info(name,
+      $sformatf("HOT_JOIN: driving IBI address byte = 0x%0h (addr=0x%0h, RnW=1)",
+                full_byte, hotjoin_addr),
+      UVM_NONE)
+
+    for (int k = 7; k >= 0; k--) begin
+     detectEdge_scl(NEGEDGE);
+      drive_sda(full_byte[k]);
+      detectEdge_scl(POSEDGE);
+
+      bus_bit = sda_i;
+      `uvm_info("HOT_JOIN_BUS_BIT",$sformatf("curretn bus bit=%b",bus_bit),UVM_LOW)
+      //detectEdge_scl(NEGEDGE);
+      
+    end
+
+    // Release SDA — controller drives the ACK slot for this read-direction
+    // byte, then (per i3c_ibi_fsm.v CHECK_WAIT->HOTJOIN->DONE) generates a
+    // STOP and immediately restarts with a fresh ENTDAA sequence.
+    drive_sda(1'b1);
+    sample_ack(ibi_ack);   // <-- add this: sample master's ACK on the 9th clock
+    `uvm_info(name, $sformatf("HOT_JOIN: address ACK/NACK = %0b", ibi_ack), UVM_NONE)
+
+    `uvm_info(name,
+      "HOT_JOIN: IBI address phase complete — controller will restart ENTDAA for hot-join",
+      UVM_NONE)
+  endtask : drive_hot_join_ibi
+
+  task drive_hot_join_data(
+      input  bit [6:0]   hotjoin_addr,
+      inout  i3c_transfer_bits_s dataPacketStruck,
+      input  i3c_transfer_cfg_s  configPacketStruck,
+      output bit [47:0]  pid_out,
+      output bit [7:0]   bcr_out,
+      output bit [7:0]   dcr_out,
+      output bit [6:0]   dyn_addr_out,
+      output bit         daa_ack_out);
+
+    `uvm_info(name, "HOT_JOIN: transaction started", UVM_NONE)
+
+    drive_hot_join_ibi(hotjoin_addr);
+
+    drive_daa_data(
+      dataPacketStruck,
+      configPacketStruck,
+      pid_out,
+      bcr_out,
+      dcr_out,
+      dyn_addr_out,
+      daa_ack_out
+    );
+
+    `uvm_info(name,
+      $sformatf("HOT_JOIN: complete. daa_ack=%0b dynamic_addr=0x%0h",
+                daa_ack_out, dyn_addr_out),
+      UVM_NONE)
+  endtask : drive_hot_join_data
+
 endinterface : i3c_target_driver_bfm
 
 `endif
+

@@ -73,12 +73,8 @@ task i3c_target_driver_proxy::run_phase(uvm_phase phase);
                 i3c_target_agent_cfg_h.target_id, req.txn_type.name()),
       UVM_NONE)
 
-    // Populate the struct_cfg from agent config (carries PID/BCR/DCR)
     i3c_target_cfg_converter::from_class(i3c_target_agent_cfg_h, struct_cfg);
 
-    // -----------------------------------------------------------------------
-    // DAA TRANSACTION
-    // -----------------------------------------------------------------------
     if (req.txn_type == i3c_target_tx::DAA) begin
       `uvm_info("TGT_DRV_PROXY",
         $sformatf("[target_id=%0d] DAA transaction",
@@ -96,7 +92,6 @@ task i3c_target_driver_proxy::run_phase(uvm_phase phase);
         daa_ack_out
       );
 
-      // Write BFM outputs back into req so the sequence can read them.
       req.pid             = pid_out;
       req.bcr             = bcr_out;
       req.dcr             = dcr_out;
@@ -109,12 +104,48 @@ task i3c_target_driver_proxy::run_phase(uvm_phase phase);
                   pid_out, bcr_out, dcr_out, dyn_addr_out, daa_ack_out),
         UVM_NONE)
 
-      // If this slave was assigned an address, update the config so
-      // subsequent SDR transactions use the dynamic address.
       if (daa_ack_out == ACK) begin
         i3c_target_agent_cfg_h.targetAddress = dyn_addr_out;
         `uvm_info("TGT_DRV_PROXY",
           $sformatf("[target_id=%0d] Dynamic address 0x%0h stored in config",
+                    i3c_target_agent_cfg_h.target_id, dyn_addr_out),
+          UVM_LOW)
+      end
+
+    end else if (req.txn_type == i3c_target_tx::HOTJOIN) begin
+      `uvm_info("TGT_DRV_PROXY",
+        $sformatf("[target_id=%0d] HOTJOIN transaction, ibi_addr=0x%0h",
+                  i3c_target_agent_cfg_h.target_id, req.hotjoin_addr), UVM_NONE)
+
+      i3c_target_seq_item_converter::from_class(req, struct_packet);
+
+      i3c_target_drv_bfm_h.drive_hot_join_data(
+        req.hotjoin_addr,
+        struct_packet,
+        struct_cfg,
+        pid_out,
+        bcr_out,
+        dcr_out,
+        dyn_addr_out,
+        daa_ack_out
+      );
+
+      req.pid             = pid_out;
+      req.bcr             = bcr_out;
+      req.dcr             = dcr_out;
+      req.dynamic_address = dyn_addr_out;
+      req.daa_ack         = daa_ack_out;
+
+      `uvm_info("TGT_DRV_PROXY",
+        $sformatf("[target_id=%0d] HOTJOIN done: PID=0x%0h BCR=0x%0h DCR=0x%0h DynAddr=0x%0h ACK=%0b",
+                  i3c_target_agent_cfg_h.target_id,
+                  pid_out, bcr_out, dcr_out, dyn_addr_out, daa_ack_out),
+        UVM_NONE)
+
+      if (daa_ack_out == ACK) begin
+        i3c_target_agent_cfg_h.targetAddress = dyn_addr_out;
+        `uvm_info("TGT_DRV_PROXY",
+          $sformatf("[target_id=%0d] Dynamic address 0x%0h stored in config (via hot-join)",
                     i3c_target_agent_cfg_h.target_id, dyn_addr_out),
           UVM_LOW)
       end
@@ -140,4 +171,5 @@ task i3c_target_driver_proxy::run_phase(uvm_phase phase);
 endtask : run_phase
 
 `endif
+
 

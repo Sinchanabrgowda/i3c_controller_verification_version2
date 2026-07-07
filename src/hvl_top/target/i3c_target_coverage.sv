@@ -156,6 +156,13 @@ function void i3c_target_coverage::write(i3c_target_tx t);
       daa_covergroup.sample(t);
     end
 
+    i3c_target_tx::HOTJOIN: begin
+      // Hot-join completions are currently reported with txn_type=DAA
+      // (see i3c_target_monitor_proxy), but sample here too in case a
+      // future caller reports HOTJOIN directly.
+      daa_covergroup.sample(t);
+    end
+
     default: begin
       `uvm_warning("DEBUG_m_coverage",
         $sformatf("Unknown txn_type=%0s — not sampled", t.txn_type.name()))
@@ -184,3 +191,4 @@ function void i3c_target_coverage::report_phase(uvm_phase phase);
 endfunction: report_phase
 
 `endif
+

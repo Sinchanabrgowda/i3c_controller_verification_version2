@@ -7,27 +7,27 @@ z2
 !i10e 25
 !i10f 100
 cModel Technology
-Z0 d/fetools/work_area/frontend/Batch_10/sinchanabr/i3c_controller_verification_version2/sim/questa_sim
+Z0 d/fetools/work_area/frontend/Batch_10/rakshith_shetty/DV_PROJECTS/PROTOCOL/i3c_controller_verification_version2/sim/questa_sim
 T_opt
-!s110 1782982397
-Vo;<0:cgXmnfzFURN4D[<`1
+!s110 1783360347
+V_GkE?b2DKEoMza`h8f=mz1
 04 7 4 work hvl_top fast 0
 04 7 4 work hdl_top fast 0
-=1-6805caf5892e-6a4626fc-69a68-3f4ec
+=1-6805caf5892e-6a4beb5a-a7138-209e7
 o-quiet -auto_acc_if_foreign -work work +acc=npr
 Z1 tCvgOpt 0
 n@_opt
 OE;O;10.6c;65
 Xapb_global_pkg
 Z2 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
-Z3 !s110 1782981787
+Z3 !s110 1783360318
 !i10b 1
 !s100 0?llI<m4S[3Q2>A]Bjo4U3
 I9z<L^L9[f4c]FETH8ai`50
 V9z<L^L9[f4c]FETH8ai`50
 S1
 R0
-Z4 w1779182288
+Z4 w1779189367
 8../../src/globals/apb_global_pkg.sv
 F../../src/globals/apb_global_pkg.sv
 L0 8
@@ -35,8 +35,8 @@ Z5 OE;L;10.6c;65
 r1
 !s85 0
 31
-Z6 !s108 1782981787.000000
-Z7 !s107 ../../rtl_dev/src/param.v|../../src/hvl_top/test/i3c_sdr_or_daa_write_8b_test.sv|../../src/hvl_top/test/i3c_daa_write_read_write_read_8b_test.sv|../../src/hvl_top/test/i3c_daa_read_8b_test.sv|../../src/hvl_top/test/i3c_daa_write_8b_test.sv|../../src/hvl_top/test/i3c_ccc_coverage_test.sv|../../src/hvl_top/test/i3c_fifo_full_write_test.sv|../../src/hvl_top/test/i3c_invalid_addr_write_test.sv|../../src/hvl_top/test/i3c_write_read_write_read_8b_test.sv|../../src/hvl_top/test/i3c_write_read_8b_test.sv|../../src/hvl_top/test/i3c_read_8b_test.sv|../../src/hvl_top/test/i3c_multi_write_test.sv|../../src/hvl_top/test/i3c_write_8b_test.sv|../../src/hvl_top/test/i3c_base_test.sv|../../src/hvl_top/test/virtual_sequences//i3c_daa_virtual_sequence.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_WriteFollowedByReadOperationWithRepeatedStart_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWithRandomWriteDataStatusNACK_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_MultipleWritesMultipleReadsOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_WriteFollowedByReadFollowdByWriteFollowedByReadOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_ReadFollowedByWriteFollowedByReadOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_WriteFollowedByReadOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_randomOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith8bitsData_startStopCombination_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith8bitsData_startStopCombination_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith64bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith64bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith16bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith16bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith8bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith8bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_base_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_or_daa_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_multi_write_read_back_req.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_read_write_read_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_sdr_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_multi_wdatab_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_random_rw_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_randomDataTransferWidth_vseq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_start_stop_combination_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_verify_repeated_start_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_verify_neg_ack_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_verify_pos_ack_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_rdatab_ro_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_ccc_coverage_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_fifo_full_write_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_invalid_addr_write_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_read_write_read_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_read_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_multi_write_read_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_read_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//top_virtual_base_seq.sv|../../src/hvl_top/env/i3c_env.sv|../../src/hvl_top/env/i3c_scoreboard.sv|../../src/hvl_top/env/virtual_sequencer//i3c_virtual_sequencer.sv|../../src/hvl_top/env/apb_env_config.sv|../../src/hvl_top/env/i3c_env_config.sv|../../src/hvl_top/env/i3c_ral_reg_block.sv|../../src/hvl_top/env/i3c_ral_reg.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_8b_read_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_32b_write_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_24b_write_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_16b_write_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_8b_write_read_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_8b_write_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_vd_vws_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_base_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWithRandomWriteDataStatusNACK_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_randomOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWith64bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith64bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWith32bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith32bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWith16bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith16bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWith8bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith8bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_base_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_randomOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWith64bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWith64bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWith32bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWith32bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWith16bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWith16bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWith8bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWith8bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_base_seq.sv|../../src/hvl_top/apb_master//apb_master_agent.sv|../../src/hvl_top/apb_master//apb_master_coverage.sv|../../src/hvl_top/apb_master//apb_master_monitor_proxy.sv|../../src/hvl_top/apb_master//apb_master_driver_proxy.sv|../../src/hvl_top/apb_master//apb_master_sequencer.sv|../../src/hvl_top/apb_master//apb_master_adapter.sv|../../src/hvl_top/apb_master//apb_master_cfg_converter.sv|../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv|../../src/hvl_top/apb_master//apb_master_tx.sv|../../src/hvl_top/apb_master//apb_master_agent_config.sv|../../src/hvl_top/target//i3c_target_agent.sv|../../src/hvl_top/target//i3c_target_coverage.sv|../../src/hvl_top/target//i3c_target_monitor_proxy.sv|../../src/hvl_top/target//i3c_target_driver_proxy.sv|../../src/hvl_top/target//i3c_target_sequencer.sv|../../src/hvl_top/target//i3c_target_cfg_converter.sv|../../src/hvl_top/target//i3c_target_seq_item_converter.sv|../../src/hvl_top/target//i3c_target_tx.sv|../../src/hvl_top/target//i3c_target_agent_config.sv|../../src/hvl_top/controller//i3c_controller_agent.sv|../../src/hvl_top/controller//i3c_controller_coverage.sv|../../src/hvl_top/controller//i3c_controller_monitor_proxy.sv|../../src/hvl_top/controller//i3c_controller_driver_proxy.sv|../../src/hvl_top/controller//i3c_controller_sequencer.sv|../../src/hvl_top/controller//i3c_controller_cfg_converter.sv|../../src/hvl_top/controller//i3c_controller_seq_item_converter.sv|../../src/hvl_top/controller//i3c_controller_tx.sv|../../src/hvl_top/controller//i3c_controller_agent_config.sv|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_deprecated_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_reg_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_callback_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_sequence_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/tlm1/uvm_tlm_imps.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_tlm_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_printer_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_object_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_phase_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_message_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_version_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/uvm_macros.svh|../../rtl_dev/src/i3c_hdr_ddr_engine.v|../../rtl_dev/src/i3c_hdr_fsm.v|../../rtl_dev/src/i3c_ibi_regs.v|../../rtl_dev/src/i3c_ibi_fsm.v|../../rtl_dev/src/i3c_ibi_detector.v|../../rtl_dev/src/i3c_Tx_FIFO.v|../../rtl_dev/src/i3c_sdr_fsm.v|../../rtl_dev/src/i3c_scl_gen.v|../../rtl_dev/src/i3c_Rx_FIFO.v|../../rtl_dev/src/i3c_reg_interface.v|../../rtl_dev/src/i3c_device_table.v|../../rtl_dev/src/i3c_daa_fsm.v|../../rtl_dev/src/i3c_cmd_ctrl.v|../../rtl_dev/src/i3c_bit_engine.v|../../rtl_dev/src/I3C_TOP.v|../../src/hvl_top/hvl_top.sv|../../src/hdl_top/hdl_top.sv|../../src/hdl_top/apb_master_agent_bfm/apb_master_agent_bfm.sv|../../src/hdl_top/apb_master_agent_bfm/apb_master_monitor_bfm.sv|../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv|../../src/hdl_top/target_agent_bfm/i3c_target_agent_bfm.sv|../../src/hdl_top/target_agent_bfm/i3c_target_monitor_bfm.sv|../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv|../../src/hdl_top/controller_agent_bfm/i3c_controller_agent_bfm.sv|../../src/hdl_top/controller_agent_bfm/i3c_controller_monitor_bfm.sv|../../src/hdl_top/controller_agent_bfm/i3c_controller_driver_bfm.sv|../../src/hdl_top/i3c_wrapper.sv|../../src/hdl_top/apb_if/apb_if.sv|../../src/hdl_top/i3c_interface/i3c_if.sv|../../src/hvl_top/test/i3c_test_pkg.sv|../../src/hvl_top/test/virtual_sequences/i3c_virtual_seq_pkg.sv|../../src/hvl_top/test/ral_virtual_sequences/i3c_ral_virtual_seq_pkg.sv|../../src/hvl_top/env/i3c_env_pkg.sv|../../src/hvl_top/apb_master/master_sequences/apb_master_seq_pkg.sv|../../src/hvl_top/target/target_sequences/i3c_target_seq_pkg.sv|../../src/hvl_top/controller/controller_sequences/i3c_controller_seq_pkg.sv|../../src/hvl_top/apb_master/apb_master_pkg.sv|../../src/hvl_top/target/i3c_target_pkg.sv|../../src/hvl_top/controller/i3c_controller_pkg.sv|../../src/globals/apb_global_pkg.sv|../../src/globals/i3c_globals_pkg.sv|
+Z6 !s108 1783360318.000000
+Z7 !s107 ../../rtl_dev/src/param.v|../../src/hvl_top/test/i3c_hot_join_test.sv|../../src/hvl_top/test/i3c_sdr_or_daa_write_8b_test.sv|../../src/hvl_top/test/i3c_daa_write_read_write_read_8b_test.sv|../../src/hvl_top/test/i3c_daa_read_8b_test.sv|../../src/hvl_top/test/i3c_daa_write_8b_test.sv|../../src/hvl_top/test/i3c_ccc_coverage_test.sv|../../src/hvl_top/test/i3c_fifo_full_write_test.sv|../../src/hvl_top/test/i3c_invalid_addr_write_test.sv|../../src/hvl_top/test/i3c_write_read_write_read_8b_test.sv|../../src/hvl_top/test/i3c_write_read_8b_test.sv|../../src/hvl_top/test/i3c_read_8b_test.sv|../../src/hvl_top/test/i3c_multi_write_test.sv|../../src/hvl_top/test/i3c_write_8b_test.sv|../../src/hvl_top/test/i3c_base_test.sv|../../src/hvl_top/test/virtual_sequences//i3c_daa_virtual_sequence.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_WriteFollowedByReadOperationWithRepeatedStart_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWithRandomWriteDataStatusNACK_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_MultipleWritesMultipleReadsOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_WriteFollowedByReadFollowdByWriteFollowedByReadOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_ReadFollowedByWriteFollowedByReadOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_WriteFollowedByReadOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_randomOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith8bitsData_startStopCombination_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith8bitsData_startStopCombination_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith64bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith64bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith32bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith16bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith16bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith8bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith8bitsData_seq.sv|../../src/hvl_top/test/virtual_sequences//i3c_virtual_base_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_hot_join_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_or_daa_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_multi_write_read_back_req.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_read_write_read_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_sdr_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_multi_wdatab_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_random_rw_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_randomDataTransferWidth_vseq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_start_stop_combination_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_verify_repeated_start_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_verify_neg_ack_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_verify_pos_ack_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_rdatab_ro_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_ccc_coverage_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_fifo_full_write_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_invalid_addr_write_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_read_write_read_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_read_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_multi_write_read_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_read_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv|../../src/hvl_top/test/ral_virtual_sequences//top_virtual_base_seq.sv|../../src/hvl_top/env/i3c_env.sv|../../src/hvl_top/env/i3c_scoreboard.sv|../../src/hvl_top/env/virtual_sequencer//i3c_virtual_sequencer.sv|../../src/hvl_top/env/apb_env_config.sv|../../src/hvl_top/env/i3c_env_config.sv|../../src/hvl_top/env/i3c_ral_reg_block.sv|../../src/hvl_top/env/i3c_ral_reg.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_8b_read_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_32b_write_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_24b_write_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_16b_write_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_8b_write_read_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_8b_write_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_vd_vws_seq.sv|../../src/hvl_top/apb_master/master_sequences//apb_master_base_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_hot_join_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWithRandomWriteDataStatusNACK_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_randomOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWith64bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith64bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWith32bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith32bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWith16bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith16bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_readOperationWith8bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith8bitsData_seq.sv|../../src/hvl_top/target/target_sequences//i3c_target_base_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_randomOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWithRandomDataTransferWidth_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWithMaximumbitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWith64bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWith64bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWith32bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWith32bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWith16bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWith16bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWith8bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWith8bitsData_seq.sv|../../src/hvl_top/controller/controller_sequences//i3c_controller_base_seq.sv|../../src/hvl_top/apb_master//apb_master_agent.sv|../../src/hvl_top/apb_master//apb_master_coverage.sv|../../src/hvl_top/apb_master//apb_master_monitor_proxy.sv|../../src/hvl_top/apb_master//apb_master_driver_proxy.sv|../../src/hvl_top/apb_master//apb_master_sequencer.sv|../../src/hvl_top/apb_master//apb_master_adapter.sv|../../src/hvl_top/apb_master//apb_master_cfg_converter.sv|../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv|../../src/hvl_top/apb_master//apb_master_tx.sv|../../src/hvl_top/apb_master//apb_master_agent_config.sv|../../src/hvl_top/target//i3c_target_agent.sv|../../src/hvl_top/target//i3c_target_coverage.sv|../../src/hvl_top/target//i3c_target_monitor_proxy.sv|../../src/hvl_top/target//i3c_target_driver_proxy.sv|../../src/hvl_top/target//i3c_target_sequencer.sv|../../src/hvl_top/target//i3c_target_cfg_converter.sv|../../src/hvl_top/target//i3c_target_seq_item_converter.sv|../../src/hvl_top/target//i3c_target_tx.sv|../../src/hvl_top/target//i3c_target_agent_config.sv|../../src/hvl_top/controller//i3c_controller_agent.sv|../../src/hvl_top/controller//i3c_controller_coverage.sv|../../src/hvl_top/controller//i3c_controller_monitor_proxy.sv|../../src/hvl_top/controller//i3c_controller_driver_proxy.sv|../../src/hvl_top/controller//i3c_controller_sequencer.sv|../../src/hvl_top/controller//i3c_controller_cfg_converter.sv|../../src/hvl_top/controller//i3c_controller_seq_item_converter.sv|../../src/hvl_top/controller//i3c_controller_tx.sv|../../src/hvl_top/controller//i3c_controller_agent_config.sv|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_deprecated_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_reg_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_callback_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_sequence_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/tlm1/uvm_tlm_imps.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_tlm_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_printer_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_object_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_phase_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_message_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_version_defines.svh|/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/uvm_macros.svh|../../rtl_dev/src/i3c_hdr_ddr_engine.v|../../rtl_dev/src/i3c_hdr_fsm.v|../../rtl_dev/src/i3c_ibi_regs.v|../../rtl_dev/src/i3c_ibi_fsm.v|../../rtl_dev/src/i3c_ibi_detector.v|../../rtl_dev/src/i3c_Tx_FIFO.v|../../rtl_dev/src/i3c_sdr_fsm.v|../../rtl_dev/src/i3c_scl_gen.v|../../rtl_dev/src/i3c_Rx_FIFO.v|../../rtl_dev/src/i3c_reg_interface.v|../../rtl_dev/src/i3c_device_table.v|../../rtl_dev/src/i3c_daa_fsm.v|../../rtl_dev/src/i3c_cmd_ctrl.v|../../rtl_dev/src/i3c_bit_engine.v|../../rtl_dev/src/I3C_TOP.v|../../src/hvl_top/hvl_top.sv|../../src/hdl_top/hdl_top.sv|../../src/hdl_top/apb_master_agent_bfm/apb_master_agent_bfm.sv|../../src/hdl_top/apb_master_agent_bfm/apb_master_monitor_bfm.sv|../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv|../../src/hdl_top/target_agent_bfm/i3c_target_agent_bfm.sv|../../src/hdl_top/target_agent_bfm/i3c_target_monitor_bfm.sv|../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv|../../src/hdl_top/controller_agent_bfm/i3c_controller_agent_bfm.sv|../../src/hdl_top/controller_agent_bfm/i3c_controller_monitor_bfm.sv|../../src/hdl_top/controller_agent_bfm/i3c_controller_driver_bfm.sv|../../src/hdl_top/i3c_wrapper.sv|../../src/hdl_top/apb_if/apb_if.sv|../../src/hdl_top/i3c_interface/i3c_if.sv|../../src/hvl_top/test/i3c_test_pkg.sv|../../src/hvl_top/test/virtual_sequences/i3c_virtual_seq_pkg.sv|../../src/hvl_top/test/ral_virtual_sequences/i3c_ral_virtual_seq_pkg.sv|../../src/hvl_top/env/i3c_env_pkg.sv|../../src/hvl_top/apb_master/master_sequences/apb_master_seq_pkg.sv|../../src/hvl_top/target/target_sequences/i3c_target_seq_pkg.sv|../../src/hvl_top/controller/controller_sequences/i3c_controller_seq_pkg.sv|../../src/hvl_top/apb_master/apb_master_pkg.sv|../../src/hvl_top/target/i3c_target_pkg.sv|../../src/hvl_top/controller/i3c_controller_pkg.sv|../../src/globals/apb_global_pkg.sv|../../src/globals/i3c_globals_pkg.sv|
 Z8 !s90 -sv|+acc|+cover|+fcover|-l|i3c_compile.log|-f|../i3c_compile.f|
 !i113 0
 Z9 !s102 +cover
@@ -126,7 +126,7 @@ R1
 vapb_master_agent_bfm
 R2
 Z19 DXx6 mtiUvm 7 uvm_pkg 0 22 oMKUklN?>LE6@MJe7=2><1
-Z20 !s110 1782981791
+!s110 1783360322
 !i10b 1
 !s100 TCd<VnKNB2G_E9MS3UXl<0
 IU91lL;YAdVI:DYi^fz4ZA3
@@ -137,18 +137,18 @@ R0
 R4
 8../../src/hdl_top/apb_master_agent_bfm/apb_master_agent_bfm.sv
 F../../src/hdl_top/apb_master_agent_bfm/apb_master_agent_bfm.sv
-Z21 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/uvm_macros.svh
-Z22 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_version_defines.svh
-Z23 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_message_defines.svh
-Z24 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_phase_defines.svh
-Z25 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_object_defines.svh
-Z26 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_printer_defines.svh
-Z27 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_tlm_defines.svh
-Z28 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/tlm1/uvm_tlm_imps.svh
-Z29 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_sequence_defines.svh
-Z30 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_callback_defines.svh
-Z31 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_reg_defines.svh
-Z32 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_deprecated_defines.svh
+Z20 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/uvm_macros.svh
+Z21 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_version_defines.svh
+Z22 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_message_defines.svh
+Z23 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_phase_defines.svh
+Z24 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_object_defines.svh
+Z25 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_printer_defines.svh
+Z26 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_tlm_defines.svh
+Z27 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/tlm1/uvm_tlm_imps.svh
+Z28 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_sequence_defines.svh
+Z29 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_callback_defines.svh
+Z30 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_reg_defines.svh
+Z31 F/tools/mentor/questasim_10.6c/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src/macros/uvm_deprecated_defines.svh
 L0 8
 R5
 r1
@@ -167,7 +167,7 @@ R2
 R12
 DXx4 work 29 apb_master_driver_bfm_sv_unit 0 22 3CcWmQQ8Tie]8>n`QzeY02
 R19
-Z33 DXx4 work 14 apb_master_pkg 0 22 hgambHFg^BU<T6DDnL7kB0
+Z32 DXx4 work 14 apb_master_pkg 0 22 hgambHFg^BU<T6DDnL7kB0
 R13
 r1
 !s85 0
@@ -179,8 +179,9 @@ I@0ZRl9knY61`NkET[IT2O1
 S1
 R0
 R4
-Z34 8../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv
-Z35 F../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv
+Z33 8../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv
+Z34 F../../src/hdl_top/apb_master_agent_bfm/apb_master_driver_bfm.sv
+R20
 R21
 R22
 R23
@@ -192,7 +193,6 @@ R28
 R29
 R30
 R31
-R32
 L0 14
 R5
 R6
@@ -217,8 +217,8 @@ I3CcWmQQ8Tie]8>n`QzeY02
 S1
 R0
 R4
+R33
 R34
-R35
 L0 7
 R5
 R6
@@ -234,7 +234,7 @@ R2
 R12
 DXx4 work 30 apb_master_monitor_bfm_sv_unit 0 22 kF@51B:]aN@ae;zRF1Kml0
 R19
-R33
+R32
 R13
 r1
 !s85 0
@@ -246,8 +246,9 @@ INeQ2ebBQBY]b<10DzYNo@1
 S1
 R0
 R4
-Z36 8../../src/hdl_top/apb_master_agent_bfm/apb_master_monitor_bfm.sv
-Z37 F../../src/hdl_top/apb_master_agent_bfm/apb_master_monitor_bfm.sv
+Z35 8../../src/hdl_top/apb_master_agent_bfm/apb_master_monitor_bfm.sv
+Z36 F../../src/hdl_top/apb_master_agent_bfm/apb_master_monitor_bfm.sv
+R20
 R21
 R22
 R23
@@ -259,7 +260,6 @@ R28
 R29
 R30
 R31
-R32
 R18
 R5
 R6
@@ -284,8 +284,8 @@ IkF@51B:]aN@ae;zRF1Kml0
 S1
 R0
 R4
+R35
 R36
-R37
 L0 7
 R5
 R6
@@ -302,7 +302,7 @@ Xapb_master_pkg
 R2
 R19
 R12
-Z38 !s110 1782981788
+Z37 !s110 1783360319
 !i10b 1
 !s100 LgiIUbXg6YJAfhLRm[E2A0
 IhgambHFg^BU<T6DDnL7kB0
@@ -312,6 +312,7 @@ R0
 R4
 8../../src/hvl_top/apb_master/apb_master_pkg.sv
 F../../src/hvl_top/apb_master/apb_master_pkg.sv
+R20
 R21
 R22
 R23
@@ -323,7 +324,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/apb_master//apb_master_agent_config.sv
 F../../src/hvl_top/apb_master//apb_master_tx.sv
 F../../src/hvl_top/apb_master//apb_master_seq_item_converter.sv
@@ -351,8 +351,8 @@ Xapb_master_seq_pkg
 R2
 R19
 R12
-R33
-R38
+R32
+R37
 !i10b 1
 !s100 5SfiNC]j8D0Oj^zA5_?Bk3
 IhgLXFlJ?Fka<D41VN4GMY3
@@ -362,6 +362,7 @@ R0
 R4
 8../../src/hvl_top/apb_master/master_sequences/apb_master_seq_pkg.sv
 F../../src/hvl_top/apb_master/master_sequences/apb_master_seq_pkg.sv
+R20
 R21
 R22
 R23
@@ -373,7 +374,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/apb_master/master_sequences//apb_master_base_seq.sv
 F../../src/hvl_top/apb_master/master_sequences//apb_master_vd_vws_seq.sv
 F../../src/hvl_top/apb_master/master_sequences//apb_master_8b_write_seq.sv
@@ -397,23 +397,23 @@ R11
 R1
 vhdl_top
 R2
-Z39 DXx4 work 15 i3c_globals_pkg 0 22 Od8BB3Jh?`dc<VWQEiN7U1
+Z38 DXx4 work 15 i3c_globals_pkg 0 22 h1<=XRohIzi[9[JTl[7R:1
 R12
-DXx4 work 15 hdl_top_sv_unit 0 22 cI>?HN0:Qd0c06_iO;L=]1
+DXx4 work 15 hdl_top_sv_unit 0 22 fmBN8Z7nK>mVCdn<YoY4B0
 R13
 r1
 !s85 0
 31
 !i10b 1
-!s100 YlO;b3Sl@z=HX8G`6zlVQ2
-IUj7Kag?S85QgdWJgFbRQe2
+!s100 mPib<JAl;XKI4Tkm479G]3
+ILUl]Km[>;cgoRLkY7Xo;m0
 !s105 hdl_top_sv_unit
 S1
 R0
-Z40 w1781254463
-Z41 8../../src/hdl_top/hdl_top.sv
-Z42 F../../src/hdl_top/hdl_top.sv
-L0 18
+Z39 w1783357877
+Z40 8../../src/hdl_top/hdl_top.sv
+Z41 F../../src/hdl_top/hdl_top.sv
+L0 8
 R5
 R6
 R7
@@ -425,22 +425,22 @@ R11
 R1
 Xhdl_top_sv_unit
 R2
-R39
+R38
 R12
-VcI>?HN0:Qd0c06_iO;L=]1
+VfmBN8Z7nK>mVCdn<YoY4B0
 r1
 !s85 0
 31
 !i10b 1
-!s100 P6jmAT0lzMJeQ2g70^;Vc1
-IcI>?HN0:Qd0c06_iO;L=]1
+!s100 75VF=:a>KUedYhzCH8fjA1
+IfmBN8Z7nK>mVCdn<YoY4B0
 !i103 1
 S1
 R0
+R39
 R40
 R41
-R42
-L0 15
+L0 5
 R5
 R6
 R7
@@ -454,18 +454,18 @@ vhvl_top
 R2
 R19
 R12
-R39
-R33
-Z43 DXx4 work 14 i3c_target_pkg 0 22 =dbOW2Fb?@kB;W<d=LRY72
-Z44 DXx4 work 11 i3c_env_pkg 0 22 1G0TfC`;[=IO71cVLY;BM3
-Z45 DXx4 work 18 apb_master_seq_pkg 0 22 hgLXFlJ?Fka<D41VN4GMY3
-Z46 DXx4 work 18 i3c_target_seq_pkg 0 22 :@^PZ[WSFG^9X5VQiCkM00
-Z47 DXx4 work 23 i3c_ral_virtual_seq_pkg 0 22 RjQBWdg^ZR5m>12::h[3f1
-DXx4 work 12 i3c_test_pkg 0 22 Q:UajJ3al?EC@[lXXB=5S0
-R20
+R38
+R32
+Z42 DXx4 work 14 i3c_target_pkg 0 22 :6eGEaT56:96B8YCgoOzL1
+Z43 DXx4 work 11 i3c_env_pkg 0 22 2zOmAnJ7Y0U0W61Fo@8FF1
+Z44 DXx4 work 18 apb_master_seq_pkg 0 22 hgLXFlJ?Fka<D41VN4GMY3
+Z45 DXx4 work 18 i3c_target_seq_pkg 0 22 dKW4[ZGBZ2_82CQbEG:g81
+Z46 DXx4 work 23 i3c_ral_virtual_seq_pkg 0 22 kkZ5OYf_`DY6IH2;AzDlA0
+DXx4 work 12 i3c_test_pkg 0 22 Z<3=FRcQCl_oTRT6NL:n[3
+Z47 !s110 1783360323
 !i10b 1
 !s100 EzQ]KbSPdY91YLje6`agH2
-Iz1G>O5PaC=lGdRGT[7=Se0
+IR>o^biKcJ=JgQcIiOizVl3
 R13
 !s105 hvl_top_sv_unit
 S1
@@ -488,7 +488,7 @@ R11
 R1
 vi3c_bit_engine
 R2
-R20
+R47
 !i10b 1
 !s100 FOZJ<hWa6A91lDZWHi1f[3
 IAf<QPUQ^djU8lCeSn19ZC2
@@ -496,7 +496,7 @@ R13
 !s105 i3c_bit_engine_v_unit
 S1
 R0
-w1781519143
+Z48 w1783321801
 8../../rtl_dev/src/i3c_bit_engine.v
 F../../rtl_dev/src/i3c_bit_engine.v
 L0 1
@@ -514,7 +514,7 @@ R11
 R1
 vi3c_cmd_ctrl
 R2
-R20
+R47
 !i10b 1
 !s100 XFlL;6M;a2^i7Wb[Jg=V<1
 I:aLgIcf;cH7DT@8_ULa]F2
@@ -522,7 +522,7 @@ R13
 !s105 i3c_cmd_ctrl_v_unit
 S1
 R0
-w1779182923
+R4
 8../../rtl_dev/src/i3c_cmd_ctrl.v
 F../../rtl_dev/src/i3c_cmd_ctrl.v
 L0 3
@@ -541,11 +541,11 @@ R1
 vi3c_controller_agent_bfm
 R2
 R19
-R39
-!s110 1782981789
+R38
+!s110 1783360320
 !i10b 1
 !s100 <]WW3JbGMLXCVXc30M8a=1
-IYKnk2EChWe]VcY3jllEBd0
+I=;348EI<PZ>B?P8<NNl>12
 R13
 !s105 i3c_controller_agent_bfm_sv_unit
 S1
@@ -553,6 +553,7 @@ R0
 R4
 8../../src/hdl_top/controller_agent_bfm/i3c_controller_agent_bfm.sv
 F../../src/hdl_top/controller_agent_bfm/i3c_controller_agent_bfm.sv
+R20
 R21
 R22
 R23
@@ -564,7 +565,6 @@ R28
 R29
 R30
 R31
-R32
 L0 4
 R5
 r1
@@ -580,23 +580,24 @@ R11
 R1
 Yi3c_controller_driver_bfm
 R2
-R39
-DXx4 work 33 i3c_controller_driver_bfm_sv_unit 0 22 kJJU[Em8N^M4EmEaU:e723
+R38
+DXx4 work 33 i3c_controller_driver_bfm_sv_unit 0 22 jR7afg:1TGH7KN2GZWXTh1
 R19
-Z48 DXx4 work 18 i3c_controller_pkg 0 22 Oa_mgX>6@7VU`>EOkg2LC3
+Z49 DXx4 work 18 i3c_controller_pkg 0 22 lIkSTSaMdco3gMREG2Jbk0
 R13
 r1
 !s85 0
 31
 !i10b 1
 !s100 SC9?^Jc=LOF@^bb7QgF_80
-IA4QYJdaE7LLQ`S3H489z72
+ITYNh_dUGL38?i0fAdNSkR2
 !s105 i3c_controller_driver_bfm_sv_unit
 S1
 R0
 R4
-Z49 8../../src/hdl_top/controller_agent_bfm/i3c_controller_driver_bfm.sv
-Z50 F../../src/hdl_top/controller_agent_bfm/i3c_controller_driver_bfm.sv
+Z50 8../../src/hdl_top/controller_agent_bfm/i3c_controller_driver_bfm.sv
+Z51 F../../src/hdl_top/controller_agent_bfm/i3c_controller_driver_bfm.sv
+R20
 R21
 R22
 R23
@@ -608,7 +609,6 @@ R28
 R29
 R30
 R31
-R32
 L0 6
 R5
 R6
@@ -621,20 +621,20 @@ R11
 R1
 Xi3c_controller_driver_bfm_sv_unit
 R2
-R39
-VkJJU[Em8N^M4EmEaU:e723
+R38
+VjR7afg:1TGH7KN2GZWXTh1
 r1
 !s85 0
 31
 !i10b 1
 !s100 af=k]VZH>N@^DUQnL6XJ@3
-IkJJU[Em8N^M4EmEaU:e723
+IjR7afg:1TGH7KN2GZWXTh1
 !i103 1
 S1
 R0
 R4
-R49
 R50
+R51
 L0 4
 R5
 R6
@@ -647,23 +647,24 @@ R11
 R1
 Yi3c_controller_monitor_bfm
 R2
-R39
-DXx4 work 34 i3c_controller_monitor_bfm_sv_unit 0 22 Bk^JoG>[5P55dY:=biARH3
+R38
+DXx4 work 34 i3c_controller_monitor_bfm_sv_unit 0 22 QmPmlhJK1?0RGKgibRiXR3
 R19
-R48
+R49
 R13
 r1
 !s85 0
 31
 !i10b 1
 !s100 k^Z;7[LE`Fl_9JZbK?zFA2
-IM^4R@1LNYIO9dP6D5BbVh2
+Izm:coB5b_:]0JaUG@i0Gl0
 !s105 i3c_controller_monitor_bfm_sv_unit
 S1
 R0
 R4
-Z51 8../../src/hdl_top/controller_agent_bfm/i3c_controller_monitor_bfm.sv
-Z52 F../../src/hdl_top/controller_agent_bfm/i3c_controller_monitor_bfm.sv
+Z52 8../../src/hdl_top/controller_agent_bfm/i3c_controller_monitor_bfm.sv
+Z53 F../../src/hdl_top/controller_agent_bfm/i3c_controller_monitor_bfm.sv
+R20
 R21
 R22
 R23
@@ -675,7 +676,6 @@ R28
 R29
 R30
 R31
-R32
 L0 6
 R5
 R6
@@ -688,20 +688,20 @@ R11
 R1
 Xi3c_controller_monitor_bfm_sv_unit
 R2
-R39
-VBk^JoG>[5P55dY:=biARH3
+R38
+VQmPmlhJK1?0RGKgibRiXR3
 r1
 !s85 0
 31
 !i10b 1
 !s100 maPKlUCDhA_@ghleagnH@2
-IBk^JoG>[5P55dY:=biARH3
+IQmPmlhJK1?0RGKgibRiXR3
 !i103 1
 S1
 R0
 R4
-R51
 R52
+R53
 L0 4
 R5
 R6
@@ -717,17 +717,18 @@ Xi3c_controller_pkg
 !s115 i3c_controller_driver_bfm
 R2
 R19
-R39
-R3
+R38
+R37
 !i10b 1
 !s100 ;feP<H9RX=j]HAA^GnPD>2
-IOa_mgX>6@7VU`>EOkg2LC3
-VOa_mgX>6@7VU`>EOkg2LC3
+IlIkSTSaMdco3gMREG2Jbk0
+VlIkSTSaMdco3gMREG2Jbk0
 S1
 R0
 R4
 8../../src/hvl_top/controller/i3c_controller_pkg.sv
 F../../src/hvl_top/controller/i3c_controller_pkg.sv
+R20
 R21
 R22
 R23
@@ -739,7 +740,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/controller//i3c_controller_agent_config.sv
 F../../src/hvl_top/controller//i3c_controller_tx.sv
 F../../src/hvl_top/controller//i3c_controller_seq_item_converter.sv
@@ -765,18 +765,19 @@ R1
 Xi3c_controller_seq_pkg
 R2
 R19
-R39
-R48
 R38
+R49
+R37
 !i10b 1
 !s100 ?PIdI^7YmNTl^Kg<miYOV0
-IZ8f31OBMSM`Zg3Pa=3STT0
-VZ8f31OBMSM`Zg3Pa=3STT0
+I`;h7Hm=WcI;R?bchVQ@<?2
+V`;h7Hm=WcI;R?bchVQ@<?2
 S1
 R0
 R4
 8../../src/hvl_top/controller/controller_sequences/i3c_controller_seq_pkg.sv
 F../../src/hvl_top/controller/controller_sequences/i3c_controller_seq_pkg.sv
+R20
 R21
 R22
 R23
@@ -788,7 +789,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/controller/controller_sequences//i3c_controller_base_seq.sv
 F../../src/hvl_top/controller/controller_sequences//i3c_controller_writeOperationWith8bitsData_seq.sv
 F../../src/hvl_top/controller/controller_sequences//i3c_controller_readOperationWith8bitsData_seq.sv
@@ -818,7 +818,7 @@ R11
 R1
 vi3c_daa_fsm
 R2
-R20
+R47
 !i10b 1
 !s100 9D=C?UES3dIkV0gJ><RR`1
 I>8JQW89Y0mCj:8E;]Z:z]2
@@ -826,7 +826,7 @@ R13
 !s105 i3c_daa_fsm_v_unit
 S1
 R0
-w1782723950
+w1783331441
 8../../rtl_dev/src/i3c_daa_fsm.v
 F../../rtl_dev/src/i3c_daa_fsm.v
 L0 1
@@ -844,7 +844,7 @@ R11
 R1
 vi3c_device_table
 R2
-R20
+R47
 !i10b 1
 !s100 K4nFTY63J_MmkfnP;lK`>1
 IDCELY3fUYX8TXlhBnT5U_2
@@ -852,7 +852,7 @@ R13
 !s105 i3c_device_table_v_unit
 S1
 R0
-w1779183165
+R4
 8../../rtl_dev/src/i3c_device_table.v
 F../../rtl_dev/src/i3c_device_table.v
 L0 1
@@ -871,20 +871,21 @@ R1
 Xi3c_env_pkg
 R2
 R19
-R39
-R43
-R12
-R33
 R38
+R42
+R12
+R32
+R37
 !i10b 1
-!s100 nR[=7QYB51O_jjNNNmXfJ3
-I1G0TfC`;[=IO71cVLY;BM3
-V1G0TfC`;[=IO71cVLY;BM3
+!s100 3bL;;1dOHMmdlzek`BUmk2
+I2zOmAnJ7Y0U0W61Fo@8FF1
+V2zOmAnJ7Y0U0W61Fo@8FF1
 S1
 R0
-Z53 w1782717118
+w1783326285
 8../../src/hvl_top/env/i3c_env_pkg.sv
 F../../src/hvl_top/env/i3c_env_pkg.sv
+R20
 R21
 R22
 R23
@@ -896,7 +897,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/env/i3c_ral_reg.sv
 F../../src/hvl_top/env/i3c_ral_reg_block.sv
 F../../src/hvl_top/env/i3c_env_config.sv
@@ -921,15 +921,15 @@ Xi3c_globals_pkg
 R2
 R3
 !i10b 1
-!s100 d824`hW;YcRek7<:<>;6;0
-IOd8BB3Jh?`dc<VWQEiN7U1
-VOd8BB3Jh?`dc<VWQEiN7U1
+!s100 L`[TUdBh>WC_5giTNVY2P3
+Ih1<=XRohIzi[9[JTl[7R:1
+Vh1<=XRohIzi[9[JTl[7R:1
 S1
 R0
-w1782816875
+w1783358895
 8../../src/globals/i3c_globals_pkg.sv
 F../../src/globals/i3c_globals_pkg.sv
-Z54 L0 11
+L0 5
 R5
 r1
 !s85 0
@@ -944,7 +944,7 @@ R11
 R1
 vi3c_hdr_ddr_engine
 R2
-R20
+R47
 !i10b 1
 !s100 `5N_B3SU;EeQ4H3MO5c]R0
 Ih2TN[6QLL6^l4:;BD8QJ`2
@@ -952,7 +952,7 @@ R13
 !s105 i3c_hdr_ddr_engine_v_unit
 S1
 R0
-w1779183612
+R4
 8../../rtl_dev/src/i3c_hdr_ddr_engine.v
 F../../rtl_dev/src/i3c_hdr_ddr_engine.v
 L0 1
@@ -970,7 +970,7 @@ R11
 R1
 vi3c_hdr_fsm
 R2
-R20
+R47
 !i10b 1
 !s100 `@Sij1h:X9U3^mh5mQVdS2
 IcOGO]i=56jQjjWE>8lQdf3
@@ -978,7 +978,7 @@ R13
 !s105 i3c_hdr_fsm_v_unit
 S1
 R0
-w1779183533
+R4
 8../../rtl_dev/src/i3c_hdr_fsm.v
 F../../rtl_dev/src/i3c_hdr_fsm.v
 L0 1
@@ -996,7 +996,7 @@ R11
 R1
 vi3c_ibi_detector
 R2
-R20
+R47
 !i10b 1
 !s100 3NRH:oU<h@OzcA`=Qhm1j3
 IP8Zz1;SNIiS7F:jS9e;j10
@@ -1004,7 +1004,7 @@ R13
 !s105 i3c_ibi_detector_v_unit
 S1
 R0
-w1779183265
+R4
 8../../rtl_dev/src/i3c_ibi_detector.v
 F../../rtl_dev/src/i3c_ibi_detector.v
 L0 1
@@ -1022,7 +1022,7 @@ R11
 R1
 vi3c_ibi_fsm
 R2
-R20
+R47
 !i10b 1
 !s100 6hnCma@I[UnP_EMmTjPF82
 Il4]2S9k7<ZYadE6?onaX[1
@@ -1030,7 +1030,7 @@ R13
 !s105 i3c_ibi_fsm_v_unit
 S1
 R0
-w1779183360
+R4
 8../../rtl_dev/src/i3c_ibi_fsm.v
 F../../rtl_dev/src/i3c_ibi_fsm.v
 L0 1
@@ -1048,7 +1048,7 @@ R11
 R1
 vi3c_ibi_regs
 R2
-R20
+R47
 !i10b 1
 !s100 R<>8Omc04]RT;T9JeEI920
 InP7OAhbPgT5UKSOK;o:A>0
@@ -1056,7 +1056,7 @@ R13
 !s105 i3c_ibi_regs_v_unit
 S1
 R0
-w1779183387
+R4
 8../../rtl_dev/src/i3c_ibi_regs.v
 F../../rtl_dev/src/i3c_ibi_regs.v
 L0 1
@@ -1074,19 +1074,19 @@ R11
 R1
 Yi3c_if
 R2
-R39
 R38
+R37
 !i10b 1
-!s100 5>_1U?:iXZ:`gFQ`Db=f21
-I<4WOIc7MW<9QAghV:jM5j2
+!s100 XJ[^jk8:[`g^Rj6G1>S9B0
+IY`Ih5PaLC:TncoQS?HFTE0
 R13
 !s105 i3c_if_sv_unit
 S1
 R0
-R40
+w1783358347
 8../../src/hdl_top/i3c_interface/i3c_if.sv
 F../../src/hdl_top/i3c_interface/i3c_if.sv
-L0 10
+L0 3
 R5
 r1
 !s85 0
@@ -1102,23 +1102,24 @@ R1
 Xi3c_ral_virtual_seq_pkg
 R2
 R19
-R39
+R38
 R12
-R33
+R32
+R44
+R42
 R45
 R43
-R46
-R44
-R38
+R37
 !i10b 1
-!s100 TWoFSKGJ7[]0aKLIZIJD`0
-IRjQBWdg^ZR5m>12::h[3f1
-VRjQBWdg^ZR5m>12::h[3f1
+!s100 S;j9kEPWSYKfn9VdCbL?U2
+IkkZ5OYf_`DY6IH2;AzDlA0
+VkkZ5OYf_`DY6IH2;AzDlA0
 S1
 R0
-w1782981766
+w1783359780
 8../../src/hvl_top/test/ral_virtual_sequences/i3c_ral_virtual_seq_pkg.sv
 F../../src/hvl_top/test/ral_virtual_sequences/i3c_ral_virtual_seq_pkg.sv
+R20
 R21
 R22
 R23
@@ -1130,7 +1131,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/test/ral_virtual_sequences//top_virtual_base_seq.sv
 F../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_write_virtual_seq.sv
 F../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_read_virtual_seq.sv
@@ -1153,7 +1153,8 @@ F../../src/hvl_top/test/ral_virtual_sequences//i3c_read_write_read_seq.sv
 F../../src/hvl_top/test/ral_virtual_sequences//i3c_multi_write_read_back_req.sv
 F../../src/hvl_top/test/ral_virtual_sequences//i3c_daa_virtual_seq.sv
 F../../src/hvl_top/test/ral_virtual_sequences//i3c_sdr_or_daa_virtual_seq.sv
-R54
+F../../src/hvl_top/test/ral_virtual_sequences//i3c_hot_join_virtual_seq.sv
+L0 11
 R5
 r1
 !s85 0
@@ -1168,7 +1169,7 @@ R11
 R1
 vi3c_reg_interface
 R2
-R20
+R47
 !i10b 1
 !s100 c48=2Ue@8aU4b?0g]nM;J0
 I[lF8eM?;M[X^<Om@loF]:2
@@ -1176,7 +1177,7 @@ R13
 !s105 i3c_reg_interface_v_unit
 S1
 R0
-w1779182731
+R4
 8../../rtl_dev/src/i3c_reg_interface.v
 F../../rtl_dev/src/i3c_reg_interface.v
 L0 3
@@ -1194,7 +1195,7 @@ R11
 R1
 vi3c_Rx_FIFO
 R2
-R20
+R47
 !i10b 1
 !s100 FDQ`>dTZA6_6mlPGQELo83
 IB1Fiei?P`^dDL;a@Z=jo]1
@@ -1202,7 +1203,7 @@ R13
 !s105 i3c_Rx_FIFO_v_unit
 S1
 R0
-w1779182982
+R4
 8../../rtl_dev/src/i3c_Rx_FIFO.v
 F../../rtl_dev/src/i3c_Rx_FIFO.v
 L0 1
@@ -1221,7 +1222,7 @@ R1
 ni3c_@rx_@f@i@f@o
 vi3c_scl_gen
 R2
-R20
+R47
 !i10b 1
 !s100 BB9Q<CCnB5bi@_l3UAWE31
 I<k@L]goVQK10]lbZ;dgT02
@@ -1229,7 +1230,7 @@ R13
 !s105 i3c_scl_gen_v_unit
 S1
 R0
-w1779183231
+R4
 8../../rtl_dev/src/i3c_scl_gen.v
 F../../rtl_dev/src/i3c_scl_gen.v
 L0 1
@@ -1247,7 +1248,7 @@ R11
 R1
 vi3c_sdr_fsm
 R2
-R20
+R47
 !i10b 1
 !s100 OnR3Ee3eB^k`IGVQzf3k01
 Ij]Qe_<dW^Bml2f:d=0mC@3
@@ -1255,7 +1256,7 @@ R13
 !s105 i3c_sdr_fsm_v_unit
 S1
 R0
-w1782886742
+R48
 8../../rtl_dev/src/i3c_sdr_fsm.v
 F../../rtl_dev/src/i3c_sdr_fsm.v
 L0 1
@@ -1274,18 +1275,19 @@ R1
 vi3c_target_agent_bfm
 R2
 R19
-R39
-!s110 1782981790
+R38
+!s110 1783360321
 !i10b 1
-!s100 :S7`93]zkf=OEI[`CSBeg1
-IzSQ7g3RYO=?Cei]lHSeIm2
+!s100 ;ZNRCJK?3oD0:^SWji>5J1
+I1PVJiT5NaDnM@5h8XP=TH1
 R13
 !s105 i3c_target_agent_bfm_sv_unit
 S1
 R0
-R40
+w1783358900
 8../../src/hdl_top/target_agent_bfm/i3c_target_agent_bfm.sv
 F../../src/hdl_top/target_agent_bfm/i3c_target_agent_bfm.sv
+R20
 R21
 R22
 R23
@@ -1297,7 +1299,6 @@ R28
 R29
 R30
 R31
-R32
 L0 5
 R5
 r1
@@ -1313,23 +1314,24 @@ R11
 R1
 Yi3c_target_driver_bfm
 R2
-R39
-DXx4 work 29 i3c_target_driver_bfm_sv_unit 0 22 =m[>9O=7TIlC:`V3IX_7K0
+R38
+DXx4 work 29 i3c_target_driver_bfm_sv_unit 0 22 _9DLQ71D[Tm=>9`DJHn2`2
 R19
-R43
+R42
 R13
 r1
 !s85 0
 31
 !i10b 1
-!s100 =]bBaiCMf4Nf[ca?A@51W1
-IN_UdfbN>kfz73aBRDE6<I0
+!s100 UFCL]HRz57>gGL:SGieDS0
+Ie2GIng9VAT`a?SHkSNWUj3
 !s105 i3c_target_driver_bfm_sv_unit
 S1
 R0
-Z55 w1782900369
-Z56 8../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv
-Z57 F../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv
+Z54 w1783358163
+Z55 8../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv
+Z56 F../../src/hdl_top/target_agent_bfm/i3c_target_driver_bfm.sv
+R20
 R21
 R22
 R23
@@ -1341,7 +1343,6 @@ R28
 R29
 R30
 R31
-R32
 L0 6
 R5
 R6
@@ -1354,20 +1355,20 @@ R11
 R1
 Xi3c_target_driver_bfm_sv_unit
 R2
-R39
-V=m[>9O=7TIlC:`V3IX_7K0
+R38
+V_9DLQ71D[Tm=>9`DJHn2`2
 r1
 !s85 0
 31
 !i10b 1
-!s100 23RSaTLaX=l5eQ[F;V3H;2
-I=m[>9O=7TIlC:`V3IX_7K0
+!s100 `Wem^@bTYc6TUOGkgmL:B3
+I_9DLQ71D[Tm=>9`DJHn2`2
 !i103 1
 S1
 R0
+R54
 R55
 R56
-R57
 L0 4
 R5
 R6
@@ -1380,23 +1381,24 @@ R11
 R1
 Yi3c_target_monitor_bfm
 R2
-R39
-DXx4 work 30 i3c_target_monitor_bfm_sv_unit 0 22 Abna_>3RMkNCY3P?XM5N=0
+R38
+DXx4 work 30 i3c_target_monitor_bfm_sv_unit 0 22 O=7o@kZbK:f3cE?Ba38`e3
 R19
-R43
+R42
 R13
 r1
 !s85 0
 31
 !i10b 1
-!s100 IPCmF@W@KA=4CJ;2]ZF0l2
-ICO^jD_X6ZEH04Nm?ndB[z2
+!s100 ofIB[zgLX5K<lZVIS5`Td3
+Im3N26:CRgm=WHkDSehDR?0
 !s105 i3c_target_monitor_bfm_sv_unit
 S1
 R0
-Z58 w1782903186
-Z59 8../../src/hdl_top/target_agent_bfm/i3c_target_monitor_bfm.sv
-Z60 F../../src/hdl_top/target_agent_bfm/i3c_target_monitor_bfm.sv
+Z57 w1783358282
+Z58 8../../src/hdl_top/target_agent_bfm/i3c_target_monitor_bfm.sv
+Z59 F../../src/hdl_top/target_agent_bfm/i3c_target_monitor_bfm.sv
+R20
 R21
 R22
 R23
@@ -1408,7 +1410,6 @@ R28
 R29
 R30
 R31
-R32
 L0 6
 R5
 R6
@@ -1421,20 +1422,20 @@ R11
 R1
 Xi3c_target_monitor_bfm_sv_unit
 R2
-R39
-VAbna_>3RMkNCY3P?XM5N=0
+R38
+VO=7o@kZbK:f3cE?Ba38`e3
 r1
 !s85 0
 31
 !i10b 1
-!s100 3bJ310]c]W^e78_z4cJCn2
-IAbna_>3RMkNCY3P?XM5N=0
+!s100 9Jfz<6CSb4X=SQ_CYSOC]2
+IO=7o@kZbK:f3cE?Ba38`e3
 !i103 1
 S1
 R0
+R57
 R58
 R59
-R60
 L0 4
 R5
 R6
@@ -1450,17 +1451,18 @@ Xi3c_target_pkg
 !s115 i3c_target_driver_bfm
 R2
 R19
-R39
-R3
+R38
+R37
 !i10b 1
-!s100 ^3K`><cenLgFY_[cE;D4D0
-I=dbOW2Fb?@kB;W<d=LRY72
-V=dbOW2Fb?@kB;W<d=LRY72
+!s100 1PoJIe4_[fSoc3`T0McWK2
+I:6eGEaT56:96B8YCgoOzL1
+V:6eGEaT56:96B8YCgoOzL1
 S1
 R0
-w1782902509
+w1783359511
 8../../src/hvl_top/target/i3c_target_pkg.sv
 F../../src/hvl_top/target/i3c_target_pkg.sv
+R20
 R21
 R22
 R23
@@ -1472,7 +1474,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/target//i3c_target_agent_config.sv
 F../../src/hvl_top/target//i3c_target_tx.sv
 F../../src/hvl_top/target//i3c_target_seq_item_converter.sv
@@ -1498,18 +1499,19 @@ R1
 Xi3c_target_seq_pkg
 R2
 R19
-R39
-R43
 R38
+R42
+R37
 !i10b 1
-!s100 VUKm[I5ZN7CLk`OM[RONY0
-I:@^PZ[WSFG^9X5VQiCkM00
-V:@^PZ[WSFG^9X5VQiCkM00
+!s100 UhOGR`03SnQfF43QZW9XT3
+IdKW4[ZGBZ2_82CQbEG:g81
+VdKW4[ZGBZ2_82CQbEG:g81
 S1
 R0
-R53
+w1783359650
 8../../src/hvl_top/target/target_sequences/i3c_target_seq_pkg.sv
 F../../src/hvl_top/target/target_sequences/i3c_target_seq_pkg.sv
+R20
 R21
 R22
 R23
@@ -1521,7 +1523,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/target/target_sequences//i3c_target_base_seq.sv
 F../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWith8bitsData_seq.sv
 F../../src/hvl_top/target/target_sequences//i3c_target_readOperationWith8bitsData_seq.sv
@@ -1538,6 +1539,7 @@ F../../src/hvl_top/target/target_sequences//i3c_target_readOperationWithRandomDa
 F../../src/hvl_top/target/target_sequences//i3c_target_randomOperationWithRandomDataTransferWidth_seq.sv
 F../../src/hvl_top/target/target_sequences//i3c_target_writeOperationWithRandomWriteDataStatusNACK_seq.sv
 F../../src/hvl_top/target/target_sequences//i3c_target_daa_seq.sv
+F../../src/hvl_top/target/target_sequences//i3c_target_hot_join_seq.sv
 L0 4
 R5
 r1
@@ -1555,23 +1557,24 @@ Xi3c_test_pkg
 R2
 R19
 R12
-R39
-R33
+R38
+R32
+R42
 R43
 R44
 R45
 R46
-R47
-R38
+R37
 !i10b 1
-!s100 8Bnfo<0kikBXz6O5C2Em11
-IQ:UajJ3al?EC@[lXXB=5S0
-VQ:UajJ3al?EC@[lXXB=5S0
+!s100 GzLBG_4`CRCcjPN1e_S2F1
+IZ<3=FRcQCl_oTRT6NL:n[3
+VZ<3=FRcQCl_oTRT6NL:n[3
 S1
 R0
-R40
+w1783359810
 8../../src/hvl_top/test/i3c_test_pkg.sv
 F../../src/hvl_top/test/i3c_test_pkg.sv
+R20
 R21
 R22
 R23
@@ -1583,7 +1586,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/test/i3c_base_test.sv
 F../../src/hvl_top/test/i3c_write_8b_test.sv
 F../../src/hvl_top/test/i3c_multi_write_test.sv
@@ -1597,6 +1599,7 @@ F../../src/hvl_top/test/i3c_daa_write_8b_test.sv
 F../../src/hvl_top/test/i3c_daa_read_8b_test.sv
 F../../src/hvl_top/test/i3c_daa_write_read_write_read_8b_test.sv
 F../../src/hvl_top/test/i3c_sdr_or_daa_write_8b_test.sv
+F../../src/hvl_top/test/i3c_hot_join_test.sv
 L0 16
 R5
 r1
@@ -1612,7 +1615,7 @@ R11
 R1
 vI3C_TOP
 R2
-R20
+R47
 !i10b 1
 !s100 87aWF^gIBSChMVNY2iN]`3
 I4AnnJd_QgjEOA>PidIafU0
@@ -1620,7 +1623,7 @@ R13
 !s105 I3C_TOP_v_unit
 S1
 R0
-R40
+w1782208986
 8../../rtl_dev/src/I3C_TOP.v
 F../../rtl_dev/src/I3C_TOP.v
 L0 3
@@ -1639,7 +1642,7 @@ R1
 n@i3@c_@t@o@p
 vi3c_Tx_FIFO
 R2
-R20
+R47
 !i10b 1
 !s100 G8QTJeG>nnC81>D9liDH31
 IG78S^<iQLAJOl;N3]Y>6V2
@@ -1647,7 +1650,7 @@ R13
 !s105 i3c_Tx_FIFO_v_unit
 S1
 R0
-w1779182964
+R4
 8../../rtl_dev/src/i3c_Tx_FIFO.v
 F../../rtl_dev/src/i3c_Tx_FIFO.v
 L0 1
@@ -1667,24 +1670,25 @@ ni3c_@tx_@f@i@f@o
 Xi3c_virtual_seq_pkg
 R2
 R19
-R39
-R48
-R43
-DXx4 work 22 i3c_controller_seq_pkg 0 22 Z8f31OBMSM`Zg3Pa=3STT0
-R46
-R12
-R33
-R44
 R38
+R49
+R42
+DXx4 work 22 i3c_controller_seq_pkg 0 22 `;h7Hm=WcI;R?bchVQ@<?2
+R45
+R12
+R32
+R43
+R37
 !i10b 1
 !s100 X<Fo5HcKGJ_Q3DDIKU?]T3
-IG]aiJQz5Q[dc>E]fo44141
-VG]aiJQz5Q[dc>E]fo44141
+IDI_?hhh4l_3ET=@gkWzgk2
+VDI_?hhh4l_3ET=@gkWzgk2
 S1
 R0
-R40
+R4
 8../../src/hvl_top/test/virtual_sequences/i3c_virtual_seq_pkg.sv
 F../../src/hvl_top/test/virtual_sequences/i3c_virtual_seq_pkg.sv
+R20
 R21
 R22
 R23
@@ -1696,7 +1700,6 @@ R28
 R29
 R30
 R31
-R32
 F../../src/hvl_top/test/virtual_sequences//i3c_virtual_base_seq.sv
 F../../src/hvl_top/test/virtual_sequences//i3c_virtual_writeOperationWith8bitsData_seq.sv
 F../../src/hvl_top/test/virtual_sequences//i3c_virtual_readOperationWith8bitsData_seq.sv

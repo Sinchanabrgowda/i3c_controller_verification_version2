@@ -70,6 +70,22 @@ class i3c_scoreboard extends uvm_component;
   bit [6:0] daa_next_exp_addr;
 
   // -----------------------------------------------------------------------
+  // HOT JOIN — additive only.
+  //
+  // compare_with_daa_target() is only ever triggered by the APB CTRL write
+  // that kicks off the *initial* ENTDAA round; a hot-join-triggered ENTDAA
+  // round has no corresponding CTRL write (it's generated internally by
+  // hotjoin_req — see i3c_ibi_fsm.v / i3c_daa_fsm.v), so it would otherwise
+  // never be checked. daa_initial_round_done_ev is triggered once, right
+  // after compare_with_daa_target() returns, and unblocks a background
+  // checker that then (and only then) starts draining/validating anything
+  // that shows up afterwards in target_analysis_fifo[]. Gating it behind
+  // this event guarantees it never races compare_with_daa_target() for the
+  // initial round's own fifo items.
+  // -----------------------------------------------------------------------
+  event daa_initial_round_done_ev;
+
+  // -----------------------------------------------------------------------
   // Extern declarations
   // -----------------------------------------------------------------------
   extern function new(string name = "i3c_scoreboard",
@@ -86,6 +102,9 @@ class i3c_scoreboard extends uvm_component;
   // DAA
   extern protected function bit  is_daa_transaction();
   extern protected task          compare_with_daa_target();
+
+  // HOT JOIN (additive)
+  extern protected task          check_hot_join_results();
 
   // helpers
   extern protected function int  find_target_by_address(bit [6:0] addr);
@@ -149,6 +168,13 @@ endfunction : build_phase
 task i3c_scoreboard::run_phase(uvm_phase phase);
   super.run_phase(phase);
 
+  // HOT JOIN (additive) — runs in the background, gated by
+  // daa_initial_round_done_ev so it never touches target_analysis_fifo[]
+  // until the initial round's own processing below has fully finished.
+  fork
+    check_hot_join_results();
+  join_none
+
   forever begin
     collect_apb_transaction();
 
@@ -157,6 +183,7 @@ task i3c_scoreboard::run_phase(uvm_phase phase);
         $sformatf("DAA transaction detected: cmd_type=0x%0x ccc=0x%0x",
                   exp_cmd_type, exp_ccc), UVM_MEDIUM)
       compare_with_daa_target();
+      -> daa_initial_round_done_ev;
     end else begin
       compare_with_target();
     end
@@ -287,82 +314,97 @@ task i3c_scoreboard::compare_with_daa_target();
         daa_result[i].dcr             = tgt.dcr;
         daa_result[i].daa_ack         = tgt.daa_ack;
 
-        // -- Sequential dynamic address check
-        exp_dyn_addr = daa_next_exp_addr;
-        daa_next_exp_addr++;   // always advance so later slaves get the right expected address
-        if (tgt.dynamic_address !== exp_dyn_addr) begin
-          `uvm_error("SB_DAA_DYNADDR",
-            $sformatf("[target %0d] Dynamic address: expected 0x%0h got 0x%0h",
-                      i, exp_dyn_addr, tgt.dynamic_address))
-          daa_addr_fail++;
-        end else begin
-          `uvm_info("SB_DAA_DYNADDR",
-            $sformatf("[target %0d] Dynamic address 0x%0h PASS",
-                      i, tgt.dynamic_address), UVM_MEDIUM)
-          daa_addr_pass++;
-        end
-
         // -- Parity / ACK check
+        //
+        // NOTE: the strict per-device checks below (sequential dynamic
+        // address, BCR[7] role, PID/BCR/DCR cross-checks) only make sense
+        // for a device that actually got assigned THIS round. A device
+        // that legitimately did not participate this round (e.g. one
+        // reserved to hot-join later — see i3c_hot_join_virtual_seq) will
+        // correctly report daa_ack=NACK / dynamic_address=0 here, which is
+        // NOT a failure and must not consume/advance daa_next_exp_addr.
+        // Every existing DAA test has every reporting target ACK, so this
+        // gating is a no-op for them.
         if (tgt.daa_ack === ACK) begin
           `uvm_info("SB_DAA_ACK",
             $sformatf("[target %0d] daa_ack=ACK for addr 0x%0h PASS",
                       i, tgt.dynamic_address), UVM_MEDIUM)
           daa_parity_pass++;
+
+          // -- Sequential dynamic address check
+          exp_dyn_addr = daa_next_exp_addr;
+          daa_next_exp_addr++;   // always advance so later slaves get the right expected address
+          if (tgt.dynamic_address !== exp_dyn_addr) begin
+            `uvm_error("SB_DAA_DYNADDR",
+              $sformatf("[target %0d] Dynamic address: expected 0x%0h got 0x%0h",
+                        i, exp_dyn_addr, tgt.dynamic_address))
+            daa_addr_fail++;
+          end else begin
+            `uvm_info("SB_DAA_DYNADDR",
+              $sformatf("[target %0d] Dynamic address 0x%0h PASS",
+                        i, tgt.dynamic_address), UVM_MEDIUM)
+            daa_addr_pass++;
+          end
+
+          // -- BCR[7] must be 0 (target device role)
+          if (tgt.bcr[7] !== 1'b0)
+            `uvm_error("SB_DAA_BCR_ROLE",
+              $sformatf("[target %0d] BCR[7] must be 0 but got 1 (PID=0x%0h)",
+                        i, tgt.pid))
+          else
+            `uvm_info("SB_DAA_BCR_ROLE",
+              $sformatf("[target %0d] BCR[7]=0 (target role) PASS", i),
+              UVM_MEDIUM)
+
+          // -- PID non-zero
+          if (tgt.pid === 48'h0)
+            `uvm_error("SB_DAA_PID_ZERO",
+              $sformatf("[target %0d] PID is zero – invalid", i))
+
+          // -- Cross-check: PID must match what test configured
+          if (i3c_env_cfg_h.i3c_target_agent_cfg_h[i].pid !== tgt.pid)
+            `uvm_error("SB_DAA_PID_MISMATCH",
+              $sformatf("[target %0d] PID: configured=0x%0h received=0x%0h",
+                        i,
+                        i3c_env_cfg_h.i3c_target_agent_cfg_h[i].pid,
+                        tgt.pid))
+          else
+            `uvm_info("SB_DAA_PID",
+              $sformatf("[target %0d] PID 0x%0h matches config PASS", i, tgt.pid),
+              UVM_MEDIUM)
+
+          // -- BCR cross-check
+          if (i3c_env_cfg_h.i3c_target_agent_cfg_h[i].bcr !== tgt.bcr)
+            `uvm_error("SB_DAA_BCR_MISMATCH",
+              $sformatf("[target %0d] BCR: configured=0x%0h received=0x%0h",
+                        i,
+                        i3c_env_cfg_h.i3c_target_agent_cfg_h[i].bcr,
+                        tgt.bcr))
+          else
+            `uvm_info("SB_DAA_BCR",
+              $sformatf("[target %0d] BCR 0x%0h PASS", i, tgt.bcr), UVM_MEDIUM)
+
+          // -- DCR cross-check
+          if (i3c_env_cfg_h.i3c_target_agent_cfg_h[i].dcr !== tgt.dcr)
+            `uvm_error("SB_DAA_DCR_MISMATCH",
+              $sformatf("[target %0d] DCR: configured=0x%0h received=0x%0h",
+                        i,
+                        i3c_env_cfg_h.i3c_target_agent_cfg_h[i].dcr,
+                        tgt.dcr))
+          else
+            `uvm_info("SB_DAA_DCR",
+              $sformatf("[target %0d] DCR 0x%0h PASS", i, tgt.dcr), UVM_MEDIUM)
+
         end else begin
-          `uvm_error("SB_DAA_ACK",
-            $sformatf("[target %0d] daa_ack=NACK for addr 0x%0h FAIL",
-                      i, tgt.dynamic_address))
-          daa_parity_fail++;
+          // Legitimately not assigned this round (e.g. reserved for a
+          // later hot-join) — informational only, not a failure, and
+          // daa_next_exp_addr is deliberately left untouched so the next
+          // real assignment still checks against the correct sequential
+          // address.
+          `uvm_info("SB_DAA_ACK",
+            $sformatf("[target %0d] daa_ack=NACK this round (not assigned yet)",
+                      i), UVM_MEDIUM)
         end
-
-        // -- BCR[7] must be 0 (target device role)
-        if (tgt.bcr[7] !== 1'b0)
-          `uvm_error("SB_DAA_BCR_ROLE",
-            $sformatf("[target %0d] BCR[7] must be 0 but got 1 (PID=0x%0h)",
-                      i, tgt.pid))
-        else
-          `uvm_info("SB_DAA_BCR_ROLE",
-            $sformatf("[target %0d] BCR[7]=0 (target role) PASS", i),
-            UVM_MEDIUM)
-
-        // -- PID non-zero
-        if (tgt.pid === 48'h0)
-          `uvm_error("SB_DAA_PID_ZERO",
-            $sformatf("[target %0d] PID is zero – invalid", i))
-
-        // -- Cross-check: PID must match what test configured
-        if (i3c_env_cfg_h.i3c_target_agent_cfg_h[i].pid !== tgt.pid)
-          `uvm_error("SB_DAA_PID_MISMATCH",
-            $sformatf("[target %0d] PID: configured=0x%0h received=0x%0h",
-                      i,
-                      i3c_env_cfg_h.i3c_target_agent_cfg_h[i].pid,
-                      tgt.pid))
-        else
-          `uvm_info("SB_DAA_PID",
-            $sformatf("[target %0d] PID 0x%0h matches config PASS", i, tgt.pid),
-            UVM_MEDIUM)
-
-        // -- BCR cross-check
-        if (i3c_env_cfg_h.i3c_target_agent_cfg_h[i].bcr !== tgt.bcr)
-          `uvm_error("SB_DAA_BCR_MISMATCH",
-            $sformatf("[target %0d] BCR: configured=0x%0h received=0x%0h",
-                      i,
-                      i3c_env_cfg_h.i3c_target_agent_cfg_h[i].bcr,
-                      tgt.bcr))
-        else
-          `uvm_info("SB_DAA_BCR",
-            $sformatf("[target %0d] BCR 0x%0h PASS", i, tgt.bcr), UVM_MEDIUM)
-
-        // -- DCR cross-check
-        if (i3c_env_cfg_h.i3c_target_agent_cfg_h[i].dcr !== tgt.dcr)
-          `uvm_error("SB_DAA_DCR_MISMATCH",
-            $sformatf("[target %0d] DCR: configured=0x%0h received=0x%0h",
-                      i,
-                      i3c_env_cfg_h.i3c_target_agent_cfg_h[i].dcr,
-                      tgt.dcr))
-        else
-          `uvm_info("SB_DAA_DCR",
-            $sformatf("[target %0d] DCR 0x%0h PASS", i, tgt.dcr), UVM_MEDIUM)
 
       end // try_get succeeded
 
@@ -383,6 +425,136 @@ task i3c_scoreboard::compare_with_daa_target();
               targets_processed, num_targets), UVM_LOW)
 
 endtask : compare_with_daa_target
+
+
+// ============================================================================
+// check_hot_join_results  (additive — see i3c_ibi_detector.v / i3c_ibi_fsm.v)
+//
+// A hot-join-triggered ENTDAA round has no APB CTRL write to gate on (it's
+// generated internally via hotjoin_req), so compare_with_daa_target() never
+// sees it. This task waits for the initial round to fully finish
+// (daa_initial_round_done_ev), then drains whatever shows up afterwards in
+// target_analysis_fifo[]:
+//   - the hot-joining target reports with hotjoin_addr != 0 (set only by
+//     i3c_target_monitor_proxy's pending_hot_join branch) -> validated here
+//     the same way compare_with_daa_target() validates a normal round.
+//   - every other target's monitor also independently re-observes that same
+//     bus session (has_daa stays 1 for the whole test, exactly as it always
+//     has) and reports again with hotjoin_addr == 0 since it isn't the
+//     device that hot-joined -> drained silently so check_phase's "leftover
+//     packet" check stays clean.
+// ============================================================================
+task i3c_scoreboard::check_hot_join_results();
+  i3c_target_tx tgt_i;
+  bit [6:0]     exp_dyn_addr;
+  int           num_targets;
+
+  num_targets = i3c_env_cfg_h.no_of_targets;
+
+  // Never touch the fifos until the initial round is fully processed —
+  // guarantees zero contention with compare_with_daa_target() above.
+  @(daa_initial_round_done_ev);
+
+  `uvm_info("SB_HOTJOIN",
+    "Initial DAA round processed - now watching for hot-join round result(s)",
+    UVM_MEDIUM)
+
+  forever begin
+    for (int i = 0; i < num_targets; i++) begin
+
+      if (target_analysis_fifo[i].try_get(tgt_i)) begin
+
+        target_tx_count++;
+
+        if (tgt_i.hotjoin_addr != 7'h0) begin
+          // ---------------------------------------------------------------
+          // This is the hot-joining target's post-IBI ENTDAA result.
+          // ---------------------------------------------------------------
+          `uvm_info("SB_HOTJOIN",
+            $sformatf("[target %0d] HOTJOIN result: ibi_addr=0x%0h daa_ack=%0b dynamic_addr=0x%0h PID=0x%0h BCR=0x%0h DCR=0x%0h",
+                      i, tgt_i.hotjoin_addr, tgt_i.daa_ack,
+                      tgt_i.dynamic_address, tgt_i.pid, tgt_i.bcr, tgt_i.dcr),
+            UVM_LOW)
+
+          if (tgt_i.txn_type !== i3c_target_tx::DAA)
+            `uvm_error("SB_HOTJOIN_TXN_TYPE",
+              $sformatf("[target %0d] Expected DAA-shaped txn for hot-join result but got txn_type=%s",
+                        i, tgt_i.txn_type.name()))
+
+          if (tgt_i.daa_ack !== ACK) begin
+            `uvm_error("SB_HOTJOIN_ACK",
+              $sformatf("[target %0d] HOT JOIN FAILED: daa_ack=NACK (no dynamic address assigned)",
+                        i))
+            daa_parity_fail++;
+          end else begin
+            daa_parity_pass++;
+
+            // -- Sequential dynamic address check (continues on from
+            //    wherever the initial round left daa_next_exp_addr)
+            exp_dyn_addr = daa_next_exp_addr;
+            daa_next_exp_addr++;
+
+            if (tgt_i.dynamic_address !== exp_dyn_addr) begin
+              `uvm_error("SB_HOTJOIN_DYNADDR",
+                $sformatf("[target %0d] HOTJOIN dynamic address: expected 0x%0h got 0x%0h",
+                          i, exp_dyn_addr, tgt_i.dynamic_address))
+              daa_addr_fail++;
+            end else begin
+              `uvm_info("SB_HOTJOIN_DYNADDR",
+                $sformatf("[target %0d] HOTJOIN dynamic address 0x%0h PASS",
+                          i, tgt_i.dynamic_address), UVM_MEDIUM)
+              daa_addr_pass++;
+            end
+
+            // -- BCR[7] must be 0 (target device role)
+            if (tgt_i.bcr[7] !== 1'b0)
+              `uvm_error("SB_HOTJOIN_BCR_ROLE",
+                $sformatf("[target %0d] BCR[7] must be 0 but got 1 (PID=0x%0h)",
+                          i, tgt_i.pid))
+
+            // -- PID non-zero
+            if (tgt_i.pid === 48'h0)
+              `uvm_error("SB_HOTJOIN_PID_ZERO",
+                $sformatf("[target %0d] PID is zero - invalid", i))
+
+            // -- Cross-check against configured identity
+            if (i3c_env_cfg_h.i3c_target_agent_cfg_h[i].pid !== tgt_i.pid)
+              `uvm_error("SB_HOTJOIN_PID_MISMATCH",
+                $sformatf("[target %0d] PID: configured=0x%0h received=0x%0h",
+                          i, i3c_env_cfg_h.i3c_target_agent_cfg_h[i].pid,
+                          tgt_i.pid))
+
+            // -- Store result (fresh assignment slot for this target)
+            daa_result[i].assigned        = 1;
+            daa_result[i].dynamic_address = tgt_i.dynamic_address;
+            daa_result[i].pid             = tgt_i.pid;
+            daa_result[i].bcr             = tgt_i.bcr;
+            daa_result[i].dcr             = tgt_i.dcr;
+            daa_result[i].daa_ack         = tgt_i.daa_ack;
+
+            daa_devices_seen++;
+          end
+
+        end else begin
+          // ---------------------------------------------------------------
+          // Stale re-observation from a target that simply watched a round
+          // it didn't participate in (its monitor keeps running has_daa=1
+          // for the whole test, same as it always has). Expected and
+          // harmless — drain silently so check_phase's fifo-drain check
+          // stays clean.
+          // ---------------------------------------------------------------
+          `uvm_info("SB_HOTJOIN",
+            $sformatf("[target %0d] Draining stale post-round monitor report (daa_ack=%0b) - not the hot-joining target",
+                      i, tgt_i.daa_ack), UVM_HIGH)
+        end
+
+      end
+    end
+
+    #1ns; // yield so this doesn't spin at zero simulation time
+  end
+
+endtask : check_hot_join_results
 
 
 // ============================================================================
@@ -639,3 +811,4 @@ function void i3c_scoreboard::check_phase(uvm_phase phase);
 endfunction : check_phase
 
 `endif
+

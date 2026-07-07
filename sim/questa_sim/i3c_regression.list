@@ -10,3 +10,4 @@ i3c_daa_read_8b_test
 i3c_daa_write_read_write_read_8b_test
 i3c_sdr_or_daa_write_8b_test
 i3c_ccc_coverage_test
+i3c_hot_join_test

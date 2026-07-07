@@ -1,20 +1,11 @@
-// ============================================================================
-// FILE: i3c_globals_pkg.sv  (MULTI-SLAVE VERSION)
-//
-// Change NO_OF_TARGETS to however many slaves you need.
-// Each target must have a unique PID so open-drain arbitration produces a
-// deterministic winner (lowest numerical PID wins – like I2C address arb).
-// ============================================================================
+
 `ifndef I3C_GLOBALS_PKG_INCLUDED_
 `define I3C_GLOBALS_PKG_INCLUDED_
 
 package i3c_globals_pkg;
 
-  // -----------------------------------------------------------------------
-  // Number of slaves – change this one constant to scale the testbench
-  // -----------------------------------------------------------------------
   parameter int NO_OF_CONTROLLERS = 1;
-  parameter int NO_OF_TARGETS     = 4;   // <<< set to desired slave count
+  parameter int NO_OF_TARGETS     = 4;   
 
   parameter int NO_OF_REG              = 1;
   parameter int DATA_WIDTH             = 8;
@@ -23,29 +14,17 @@ package i3c_globals_pkg;
   parameter int MAXIMUM_BITS           = 1024;
   parameter int MAXIMUM_BYTES          = MAXIMUM_BITS / DATA_WIDTH;
 
-  // -----------------------------------------------------------------------
-  // Static (I2C legacy) target addresses – used for SDR after DAA
-  // -----------------------------------------------------------------------
   parameter TARGET0_ADDRESS = 7'b110_1000;   // 7'h68
   parameter TARGET1_ADDRESS = 7'b110_1100;   // 7'h6C
   parameter TARGET2_ADDRESS = 7'b111_1100;   // 7'h7C
   parameter TARGET3_ADDRESS = 7'b100_1100;   // 7'h4C
 
-  // -----------------------------------------------------------------------
-  // Tri-state buffer control
-  // -----------------------------------------------------------------------
   parameter bit TRISTATE_BUF_ON  = 1;   // driving
   parameter bit TRISTATE_BUF_OFF = 0;   // high-Z
 
-  // -----------------------------------------------------------------------
-  // Bus timing parameters
-  // -----------------------------------------------------------------------
   parameter BUS_IDLE_TIME = 1;
   parameter BUS_FREE_TIME = 1;
 
-  // -----------------------------------------------------------------------
-  // I3C protocol constants
-  // -----------------------------------------------------------------------
   parameter bit [6:0] I3C_BROADCAST_ADDR = 7'h7E;
   parameter bit [7:0] ENTDAA_CCC_CODE    = 8'h07;
   parameter bit [7:0] BCAST_ADDR_WRITE   = 8'hFC;  // {7'h7E, W=0}
@@ -53,19 +32,10 @@ package i3c_globals_pkg;
   parameter int       DAA_ARB_BIT_COUNT  = 64;
   parameter bit [6:0] DAA_FIRST_DYN_ADDR = 7'h08;
 
-  // -----------------------------------------------------------------------
-  // CTRL register cmd_type encoding
-  // -----------------------------------------------------------------------
   parameter bit [1:0] CMD_TYPE_DAA = 2'd3;
   parameter bit [1:0] CMD_TYPE_SDR = 2'b00;
   parameter bit [1:0] CMD_TYPE_CCC = 2'b10;
 
-  // -----------------------------------------------------------------------
-  // Per-target unique PIDs for DAA arbitration
-  //   Open-drain: lowest value wins (dominant 0 beats recessive 1).
-  //   Target 0 has the lowest PID → wins first → gets first dynamic addr.
-  //   PIDs must be non-zero and unique.
-  // -----------------------------------------------------------------------
   parameter bit [47:0] TARGET0_PID = 48'h00_AABB_CC00_01;
   parameter bit [47:0] TARGET1_PID = 48'h00_AABB_CC00_02;
   parameter bit [47:0] TARGET2_PID = 48'h00_AABB_CC00_03;
@@ -81,9 +51,6 @@ package i3c_globals_pkg;
   parameter bit [7:0]  TARGET4_DCR = 8'hC6;
 
 
-  // -----------------------------------------------------------------------
-  // Enumerations (unchanged)
-  // -----------------------------------------------------------------------
   typedef enum bit {
     MSB_FIRST = 1'b0,
     LSB_FIRST = 1'b1

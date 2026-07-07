@@ -1,9 +1,4 @@
-// ============================================================================
-// FILE: i3c_daa_write_8b_test.sv  (MULTI-SLAVE VERSION)
-//
-// Runs ENTDAA for all N slaves, then sends one SDR write to each using
-// the dynamically assigned address.
-// ============================================================================
+
 
 class i3c_daa_write_8b_test extends i3c_base_test;
   `uvm_component_utils(i3c_daa_write_8b_test)
@@ -34,9 +29,6 @@ class i3c_daa_write_8b_test extends i3c_base_test;
       $sformatf("Starting multi-slave DAA test (%0d targets)", NO_OF_TARGETS),
       UVM_LOW)
 
-    // -----------------------------------------------------------------------
-    // Phase 1: ENTDAA – assign dynamic addresses to all slaves
-    // -----------------------------------------------------------------------
     daaSeq = i3c_daa_virtual_seq::type_id::create("daaSeq");
     daaSeq.i3c_env_cfg_h = i3c_env_cfg_h;
     daaSeq.start(i3c_env_h.top_virtual_seqr_h);
@@ -49,9 +41,6 @@ class i3c_daa_write_8b_test extends i3c_base_test;
         UVM_LOW)
     end
 
-    // -----------------------------------------------------------------------
-    // Phase 2: SDR WRITE to target[0] using its newly assigned dynamic address
-    // -----------------------------------------------------------------------
     `uvm_info(get_type_name(),
       "Starting SDR WRITE with dynamic address of target[0]", UVM_LOW)
 

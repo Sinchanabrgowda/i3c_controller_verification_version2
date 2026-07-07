@@ -49,7 +49,7 @@ package i3c_ral_virtual_seq_pkg;
   // DAA virtual sequences
   `include "i3c_daa_virtual_seq.sv"
   `include "i3c_sdr_or_daa_virtual_seq.sv"
-
+`include "i3c_hot_join_virtual_seq.sv"  //hot join seq
 endpackage : i3c_ral_virtual_seq_pkg
 
 `endif
