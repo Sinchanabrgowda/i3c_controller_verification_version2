@@ -1,12 +1,4 @@
-// ============================================================================
-// FILE: i3c_env.sv  (MULTI-SLAVE VERSION)
-//
-// Changes vs single-slave:
-//   * Allocates i3c_target_seqr_h[] array on the virtual sequencer to match
-//     the number of target agents.
-//   * Connects EVERY target agent's analysis port to the scoreboard.
-//   * Each target agent's monitor analysis port is connected individually.
-// ============================================================================
+
 `ifndef I3C_ENV_INCLUDED_
 `define I3C_ENV_INCLUDED_
 
@@ -57,15 +49,9 @@ function void i3c_env::build_phase(uvm_phase phase);
   if (i3c_env_cfg_h.has_daa && i3c_env_cfg_h.no_of_daa_devices == 0)
     i3c_env_cfg_h.no_of_daa_devices = i3c_env_cfg_h.no_of_targets;
 
-  // ------------------------------------------------------------------
-  // APB master
-  // ------------------------------------------------------------------
   apb_master_agent_h =
     apb_master_agent::type_id::create("apb_master_agent_h", this);
 
-  // ------------------------------------------------------------------
-  // Target agents – one per slave
-  // ------------------------------------------------------------------
   i3c_target_agent_h = new[i3c_env_cfg_h.no_of_targets];
 
   foreach (i3c_target_agent_h[i]) begin
@@ -73,24 +59,15 @@ function void i3c_env::build_phase(uvm_phase phase);
       $sformatf("i3c_target_agent_h[%0d]", i), this);
   end
 
-  // ------------------------------------------------------------------
-  // Virtual sequencer
-  // ------------------------------------------------------------------
   top_virtual_seqr_h =
     top_virtual_sequencer::type_id::create("top_virtual_seqr_h", this);
 
   top_virtual_seqr_h.i3c_env_cfg_h = i3c_env_cfg_h;
 
-  // ------------------------------------------------------------------
-  // Scoreboard
-  // ------------------------------------------------------------------
   if (i3c_env_cfg_h.has_scoreboard)
     i3c_scoreboard_h =
       i3c_scoreboard::type_id::create("i3c_scoreboard_h", this);
 
-  // ------------------------------------------------------------------
-  // RAL
-  // ------------------------------------------------------------------
   adapter_inst  = apb_master_adapter::type_id::create("adapter_inst");
   topPredictor  = uvm_reg_predictor #(apb_master_tx)::type_id::create(
                     "topPredictor", this);
@@ -106,42 +83,26 @@ endfunction : build_phase
 function void i3c_env::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
 
-  // ------------------------------------------------------------------
-  // Allocate virtual sequencer target-sequencer array and fill it
-  // ------------------------------------------------------------------
   top_virtual_seqr_h.i3c_target_seqr_h =
     new[i3c_env_cfg_h.no_of_targets];
 
   foreach (i3c_target_agent_h[i]) begin
-    // Wire each agent's sequencer into the virtual sequencer array
     top_virtual_seqr_h.i3c_target_seqr_h[i] =
       i3c_target_agent_h[i].i3c_target_seqr_h;
 
-    // Connect every target monitor → its own per-slave scoreboard fifo
-    // target_analysis_fifo[i] is indexed by target number so the scoreboard
-    // can tell which slave produced each transaction.
     if (i3c_env_cfg_h.has_scoreboard) begin
       i3c_target_agent_h[i].i3c_target_mon_proxy_h.target_analysis_port.connect(
         i3c_scoreboard_h.target_analysis_fifo[i].analysis_export);
     end
   end
 
-  // ------------------------------------------------------------------
-  // APB master sequencer → virtual sequencer
-  // ------------------------------------------------------------------
   if (apb_env_cfg_h.has_virtual_seqr)
     top_virtual_seqr_h.apb_master_seqr_h =
       apb_master_agent_h.apb_master_seqr_h;
 
-  // ------------------------------------------------------------------
-  // APB monitor → scoreboard
-  // ------------------------------------------------------------------
   apb_master_agent_h.apb_master_mon_proxy_h.apb_master_analysis_port.connect(
     i3c_scoreboard_h.apb_analysis_fifo.analysis_export);
 
-  // ------------------------------------------------------------------
-  // RAL connections
-  // ------------------------------------------------------------------
   topPredictor.map     = regmodel.default_map;
   topPredictor.adapter = adapter_inst;
 

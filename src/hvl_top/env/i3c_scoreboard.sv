@@ -4,25 +4,15 @@
 class i3c_scoreboard extends uvm_component;
   `uvm_component_utils(i3c_scoreboard)
 
-  // -----------------------------------------------------------------------
-  // Analysis FIFOs
-  // -----------------------------------------------------------------------
 
   // APB master side – single master, one fifo (unchanged)
   uvm_tlm_analysis_fifo #(apb_master_tx) apb_analysis_fifo;
 
   // Target side – ONE FIFO PER SLAVE, sized in build_phase
-  // (the old single target_analysis_fifo is replaced by this array)
   uvm_tlm_analysis_fifo #(i3c_target_tx) target_analysis_fifo[];
 
-  // -----------------------------------------------------------------------
-  // Config handle
-  // -----------------------------------------------------------------------
   i3c_env_config i3c_env_cfg_h;
 
-  // -----------------------------------------------------------------------
-  // SDR counters
-  // -----------------------------------------------------------------------
   int apb_tx_count;
   int target_tx_count;
   int write_pass;
@@ -30,18 +20,12 @@ class i3c_scoreboard extends uvm_component;
   int read_pass;
   int read_fail;
 
-  // -----------------------------------------------------------------------
-  // DAA counters
-  // -----------------------------------------------------------------------
   int daa_addr_pass;
   int daa_addr_fail;
   int daa_parity_pass;
   int daa_parity_fail;
   int daa_devices_seen;
 
-  // -----------------------------------------------------------------------
-  // Expected values decoded from APB CTRL write
-  // -----------------------------------------------------------------------
   bit [6:0] exp_address;
   bit [7:0] exp_length;
   bit       exp_direction;
@@ -52,11 +36,8 @@ class i3c_scoreboard extends uvm_component;
   bit [7:0] exp_write_data[$];
   bit [7:0] exp_rd_wr_data[$];
 
-  // -----------------------------------------------------------------------
-  // Per-slave DAA result record
-  // -----------------------------------------------------------------------
   typedef struct {
-    bit         assigned;         // 1 once this slot gets a DAA result
+    bit         assigned;         
     bit [6:0]   dynamic_address;
     bit [47:0]  pid;
     bit [7:0]   bcr;
@@ -64,30 +45,12 @@ class i3c_scoreboard extends uvm_component;
     bit         daa_ack;
   } daa_result_t;
 
-  daa_result_t daa_result[];        // sized to no_of_targets in build_phase
+  daa_result_t daa_result[];      
 
-  // Expected sequential base address (incremented per assigned device)
   bit [6:0] daa_next_exp_addr;
 
-  // -----------------------------------------------------------------------
-  // HOT JOIN — additive only.
-  //
-  // compare_with_daa_target() is only ever triggered by the APB CTRL write
-  // that kicks off the *initial* ENTDAA round; a hot-join-triggered ENTDAA
-  // round has no corresponding CTRL write (it's generated internally by
-  // hotjoin_req — see i3c_ibi_fsm.v / i3c_daa_fsm.v), so it would otherwise
-  // never be checked. daa_initial_round_done_ev is triggered once, right
-  // after compare_with_daa_target() returns, and unblocks a background
-  // checker that then (and only then) starts draining/validating anything
-  // that shows up afterwards in target_analysis_fifo[]. Gating it behind
-  // this event guarantees it never races compare_with_daa_target() for the
-  // initial round's own fifo items.
-  // -----------------------------------------------------------------------
   event daa_initial_round_done_ev;
 
-  // -----------------------------------------------------------------------
-  // Extern declarations
-  // -----------------------------------------------------------------------
   extern function new(string name = "i3c_scoreboard",
                       uvm_component parent = null);
   extern virtual function void build_phase(uvm_phase phase);
@@ -103,7 +66,7 @@ class i3c_scoreboard extends uvm_component;
   extern protected function bit  is_daa_transaction();
   extern protected task          compare_with_daa_target();
 
-  // HOT JOIN (additive)
+  // HOT JOIN 
   extern protected task          check_hot_join_results();
 
   // helpers
@@ -111,19 +74,11 @@ class i3c_scoreboard extends uvm_component;
 
 endclass : i3c_scoreboard
 
-
-// ============================================================================
-// new
-// ============================================================================
 function i3c_scoreboard::new(string name = "i3c_scoreboard",
                               uvm_component parent = null);
   super.new(name, parent);
 endfunction
 
-
-// ============================================================================
-// build_phase
-// ============================================================================
 function void i3c_scoreboard::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
@@ -131,7 +86,7 @@ function void i3c_scoreboard::build_phase(uvm_phase phase);
         this, "", "i3c_env_config", i3c_env_cfg_h))
     `uvm_fatal("SB_CFG", "Cannot get i3c_env_config from config_db")
 
-  // APB fifo (single master – unchanged)
+  // APB fifo (single master)
   apb_analysis_fifo = new("apb_analysis_fifo", this);
 
   // Per-slave target fifos
@@ -161,16 +116,9 @@ function void i3c_scoreboard::build_phase(uvm_phase phase);
 
 endfunction : build_phase
 
-
-// ============================================================================
-// run_phase
-// ============================================================================
 task i3c_scoreboard::run_phase(uvm_phase phase);
   super.run_phase(phase);
 
-  // HOT JOIN (additive) — runs in the background, gated by
-  // daa_initial_round_done_ev so it never touches target_analysis_fifo[]
-  // until the initial round's own processing below has fully finished.
   fork
     check_hot_join_results();
   join_none
@@ -192,11 +140,6 @@ task i3c_scoreboard::run_phase(uvm_phase phase);
 endtask : run_phase
 
 
-// ============================================================================
-// collect_apb_transaction
-// Scans the APB stream for WDATAB writes and the CTRL START write.
-// Unchanged from single-slave.
-// ============================================================================
 task i3c_scoreboard::collect_apb_transaction();
   apb_master_tx apb_pkt;
   exp_write_data.delete();
@@ -230,9 +173,6 @@ task i3c_scoreboard::collect_apb_transaction();
 endtask : collect_apb_transaction
 
 
-// ============================================================================
-// decode_ctrl
-// ============================================================================
 function void i3c_scoreboard::decode_ctrl(bit [31:0] ctrl_val);
   exp_address   = ctrl_val[6:0];
   exp_length    = ctrl_val[14:7];
@@ -242,9 +182,6 @@ function void i3c_scoreboard::decode_ctrl(bit [31:0] ctrl_val);
 endfunction : decode_ctrl
 
 
-// ============================================================================
-// is_daa_transaction
-// ============================================================================
 function bit i3c_scoreboard::is_daa_transaction();
   if (exp_cmd_type == CMD_TYPE_DAA)
     return 1;
@@ -263,7 +200,6 @@ task i3c_scoreboard::compare_with_daa_target();
   num_targets        = i3c_env_cfg_h.no_of_targets;
   targets_processed  = 0;
 
-  // Validate CTRL fields once (applies to the whole ENTDAA round)
   if (exp_cmd_type == CMD_TYPE_CCC) begin
     if (exp_ccc == ENTDAA_CCC_CODE)
       `uvm_info("SB_DAA_CTRL_CCC",
@@ -276,12 +212,6 @@ task i3c_scoreboard::compare_with_daa_target();
       "CTRL cmd_type = 3 (explicit DAA) PASS", UVM_MEDIUM)
   end
 
-  // -------------------------------------------------------------------------
-  // Collect one DAA result per slave.
-  // We do a non-blocking try_get() across all fifos until all N targets
-  // have reported. This handles the case where different slaves finish in
-  // different simulation time steps.
-  // -------------------------------------------------------------------------
   while (targets_processed < num_targets) begin
 
     for (int i = 0; i < num_targets; i++) begin
@@ -315,16 +245,6 @@ task i3c_scoreboard::compare_with_daa_target();
         daa_result[i].daa_ack         = tgt.daa_ack;
 
         // -- Parity / ACK check
-        //
-        // NOTE: the strict per-device checks below (sequential dynamic
-        // address, BCR[7] role, PID/BCR/DCR cross-checks) only make sense
-        // for a device that actually got assigned THIS round. A device
-        // that legitimately did not participate this round (e.g. one
-        // reserved to hot-join later — see i3c_hot_join_virtual_seq) will
-        // correctly report daa_ack=NACK / dynamic_address=0 here, which is
-        // NOT a failure and must not consume/advance daa_next_exp_addr.
-        // Every existing DAA test has every reporting target ACK, so this
-        // gating is a no-op for them.
         if (tgt.daa_ack === ACK) begin
           `uvm_info("SB_DAA_ACK",
             $sformatf("[target %0d] daa_ack=ACK for addr 0x%0h PASS",
@@ -396,11 +316,6 @@ task i3c_scoreboard::compare_with_daa_target();
               $sformatf("[target %0d] DCR 0x%0h PASS", i, tgt.dcr), UVM_MEDIUM)
 
         end else begin
-          // Legitimately not assigned this round (e.g. reserved for a
-          // later hot-join) — informational only, not a failure, and
-          // daa_next_exp_addr is deliberately left untouched so the next
-          // real assignment still checks against the correct sequential
-          // address.
           `uvm_info("SB_DAA_ACK",
             $sformatf("[target %0d] daa_ack=NACK this round (not assigned yet)",
                       i), UVM_MEDIUM)
@@ -427,23 +342,6 @@ task i3c_scoreboard::compare_with_daa_target();
 endtask : compare_with_daa_target
 
 
-// ============================================================================
-// check_hot_join_results  (additive — see i3c_ibi_detector.v / i3c_ibi_fsm.v)
-//
-// A hot-join-triggered ENTDAA round has no APB CTRL write to gate on (it's
-// generated internally via hotjoin_req), so compare_with_daa_target() never
-// sees it. This task waits for the initial round to fully finish
-// (daa_initial_round_done_ev), then drains whatever shows up afterwards in
-// target_analysis_fifo[]:
-//   - the hot-joining target reports with hotjoin_addr != 0 (set only by
-//     i3c_target_monitor_proxy's pending_hot_join branch) -> validated here
-//     the same way compare_with_daa_target() validates a normal round.
-//   - every other target's monitor also independently re-observes that same
-//     bus session (has_daa stays 1 for the whole test, exactly as it always
-//     has) and reports again with hotjoin_addr == 0 since it isn't the
-//     device that hot-joined -> drained silently so check_phase's "leftover
-//     packet" check stays clean.
-// ============================================================================
 task i3c_scoreboard::check_hot_join_results();
   i3c_target_tx tgt_i;
   bit [6:0]     exp_dyn_addr;
@@ -451,8 +349,6 @@ task i3c_scoreboard::check_hot_join_results();
 
   num_targets = i3c_env_cfg_h.no_of_targets;
 
-  // Never touch the fifos until the initial round is fully processed —
-  // guarantees zero contention with compare_with_daa_target() above.
   @(daa_initial_round_done_ev);
 
   `uvm_info("SB_HOTJOIN",
@@ -467,9 +363,6 @@ task i3c_scoreboard::check_hot_join_results();
         target_tx_count++;
 
         if (tgt_i.hotjoin_addr != 7'h0) begin
-          // ---------------------------------------------------------------
-          // This is the hot-joining target's post-IBI ENTDAA result.
-          // ---------------------------------------------------------------
           `uvm_info("SB_HOTJOIN",
             $sformatf("[target %0d] HOTJOIN result: ibi_addr=0x%0h daa_ack=%0b dynamic_addr=0x%0h PID=0x%0h BCR=0x%0h DCR=0x%0h",
                       i, tgt_i.hotjoin_addr, tgt_i.daa_ack,
@@ -489,8 +382,6 @@ task i3c_scoreboard::check_hot_join_results();
           end else begin
             daa_parity_pass++;
 
-            // -- Sequential dynamic address check (continues on from
-            //    wherever the initial round left daa_next_exp_addr)
             exp_dyn_addr = daa_next_exp_addr;
             daa_next_exp_addr++;
 
@@ -536,13 +427,6 @@ task i3c_scoreboard::check_hot_join_results();
           end
 
         end else begin
-          // ---------------------------------------------------------------
-          // Stale re-observation from a target that simply watched a round
-          // it didn't participate in (its monitor keeps running has_daa=1
-          // for the whole test, same as it always has). Expected and
-          // harmless — drain silently so check_phase's fifo-drain check
-          // stays clean.
-          // ---------------------------------------------------------------
           `uvm_info("SB_HOTJOIN",
             $sformatf("[target %0d] Draining stale post-round monitor report (daa_ack=%0b) - not the hot-joining target",
                       i, tgt_i.daa_ack), UVM_HIGH)
@@ -557,12 +441,6 @@ task i3c_scoreboard::check_hot_join_results();
 endtask : check_hot_join_results
 
 
-// ============================================================================
-// find_target_by_address
-// Returns the index of the target agent whose current targetAddress
-// (dynamic after DAA, static before) matches addr.
-// Returns -1 if not found.
-// ============================================================================
 function int i3c_scoreboard::find_target_by_address(bit [6:0] addr);
   foreach (i3c_env_cfg_h.i3c_target_agent_cfg_h[i]) begin
     if (i3c_env_cfg_h.i3c_target_agent_cfg_h[i].targetAddress == addr)
@@ -572,13 +450,6 @@ function int i3c_scoreboard::find_target_by_address(bit [6:0] addr);
 endfunction : find_target_by_address
 
 
-// ============================================================================
-// compare_with_target  (SDR, MULTI-SLAVE)
-//
-// The master sends to ONE slave at a time (identified by exp_address).
-// We find which target fifo to read by matching exp_address against each
-// agent's current targetAddress (which is the dynamic address after DAA).
-// ============================================================================
 task i3c_scoreboard::compare_with_target();
   i3c_target_tx tgt;
   int           tgt_idx;
@@ -703,15 +574,8 @@ task i3c_scoreboard::compare_with_target();
 endtask : compare_with_target
 
 
-// ============================================================================
-// check_phase
-// ============================================================================
 function void i3c_scoreboard::check_phase(uvm_phase phase);
   super.check_phase(phase);
-
-  // -----------------------------------------------------------------------
-  // Summary banner
-  // -----------------------------------------------------------------------
   `uvm_info("SB_SUMMARY", $sformatf({
     "\n============= SCOREBOARD SUMMARY =============\n",
     "  APB transactions seen      : %0d\n",
@@ -732,26 +596,20 @@ function void i3c_scoreboard::check_phase(uvm_phase phase);
     daa_parity_pass, daa_parity_fail),
     UVM_NONE)
 
-  // -----------------------------------------------------------------------
   // SDR error flags
-  // -----------------------------------------------------------------------
   if (write_fail != 0)
     `uvm_error("SB_SUMMARY", $sformatf("%0d write data mismatch(es)", write_fail))
   if (read_fail != 0)
     `uvm_error("SB_SUMMARY", $sformatf("%0d read data mismatch(es)", read_fail))
 
-  // -----------------------------------------------------------------------
   // DAA: count check
-  // -----------------------------------------------------------------------
   if (i3c_env_cfg_h.has_daa &&
       daa_devices_seen != i3c_env_cfg_h.no_of_daa_devices)
     `uvm_error("SB_SUMMARY",
       $sformatf("DAA device count: expected %0d, saw %0d",
                 i3c_env_cfg_h.no_of_daa_devices, daa_devices_seen))
 
-  // -----------------------------------------------------------------------
   // DAA: address error flags
-  // -----------------------------------------------------------------------
   if (daa_addr_fail != 0)
     `uvm_error("SB_SUMMARY",
       $sformatf("%0d DAA dynamic address mismatch(es)", daa_addr_fail))
@@ -759,9 +617,7 @@ function void i3c_scoreboard::check_phase(uvm_phase phase);
     `uvm_error("SB_SUMMARY",
       $sformatf("%0d DAA parity/ACK failure(s)", daa_parity_fail))
 
-  // -----------------------------------------------------------------------
   // DAA: unique dynamic address check across all slaves
-  // -----------------------------------------------------------------------
   if (i3c_env_cfg_h.has_daa) begin
     for (int i = 0; i < i3c_env_cfg_h.no_of_targets; i++) begin
       for (int j = i+1; j < i3c_env_cfg_h.no_of_targets; j++) begin
@@ -775,9 +631,7 @@ function void i3c_scoreboard::check_phase(uvm_phase phase);
     end
   end
 
-  // -----------------------------------------------------------------------
   // DAA: unique PID check across all slaves
-  // -----------------------------------------------------------------------
   if (i3c_env_cfg_h.has_daa) begin
     for (int i = 0; i < i3c_env_cfg_h.no_of_targets; i++) begin
       for (int j = i+1; j < i3c_env_cfg_h.no_of_targets; j++) begin
@@ -791,9 +645,7 @@ function void i3c_scoreboard::check_phase(uvm_phase phase);
     end
   end
 
-  // -----------------------------------------------------------------------
   // Per-slave FIFO drain check
-  // -----------------------------------------------------------------------
   foreach (target_analysis_fifo[i]) begin
     if (target_analysis_fifo[i].size() != 0)
       `uvm_error("SB_SUMMARY",

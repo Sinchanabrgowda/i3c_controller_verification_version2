@@ -1,13 +1,6 @@
 `ifndef I3C_ENV_CONFIG_INCLUDED_
 `define I3C_ENV_CONFIG_INCLUDED_
 
-// ============================================================================
-// FILE: i3c_env_config.sv  (MULTI-SLAVE – controller AVIP removed)
-//
-// Removed:
-//   - no_of_controllers  (not needed: DUT IS the controller)
-//   - i3c_controller_agent_config i3c_controller_agent_cfg_h[]
-// ============================================================================
 class i3c_env_config extends uvm_object;
   `uvm_object_utils(i3c_env_config)
 

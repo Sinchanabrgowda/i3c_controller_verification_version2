@@ -89,8 +89,6 @@ endfunction : setup_env_cfg
 
 
 function void i3c_base_test::setup_target_agent_cfg();
-  // Assign unique PID/BCR/DCR and target_id to every slave.
-  // Lowest PID wins DAA arbitration first (open-drain dominant-0 rule).
   foreach (i3c_env_cfg_h.i3c_target_agent_cfg_h[i]) begin
     i3c_env_cfg_h.i3c_target_agent_cfg_h[i].target_id    = i;
     i3c_env_cfg_h.i3c_target_agent_cfg_h[i].isActive     = UVM_ACTIVE;
@@ -127,7 +125,6 @@ function void i3c_base_test::setup_target_agent_cfg();
            i3c_env_cfg_h.i3c_target_agent_cfg_h[i].dcr           = TARGET3_DCR;
          end
       default: begin
-        // Auto-generate unique PIDs for targets beyond index 3
         i3c_env_cfg_h.i3c_target_agent_cfg_h[i].pid = 48'h00_AABB_CC00_00 + i + 1;
         i3c_env_cfg_h.i3c_target_agent_cfg_h[i].bcr = DEFAULT_BCR;
         i3c_env_cfg_h.i3c_target_agent_cfg_h[i].dcr = 8'hC0 + i;

@@ -170,8 +170,8 @@ always @(*) begin
         be_valid = 1;
         be_rd_wr = 0;
 
-//        be_tx_data = is_i3c ? {dyn_addr, dir} : {addr, dir};
-be_tx_data = {addr, dir};  
+       be_tx_data = is_i3c ? {dyn_addr, dir} : {addr, dir};
+      //be_tx_data = {addr, dir};  
       sdr_addr   = addr;
 
         if (!be_busy)
