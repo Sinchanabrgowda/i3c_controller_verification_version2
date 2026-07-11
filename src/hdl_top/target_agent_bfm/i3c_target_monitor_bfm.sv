@@ -96,7 +96,12 @@ interface i3c_target_monitor_bfm (
     disable fork;
   endtask : sampleReadDataAndAck
 
- 
+ bit has_address = 0;
+
+function bit is_addressed();
+  return has_address;
+endfunction : is_addressed
+
   task sample_daa_data(inout i3c_transfer_bits_s pkt,
                        inout i3c_transfer_cfg_s  cfg);
     bit [63:0] arb_shift;
@@ -121,6 +126,14 @@ interface i3c_target_monitor_bfm (
     // Steps 1-3: START + 7E+W + ENTDAA (common preamble, once only)
     detect_start();
     `uvm_info(name, "DAA MON: START detected", UVM_HIGH)
+
+ if (has_address) begin
+    `uvm_info(name,
+      "DAA MON: already has dynamic address - passively skipping this DAA session",
+      UVM_NONE)
+    skip_daa_session_passively();
+    return;
+  end
 
     // Consume 7E+W byte (8 POSEDGEs) + ACK slot
     for (int k = 7; k >= 0; k--)
@@ -196,6 +209,7 @@ interface i3c_target_monitor_bfm (
         pkt.dcr             = cfg.dcr;
         pkt.dynamic_address = dyn_byte[7:1];
         pkt.daa_ack         = ACK;
+        has_address         = 1; 
         `uvm_info(name,
           $sformatf("DAA MON [round %0d] THIS TARGET WON: dyn_addr=0x%0h",
                     round, pkt.dynamic_address),
@@ -206,7 +220,7 @@ interface i3c_target_monitor_bfm (
       if (!got_rep_start) begin
         // STOP: DAA complete, this target was never assigned
         `uvm_info(name,
-          $sformatf("DAA MON: STOP detected after round %0d — target not assigned (pid=0x%0h)",
+          $sformatf("DAA MON: STOP detected after round %0d \u2014 target not assigned (pid=0x%0h)",
                     round, cfg.pid),
           UVM_NONE)
         // pkt already defaulted to NACK/0 at top
@@ -222,6 +236,40 @@ interface i3c_target_monitor_bfm (
 
   endtask : sample_daa_data
 
+task automatic skip_daa_session_passively();
+  bit [1:0] scl_loc;
+  bit [1:0] sda_loc;
+  bit       got_rep_start;
+
+  // consume 7E+W + ACK
+  for (int k = 7; k >= 0; k--) detectEdge_scl(POSEDGE);
+  detectEdge_scl(NEGEDGE); detectEdge_scl(POSEDGE); detectEdge_scl(NEGEDGE);
+
+  // consume ENTDAA + ACK
+  for (int k = 7; k >= 0; k--) detectEdge_scl(POSEDGE);
+  detectEdge_scl(NEGEDGE); detectEdge_scl(POSEDGE); detectEdge_scl(NEGEDGE);
+
+  detect_rep_start(scl_loc, sda_loc);
+
+  forever begin
+    detectEdge_scl(NEGEDGE);
+    for (int k = 7; k >= 0; k--) detectEdge_scl(POSEDGE);   // 7E+R
+    detectEdge_scl(NEGEDGE); detectEdge_scl(POSEDGE); detectEdge_scl(NEGEDGE); // ACK
+
+    for (int k = 63; k >= 0; k--) begin                      // 64 arb bits
+      detectEdge_scl(POSEDGE);
+      detectEdge_scl(NEGEDGE);
+    end
+
+    for (int k = 7; k >= 0; k--) detectEdge_scl(POSEDGE);    // dyn addr byte
+    detectEdge_scl(NEGEDGE); detectEdge_scl(POSEDGE);        // ACK/NACK
+
+    detect_rep_start_or_stop(scl_loc, sda_loc, got_rep_start);
+    detectEdge_scl(NEGEDGE);
+
+    if (!got_rep_start) return;   // STOP — session over
+  end
+endtask : skip_daa_session_passively
 
   // Detect Repeated-START: SDA falls while SCL=1
   task automatic detect_rep_start(ref bit [1:0] scl_loc, ref bit [1:0] sda_loc);
@@ -250,14 +298,14 @@ interface i3c_target_monitor_bfm (
       scl_loc = {scl_loc[0], scl_i};
       sda_loc = {sda_loc[0], sda_i};
 
-      // SDA falls while SCL=1 → Rep-START
+      // SDA falls while SCL=1 \u2192 Rep-START
       if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
          `uvm_info(name,$sformatf("DAA repeated start detected@ time=%0t", $time),UVM_NONE)
 							got_rep_start = 1;
         return;
       end
 
-      // SDA rises while SCL=1 → STOP
+      // SDA rises while SCL=1 \u2192 STOP
       if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
         `uvm_info(name, "DAA MON: STOP detected", UVM_HIGH)
 
@@ -378,7 +426,7 @@ interface i3c_target_monitor_bfm (
     end while (!(scl_loc_m == edgeSCL));
   endtask : detectEdge_scl
 
-  // HOT JOIN monitoring — NEW, additive only.
+  // HOT JOIN monitoring \u2014 NEW, additive only.
 
   task sample_hot_join_ibi(output bit [6:0] ibi_addr_out);
     bit [7:0] full_byte;
@@ -398,7 +446,7 @@ interface i3c_target_monitor_bfm (
 
     ibi_addr_out = full_byte[7:1];
 
-    // ACK slot — driven by the controller for this read-direction byte.
+    // ACK slot \u2014 driven by the controller for this read-direction byte.
     detectEdge_scl(NEGEDGE);
     detectEdge_scl(POSEDGE);
     ack = sda_i;

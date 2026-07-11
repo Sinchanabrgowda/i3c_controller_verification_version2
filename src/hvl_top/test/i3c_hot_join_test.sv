@@ -1,5 +1,3 @@
-
-
 class i3c_hot_join_test extends i3c_base_test;
   `uvm_component_utils(i3c_hot_join_test)
 
@@ -17,8 +15,16 @@ class i3c_hot_join_test extends i3c_base_test;
       i3c_env_cfg_h.i3c_target_agent_cfg_h[i].pending_hot_join  = 0;
     end
     i3c_env_cfg_h.has_daa           = 1;
-   
-    i3c_env_cfg_h.no_of_daa_devices = NO_OF_TARGETS + 1;
+
+    // FIX: total real devices on the bus = NO_OF_TARGETS (3 via the
+    // initial DAA round + 1 via hot-join = NO_OF_TARGETS when
+    // NO_OF_TARGETS=4). The scoreboard counts every device that gets a
+    // dynamic address across BOTH the initial round and the hot-join
+    // round -- there is no 5th device on the bus.
+    // Was: NO_OF_TARGETS + 1, which produced
+    //   UVM_ERROR ... [SB_SUMMARY] DAA device count: expected 5, saw 4
+    // on every run regardless of whether the hot-join itself worked.
+    i3c_env_cfg_h.no_of_daa_devices = NO_OF_TARGETS;
   endfunction
 
   virtual task run_phase(uvm_phase phase);
@@ -31,10 +37,11 @@ class i3c_hot_join_test extends i3c_base_test;
 
     hotJoinSeq = i3c_hot_join_virtual_seq::type_id::create("hotJoinSeq");
     hotJoinSeq.i3c_env_cfg_h    = i3c_env_cfg_h;
-    hotJoinSeq.hotjoin_ibi_addr = 7'h20;
+    hotJoinSeq.hotjoin_ibi_addr = 7'h02;
     hotJoinSeq.start(i3c_env_h.top_virtual_seqr_h);
 
     `uvm_info(get_type_name(), "Hot-join test phase complete", UVM_LOW)
+
     foreach (i3c_env_cfg_h.i3c_target_agent_cfg_h[i]) begin
       `uvm_info(get_type_name(),
         $sformatf("  target[%0d] dynamic addr = 0x%0h",
@@ -45,6 +52,4 @@ class i3c_hot_join_test extends i3c_base_test;
     #50us;
     phase.drop_objection(this);
   endtask
-
 endclass
-

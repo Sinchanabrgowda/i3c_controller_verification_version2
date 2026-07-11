@@ -180,7 +180,7 @@ task sampleWriteDataAndDriveACK(
     sample_daa_broadcast_read(dataPacketStruck);      // 7E+R + ACK (unassigned pulls low)
 
     // ARBITRATION LOOP
-    
+
     won_arb = 0;
 
     while (!won_arb) begin
@@ -193,7 +193,7 @@ task sampleWriteDataAndDriveACK(
 
         skip_remaining_winner_frame(lost_bit);
 
-    
+
         detect_rep_start_or_stop(got_rep_start);
 
         if (!got_rep_start) begin
@@ -231,7 +231,7 @@ task sampleWriteDataAndDriveACK(
     dataPacketStruck.targetAddress       = 7'h7E;
     dataPacketStruck.targetAddressStatus = ACK;
 
-   
+
     forever begin
 
       detect_rep_start_or_stop(got_rep_start);
@@ -245,13 +245,13 @@ task sampleWriteDataAndDriveACK(
         "DAA: REP_START after assignment - consuming 7E+R, driving NACK",
         UVM_NONE)
       sample_daa_broadcast_read(dataPacketStruck);
-     
+
 
     end // forever
 
   endtask : drive_daa_data
 
-  // ARB PHASE – drive 64-bit PID+BCR+DCR with open-drain arbitration
+  // ARB PHASE  drive 64-bit PID+BCR+DCR with open-drain arbitration
 
   task automatic drive_daa_arb_bits(
       input  bit [63:0] my_id,
@@ -318,7 +318,7 @@ task automatic drive_daa_arb_bits(
     my_bit      = my_id[i];
     all_bits[i] = my_id[i];
 
-    // Step 1: SCL low → safe window to change SDA
+    // Step 1: SCL low ? safe window to change SDA
     detectEdge_scl(NEGEDGE);
 
     // Step 2: drive our bit
@@ -326,7 +326,7 @@ task automatic drive_daa_arb_bits(
     `uvm_info("DRIVE_DAA_BITS",
       $sformatf("sent bit =%b", my_bit), UVM_LOW)
 
-    // Step 3: SCL rising → master samples
+    // Step 3: SCL rising ? master samples
     detectEdge_scl(POSEDGE);
 
     // Step 4: sample the bus
@@ -468,7 +468,7 @@ task automatic drive_daa_arb_bits(
       end
 
       if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
-       
+
 
  `uvm_info(name,$sformatf("[target_id=%0d] detect_rep_start_or_stop(STOP): STOP  @ time=%0t",i3c_target_drv_proxy_h.i3c_target_agent_cfg_h.target_id, $time),UVM_NONE)
         got_rep_start = 0;
@@ -502,7 +502,7 @@ task automatic drive_daa_arb_bits(
       $sformatf("DAA: broadcast read addr = 0x%0x (expect 0xFD)", full_byte),
       UVM_NONE)
 
-   
+
     detectEdge_scl(NEGEDGE);
 `uvm_info("DAA_ACK_DEBUG",$sformatf("[target_id=%0d] has_address=%0b -> driving %s on 7E+R ACK slot",i3c_target_drv_proxy_h.i3c_target_agent_cfg_h.target_id,has_address,has_address ? "NACK" : "ACK"),UVM_NONE)
 
@@ -540,12 +540,12 @@ task automatic drive_daa_arb_bits(
     if (parity_calc == parity_received) begin
       ack_out = ACK;
       `uvm_info(name,
-        $sformatf("DAA: dynamic addr=%0h dyn_add+parity=%0h parity OK =%0b→ ACK",dyn_addr_out,addr_byte,parity_received),UVM_NONE)
+        $sformatf("DAA: dynamic addr=%0h dyn_add+parity=%0h parity OK =%0b? ACK",dyn_addr_out,addr_byte,parity_received),UVM_NONE)
         end
     else begin
       ack_out = NACK;
       `uvm_info(name,
-        $sformatf("DAA: dynamic addr=0x%0x parity FAIL → NACK", dyn_addr_out),
+        $sformatf("DAA: dynamic addr=0x%0x parity FAIL ? NACK", dyn_addr_out),
         UVM_NONE)
     end
 
@@ -690,7 +690,7 @@ end
     drive_sda(1);
   endtask : drive_read_data
 
-  task sample_ack(output bit ack);
+        task sample_ack(output bit ack);
     state = ACK_NACK;
     detectEdge_scl(POSEDGE);
     ack = sda_i;
@@ -745,8 +745,8 @@ end
       $sformatf("scl %s detected", scl_edge_value.name()), UVM_HIGH)
   endtask : detectEdge_scl
 
-  // HOT JOIN (IBI-initiated DAA) 
- 
+  // HOT JOIN (IBI-initiated DAA)
+
 
   task wait_for_stable_bus_idle();
     int idle_cycles;
@@ -767,8 +767,8 @@ end
     bit [7:0] full_byte;
 bit ibi_ack=0;
 bit bus_bit=0;
-    full_byte = {hotjoin_addr, 1'b1};  // 7-bit addr + RnW(=1, target->ctrl)
-
+    full_byte = {hotjoin_addr, 1'b0};  // 7-bit addr + RnW(=0, target->ctrl)
+    
     `uvm_info(name,
       "HOT_JOIN: waiting for stable bus idle before asserting IBI request",
       UVM_NONE)
@@ -779,7 +779,7 @@ bit bus_bit=0;
       UVM_NONE)
     drive_sda(1'b0);
 
-    //detectEdge_scl(NEGEDGE);
+    detectEdge_scl(NEGEDGE);
 
     `uvm_info(name,
       $sformatf("HOT_JOIN: driving IBI address byte = 0x%0h (addr=0x%0h, RnW=1)",
@@ -787,28 +787,58 @@ bit bus_bit=0;
       UVM_NONE)
 
     for (int k = 7; k >= 0; k--) begin
-     detectEdge_scl(NEGEDGE);
+    // detectEdge_scl(NEGEDGE);
       drive_sda(full_byte[k]);
       detectEdge_scl(POSEDGE);
 
       bus_bit = sda_i;
       `uvm_info("HOT_JOIN_BUS_BIT",$sformatf("curretn bus bit=%b",bus_bit),UVM_LOW)
-      //detectEdge_scl(NEGEDGE);
-      
+      detectEdge_scl(NEGEDGE);
+
     end
 
-    // Release SDA — controller drives the ACK slot for this read-direction
-    // byte, then (per i3c_ibi_fsm.v CHECK_WAIT->HOTJOIN->DONE) generates a
-    // STOP and immediately restarts with a fresh ENTDAA sequence.
     drive_sda(1'b1);
     sample_ack(ibi_ack);   // <-- add this: sample master's ACK on the 9th clock
-    `uvm_info(name, $sformatf("HOT_JOIN: address ACK/NACK = %0b", ibi_ack), UVM_NONE)
+//detect_stop();
+    `uvm_info("CHECK HOT JOIN", $sformatf("HOT_JOIN: address ACK/NACK = %0b", ibi_ack), UVM_NONE)
 
     `uvm_info(name,
-      "HOT_JOIN: IBI address phase complete — controller will restart ENTDAA for hot-join",
+      "HOT_JOIN: IBI address phase complete  controller will restart ENTDAA for hot-join",
       UVM_NONE)
-  endtask : drive_hot_join_ibi
 
+//sample_daa_broadcast_Address();
+  endtask : drive_hot_join_ibi
+/*
+task sample_daa_broadcast_Address();
+    bit [6:0] addr_bits;
+    bit       rw_bit;
+    bit [7:0] full_byte;
+
+    `uvm_info(name, "DAA: sampling broadcast 0x7E+W", UVM_HIGH)
+
+    for (int k = 6; k >= 0; k--) begin
+      detectEdge_scl(POSEDGE);
+      addr_bits[k] = sda_i;
+      drive_sda(1);
+    end
+
+    detectEdge_scl(POSEDGE);
+    rw_bit    = sda_i;
+    drive_sda(1);
+
+    full_byte = {addr_bits, rw_bit};
+    `uvm_info(name,
+      $sformatf("DAA: broadcast addr = 0x%0x (expect 0xFC)", full_byte),
+      UVM_NONE)
+
+    detectEdge_scl(NEGEDGE);
+    drive_sda(1'b0);
+    detectEdge_scl(POSEDGE);
+    detectEdge_scl(NEGEDGE);
+    drive_sda(1'b1);
+
+  endtask : sample_daa_broadcast_Address
+*/
   task drive_hot_join_data(
       input  bit [6:0]   hotjoin_addr,
       inout  i3c_transfer_bits_s dataPacketStruck,
@@ -842,4 +872,3 @@ bit bus_bit=0;
 endinterface : i3c_target_driver_bfm
 
 `endif
-
