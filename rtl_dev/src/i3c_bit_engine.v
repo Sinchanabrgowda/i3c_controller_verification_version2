@@ -288,8 +288,8 @@ always @ (posedge clk or negedge rst_n) begin
 
 		  if (!rd_wr && scl_rise) begin
             parity_error <= (sda_i != parity_bit);
-            //nack <= 1'b0;
-            nack<=sda_i;
+            nack <= 1'b0;
+            //nack<=sda_i;
 		  end
 
 		  else if (rd_wr && scl_rise) begin
