@@ -24,7 +24,10 @@ class i3c_target_agent_config extends uvm_object;
   bit [47:0] pid = 48'hAABBCCDDEEFF;  
   bit [7:0]  bcr = 8'h00;          
   bit [7:0]  dcr = 8'hC2;
- 
+ // Set by the hot-join virtual sequence on every target EXCEPT the one
+// currently hot-joining. While set, that target's monitor proxy stays
+// completely off the bus.
+bit hotjoin_in_progress_elsewhere = 0;
 
   extern function new(string name = "i3c_target_agent_config");
   extern function void do_print(uvm_printer printer);

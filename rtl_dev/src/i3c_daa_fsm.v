@@ -163,7 +163,7 @@ always @(posedge clk or negedge rst_n) begin
       end
 
       SEND_7E_R: begin
-        push_pull <= 1'b0;
+        push_pull <= 1'b1;
         valid     <= !busy && !be_done ? 1'b1 : 1'b0;
         rd_wr     <= 1'b0;
         tx_data   <= {7'h7E, 1'b1};
