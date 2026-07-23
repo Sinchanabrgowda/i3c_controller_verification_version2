@@ -1,14 +1,18 @@
 //fixed
 `ifndef I3C_TARGET_MONITOR_PROXY_INCLUDED_
 `define I3C_TARGET_MONITOR_PROXY_INCLUDED_
+
 class i3c_target_monitor_proxy extends uvm_component;
   `uvm_component_utils(i3c_target_monitor_proxy)
   i3c_target_tx                      tx;
   i3c_target_agent_config            i3c_target_agent_cfg_h;
   virtual i3c_target_monitor_bfm     i3c_target_mon_bfm_h;
   uvm_analysis_port #(i3c_target_tx) target_analysis_port;
+  
+  uvm_analysis_port #(i3c_target_tx) ibi_analysis_port;
   localparam bit [7:0] BCAST_7E_W  = 8'hFC;
   localparam bit [7:0] ENTDAA_CODE = 8'h07;
+
   extern function new(string name = "i3c_target_monitor_proxy",
                       uvm_component parent = null);
   extern virtual function void build_phase(uvm_phase phase);
@@ -17,19 +21,24 @@ class i3c_target_monitor_proxy extends uvm_component;
   extern virtual function void start_of_simulation_phase(uvm_phase phase);
   extern virtual task          run_phase(uvm_phase phase);
 endclass : i3c_target_monitor_proxy
+
 function i3c_target_monitor_proxy::new(
     string name = "i3c_target_monitor_proxy",
     uvm_component parent = null);
   super.new(name, parent);
   target_analysis_port = new("target_analysis_port", this);
+  ibi_analysis_port     = new("ibi_analysis_port", this);
   tx = new();
 endfunction : new
+
 function void i3c_target_monitor_proxy::build_phase(uvm_phase phase);
   super.build_phase(phase);
 endfunction : build_phase
+
 function void i3c_target_monitor_proxy::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
 endfunction : connect_phase
+
 function void i3c_target_monitor_proxy::end_of_elaboration_phase(
     uvm_phase phase);
   string mon_key;
@@ -47,10 +56,12 @@ function void i3c_target_monitor_proxy::end_of_elaboration_phase(
   end
   i3c_target_mon_bfm_h.i3c_target_mon_proxy_h = this;
 endfunction : end_of_elaboration_phase
+
 function void i3c_target_monitor_proxy::start_of_simulation_phase(
     uvm_phase phase);
   super.start_of_simulation_phase(phase);
 endfunction : start_of_simulation_phase
+
 task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
   i3c_transfer_bits_s struct_packet;
   i3c_transfer_cfg_s  struct_cfg;
@@ -59,18 +70,9 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
               i3c_target_agent_cfg_h.target_id), UVM_HIGH)
   i3c_target_mon_bfm_h.wait_for_reset();
   i3c_target_mon_bfm_h.sample_idle_state();
+
   forever begin
-    // FIX: while another target's hot-join is in flight, this target must
-    // not touch the bus at all -- no detect_start(), no DAA bit-walking, no
-    // scoreboard report. Previously every already-assigned target still
-    // called sample_daa_data() -> has_address branch -> skip_daa_session_
-    // passively(), which actively decodes every START/STOP/arb-bit of the
-    // hot-join's ENTDAA restart and then still pushed a bogus DAA tx
-    // (dynamic_address=0x0, daa_ack=NACK) to the scoreboard. That was the
-    // source of the "Draining stale post-round monitor report" messages and
-    // the illegal DYNADDR_RESERVED coverage hits on targets 0-2. Blocking
-    // here, before the BFM is ever called, removes the noise at the root
-    // instead of filtering it downstream.
+    
     if (i3c_target_agent_cfg_h != null &&
         i3c_target_agent_cfg_h.hotjoin_in_progress_elsewhere) begin
       `uvm_info(get_type_name(),
@@ -123,20 +125,43 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
                   tx.dynamic_address),
         UVM_NONE)
     end else if (i3c_target_agent_cfg_h != null &&
+        i3c_target_agent_cfg_h.pending_ibi) begin
+      bit [6:0] observed_ibi_dyn_addr;
+      bit       observed_ibi_ack;
+      bit [7:0] observed_ibi_mdb;
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] Waiting to sample IBI transaction",
+                  i3c_target_agent_cfg_h.target_id), UVM_HIGH)
+      i3c_target_mon_bfm_h.sample_ibi_data(
+        observed_ibi_dyn_addr, observed_ibi_ack, observed_ibi_mdb);
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] IBI BFM returned -> addr=0x%0h ack=%0b mdb=0x%0h",
+                  i3c_target_agent_cfg_h.target_id,
+                  observed_ibi_dyn_addr, observed_ibi_ack, observed_ibi_mdb),
+        UVM_NONE)
+      tx.txn_type        = i3c_target_tx::IBI;
+      tx.dynamic_address = observed_ibi_dyn_addr;
+      tx.daa_ack          = observed_ibi_ack;
+      tx.ibi_mdb          = observed_ibi_mdb;
+      i3c_target_agent_cfg_h.pending_ibi = 0;
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] IBI tx -> txn_type=%s addr=0x%0h ack=%0b mdb=0x%0h",
+                  i3c_target_agent_cfg_h.target_id, tx.txn_type.name(),
+                  tx.dynamic_address, tx.daa_ack, tx.ibi_mdb), UVM_NONE)
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] --> writing to DEDICATED ibi_analysis_port (scoreboard): txn_type=%s",
+                  i3c_target_agent_cfg_h.target_id, tx.txn_type.name()),
+        UVM_NONE)
+      ibi_analysis_port.write(tx);
+      
+      continue;
+    end else if (i3c_target_agent_cfg_h != null &&
         i3c_target_agent_cfg_h.has_daa) begin
-      // FIX: sample_daa_data() blocks inside detect_start(), possibly for a
-      // long time (this is exactly what happens right after this target's
-      // own assignment, waiting for the *next* bus START). If a hot-join on
-      // another target begins while we are parked in that blocking call,
-      // setting hotjoin_in_progress_elsewhere alone does nothing -- this
-      // task is already inside the BFM and won't re-check anything until
-      // the call returns on its own, which is what let the phantom-round
-      // STOP at the end of the hot-join leak through as a bogus report.
-      // Race the blocking call against the flag instead, and abandon the
-      // in-flight sample entirely (no report, no coverage sample) if
-      // hot-join starts first.
+    
       bit hotjoin_interrupted;
+      bit ibi_interrupted;
       hotjoin_interrupted = 0;
+      ibi_interrupted     = 0;
       `uvm_info(get_type_name(),
         $sformatf("[target_id=%0d] Waiting to sample DAA transaction",
                   i3c_target_agent_cfg_h.target_id), UVM_HIGH)
@@ -148,11 +173,21 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
           wait (i3c_target_agent_cfg_h.hotjoin_in_progress_elsewhere);
           hotjoin_interrupted = 1;
         end
+        begin : abort_on_ibi
+          wait (i3c_target_agent_cfg_h.pending_ibi);
+          ibi_interrupted = 1;
+        end
       join_any
       disable fork;
       if (hotjoin_interrupted) begin
         `uvm_info(get_type_name(),
           $sformatf("[target_id=%0d] Aborting in-flight DAA sample - hot-join started on another target",
+                    i3c_target_agent_cfg_h.target_id), UVM_HIGH)
+        continue;
+      end
+      if (ibi_interrupted) begin
+        `uvm_info(get_type_name(),
+          $sformatf("[target_id=%0d] Aborting in-flight DAA sample - IBI requested on this target",
                     i3c_target_agent_cfg_h.target_id), UVM_HIGH)
         continue;
       end

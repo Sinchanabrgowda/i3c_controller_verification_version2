@@ -1,8 +1,5 @@
-
-
 interface i3c_if #(parameter int NO_OF_TARGETS = 1)
     (input pclk, input areset, inout SCL, inout SDA);
-
   import i3c_globals_pkg::*;
 
   logic scl_i;
@@ -21,8 +18,8 @@ interface i3c_if #(parameter int NO_OF_TARGETS = 1)
     end
   endgenerate
 
+  //assign SDA = (ctrl_sda_oen && !ctrl_sda_o) ? 1'b0 : 1'bz;
+
   assign scl_i = SCL;
   assign sda_i = SDA;
-
 endinterface : i3c_if
-

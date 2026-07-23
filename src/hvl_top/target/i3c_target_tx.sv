@@ -18,7 +18,8 @@ class i3c_target_tx extends uvm_sequence_item;
   typedef enum bit [1:0] {
     SDR     = 2'b00,
     DAA     = 2'b01,
-    HOTJOIN = 2'b10
+    HOTJOIN = 2'b10,
+    IBI     = 2'b11
   } txn_type_e;
 
   rand txn_type_e   txn_type;         
@@ -29,6 +30,8 @@ class i3c_target_tx extends uvm_sequence_item;
        bit          daa_ack;           
 
   rand bit [6:0]    hotjoin_addr;
+
+  rand bit [7:0]    ibi_mdb;
   
   constraint readDataSizeMax_c {
     soft readData.size() == MAXIMUM_BYTES;
@@ -56,7 +59,11 @@ class i3c_target_tx extends uvm_sequence_item;
   }
 
   constraint hotjoin_addr_default_c {
-    soft hotjoin_addr == 7'h20;
+    soft hotjoin_addr == 7'h02;
+  }
+
+  constraint ibi_mdb_default_c {
+    soft ibi_mdb == 8'h17;
   }
 
  
@@ -115,6 +122,7 @@ function void i3c_target_tx::do_copy(uvm_object rhs);
   dynamic_address = target_rhs.dynamic_address;
   daa_ack         = target_rhs.daa_ack;
   hotjoin_addr    = target_rhs.hotjoin_addr;
+  ibi_mdb         = target_rhs.ibi_mdb;
 
 endfunction : do_copy
 
@@ -144,7 +152,8 @@ function bit i3c_target_tx::do_compare(uvm_object rhs,
     dcr             == target_rhs.dcr             &&
     dynamic_address == target_rhs.dynamic_address &&
     daa_ack         == target_rhs.daa_ack         &&
-    hotjoin_addr    == target_rhs.hotjoin_addr;
+    hotjoin_addr    == target_rhs.hotjoin_addr    &&
+    ibi_mdb         == target_rhs.ibi_mdb;
 
 endfunction : do_compare
 
@@ -195,6 +204,10 @@ function void i3c_target_tx::do_print(uvm_printer printer);
     if (txn_type == HOTJOIN)
       printer.print_field("hotjoin_addr",
         this.hotjoin_addr, $bits(hotjoin_addr), UVM_HEX);
+
+    if (txn_type == IBI)
+      printer.print_field("ibi_mdb",
+        this.ibi_mdb, $bits(ibi_mdb), UVM_HEX);
   end
 
 endfunction : do_print
@@ -240,4 +253,5 @@ function bit[1:0] i3c_target_tx::getReadDataStatus();
 endfunction : getReadDataStatus
 
 `endif
+
 

@@ -46,6 +46,7 @@ package i3c_test_pkg;
   `include "i3c_daa_write_read_write_read_8b_test.sv"
   `include "i3c_sdr_or_daa_write_8b_test.sv"
 `include "i3c_hot_join_test.sv"
+`include "i3c_ibi_test.sv"
 endpackage : i3c_test_pkg
 
 `endif

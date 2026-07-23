@@ -93,6 +93,10 @@ function void i3c_env::connect_phase(uvm_phase phase);
     if (i3c_env_cfg_h.has_scoreboard) begin
       i3c_target_agent_h[i].i3c_target_mon_proxy_h.target_analysis_port.connect(
         i3c_scoreboard_h.target_analysis_fifo[i].analysis_export);
+
+      // IBI -- NEW, additive only. Dedicated port/fifo pair.
+      i3c_target_agent_h[i].i3c_target_mon_proxy_h.ibi_analysis_port.connect(
+        i3c_scoreboard_h.ibi_analysis_fifo[i].analysis_export);
     end
   end
 
@@ -118,4 +122,5 @@ function void i3c_env::connect_phase(uvm_phase phase);
 endfunction : connect_phase
 
 `endif
+
 

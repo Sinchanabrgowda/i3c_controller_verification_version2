@@ -75,6 +75,8 @@ always @(posedge clk or negedge rst_n) begin
   end
 end
 
+//here
+
 always @(posedge clk or negedge rst_n) begin
   if (!rst_n)
     pid_done <= 1'b0;
@@ -110,7 +112,7 @@ always @ (*) begin
 
       SHIFT  : next =  (bit_cnt == 0) && scl_fall ? ACK : SHIFT;
 
-      ACK    : next = scl_rise ? WAIT : ACK;
+      ACK    : next = scl_rise ? WAIT : ACK;                                    
 
       WAIT: begin
           if (pid_done )
@@ -179,6 +181,7 @@ always @ * begin
       ACK    : sda_oe = rd_wr ? 1'b1 : 1'b0;
 
       WAIT   : sda_oe = 1'b0;
+  //added
 
       STOP   : {sda_oe, sda_o} = {s_oe, s_o};
 

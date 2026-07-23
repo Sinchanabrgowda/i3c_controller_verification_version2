@@ -150,6 +150,28 @@ task i3c_target_driver_proxy::run_phase(uvm_phase phase);
           UVM_LOW)
       end
 
+    end else if (req.txn_type == i3c_target_tx::IBI) begin
+      bit ibi_ack_out;
+
+      `uvm_info("TGT_DRV_PROXY",
+        $sformatf("[target_id=%0d] IBI transaction, dynamic_address=0x%0h mdb=0x%0h",
+                  i3c_target_agent_cfg_h.target_id,
+                  i3c_target_agent_cfg_h.targetAddress, req.ibi_mdb), UVM_NONE)
+
+      i3c_target_drv_bfm_h.drive_ibi_data(
+        i3c_target_agent_cfg_h.targetAddress,
+        req.ibi_mdb,
+        ibi_ack_out
+      );
+
+      req.dynamic_address = i3c_target_agent_cfg_h.targetAddress;
+      req.daa_ack          = ibi_ack_out;
+
+      `uvm_info("TGT_DRV_PROXY",
+        $sformatf("[target_id=%0d] IBI done: dynamic_address=0x%0h mdb=0x%0h ack=%0b",
+                  i3c_target_agent_cfg_h.target_id,
+                  req.dynamic_address, req.ibi_mdb, ibi_ack_out), UVM_NONE)
+
     end else begin
       // SDR TRANSACTION
       `uvm_info("TGT_DRV_PROXY",
@@ -171,5 +193,6 @@ task i3c_target_driver_proxy::run_phase(uvm_phase phase);
 endtask : run_phase
 
 `endif
+
 
 

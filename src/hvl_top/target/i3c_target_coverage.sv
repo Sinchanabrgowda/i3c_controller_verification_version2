@@ -106,6 +106,22 @@ endgroup : target_covergroup
 
   endgroup : daa_covergroup
 
+  // IBI (In-Band Interrupt) covergroup -- NEW, additive only.
+  covergroup ibi_covergroup with function sample(i3c_target_tx packet);
+    option.per_instance = 1;
+
+    IBI_ACK_CP : coverpoint packet.daa_ack {
+      option.comment = "IBI request ACK/NACK";
+      bins IBI_ACK  = {0};
+      ignore_bins IBI_NACK = {1};
+    }
+
+    IBI_MDB_CP : coverpoint packet.ibi_mdb {
+      option.comment = "IBI Mandatory Data Byte";
+      bins IBI_MDB_BIN = {[0:255]};
+    }
+  endgroup : ibi_covergroup
+
   extern function new(string name = "i3c_target_coverage",
                       uvm_component parent = null);
   extern virtual function void display();
@@ -123,6 +139,7 @@ function i3c_target_coverage::new(
   super.new(name, parent);
   target_covergroup = new();
   daa_covergroup    = new();
+  ibi_covergroup    = new();
 
 endfunction : new
 
@@ -163,6 +180,10 @@ function void i3c_target_coverage::write(i3c_target_tx t);
       daa_covergroup.sample(t);
     end
 
+    i3c_target_tx::IBI: begin
+      ibi_covergroup.sample(t);
+    end
+
     default: begin
       `uvm_warning("DEBUG_m_coverage",
         $sformatf("Unknown txn_type=%0s — not sampled", t.txn_type.name()))
@@ -184,6 +205,10 @@ function void i3c_target_coverage::report_phase(uvm_phase phase);
               daa_covergroup.get_coverage()), UVM_NONE)
 
   `uvm_info(get_type_name(),
+    $sformatf("target Agent IBI Coverage = %0.2f %%",
+              ibi_covergroup.get_coverage()), UVM_NONE)
+
+  `uvm_info(get_type_name(),
     $sformatf("target Agent Total Coverage = %0.2f %%",
               (target_covergroup.get_coverage() +
                daa_covergroup.get_coverage()) / 2.0), UVM_NONE)
@@ -191,4 +216,5 @@ function void i3c_target_coverage::report_phase(uvm_phase phase);
 endfunction: report_phase
 
 `endif
+
 

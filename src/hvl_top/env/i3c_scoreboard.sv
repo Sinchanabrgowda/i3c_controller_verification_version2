@@ -4,12 +4,11 @@
 class i3c_scoreboard extends uvm_component;
   `uvm_component_utils(i3c_scoreboard)
 
-
-  // APB master side – single master, one fifo (unchanged)
   uvm_tlm_analysis_fifo #(apb_master_tx) apb_analysis_fifo;
 
-  // Target side – ONE FIFO PER SLAVE, sized in build_phase
   uvm_tlm_analysis_fifo #(i3c_target_tx) target_analysis_fifo[];
+
+  uvm_tlm_analysis_fifo #(i3c_target_tx) ibi_analysis_fifo[];
 
   i3c_env_config i3c_env_cfg_h;
 
@@ -25,6 +24,9 @@ class i3c_scoreboard extends uvm_component;
   int daa_parity_pass;
   int daa_parity_fail;
   int daa_devices_seen;
+
+  int ibi_pass;
+  int ibi_fail;
 
   bit [6:0] exp_address;
   bit [7:0] exp_length;
@@ -69,6 +71,9 @@ class i3c_scoreboard extends uvm_component;
   // HOT JOIN 
   extern protected task          check_hot_join_results();
 
+  // IBI
+  extern protected task          check_ibi_results();
+
   // helpers
   extern protected function int  find_target_by_address(bit [6:0] addr);
 
@@ -97,6 +102,14 @@ function void i3c_scoreboard::build_phase(uvm_phase phase);
       $sformatf("target_analysis_fifo_%0d", i), this);
   end
 
+  // IBI -- port handle
+  ibi_analysis_fifo =
+    new[i3c_env_cfg_h.no_of_targets];
+  foreach (ibi_analysis_fifo[i]) begin
+    ibi_analysis_fifo[i] = new(
+      $sformatf("ibi_analysis_fifo_%0d", i), this);
+  end
+
   // Per-slave DAA result table
   daa_result = new[i3c_env_cfg_h.no_of_targets];
   foreach (daa_result[i]) begin
@@ -121,6 +134,7 @@ task i3c_scoreboard::run_phase(uvm_phase phase);
 
   fork
     check_hot_join_results();
+    check_ibi_results();
   join_none
 
   forever begin
@@ -440,6 +454,75 @@ task i3c_scoreboard::check_hot_join_results();
 
 endtask : check_hot_join_results
 
+task i3c_scoreboard::check_ibi_results();
+  i3c_target_tx tgt_i;
+  int           num_targets;
+  bit [7:0]     exp_mdb;
+  bit [6:0]     exp_addr;
+
+  num_targets = i3c_env_cfg_h.no_of_targets;
+
+  `uvm_info("SB_IBI",
+    "Watching for IBI (In-Band Interrupt) result(s)", UVM_MEDIUM)
+
+  forever begin
+    for (int i = 0; i < num_targets; i++) begin
+
+      if (ibi_analysis_fifo[i].try_get(tgt_i)) begin
+
+        if (tgt_i.txn_type !== i3c_target_tx::IBI) begin
+          `uvm_error("SB_IBI_TXN_TYPE",
+            $sformatf("[target %0d] Expected IBI-tagged txn on ibi_analysis_fifo but got txn_type=%s",
+                      i, tgt_i.txn_type.name()))
+          continue;
+        end
+
+        target_tx_count++;
+
+        `uvm_info("SB_IBI",
+          $sformatf("[target %0d] IBI result: addr=0x%0h ack=%0b mdb=0x%0h",
+                    i, tgt_i.dynamic_address, tgt_i.daa_ack, tgt_i.ibi_mdb),
+          UVM_LOW)
+
+        if (tgt_i.daa_ack !== ACK) begin
+          `uvm_error("SB_IBI_ACK",
+            $sformatf("[target %0d] IBI FAILED: request NACKed by controller",
+                      i))
+          ibi_fail++;
+          continue;
+        end
+
+        exp_addr = i3c_env_cfg_h.i3c_target_agent_cfg_h[i].targetAddress;
+        if (tgt_i.dynamic_address !== exp_addr) begin
+          `uvm_error("SB_IBI_ADDR",
+            $sformatf("[target %0d] IBI address mismatch: expected 0x%0h (its assigned dynamic address) got 0x%0h",
+                      i, exp_addr, tgt_i.dynamic_address))
+          ibi_fail++;
+          continue;
+        end
+
+        // -- MDB payload must match what the target was configured to send.
+        exp_mdb = i3c_env_cfg_h.i3c_target_agent_cfg_h[i].ibi_mdb;
+        if (tgt_i.ibi_mdb !== exp_mdb) begin
+          `uvm_error("SB_IBI_MDB",
+            $sformatf("[target %0d] IBI MDB mismatch: expected 0x%0h got 0x%0h",
+                      i, exp_mdb, tgt_i.ibi_mdb))
+          ibi_fail++;
+        end else begin
+          `uvm_info("SB_IBI_MDB",
+            $sformatf("[target %0d] IBI MDB 0x%0h PASS", i, tgt_i.ibi_mdb),
+            UVM_MEDIUM)
+          ibi_pass++;
+        end
+
+      end
+    end
+
+    #1ns; // yield so this doesn't spin at zero simulation time
+  end
+
+endtask : check_ibi_results
+
 
 function int i3c_scoreboard::find_target_by_address(bit [6:0] addr);
   foreach (i3c_env_cfg_h.i3c_target_agent_cfg_h[i]) begin
@@ -653,6 +736,26 @@ function void i3c_scoreboard::check_phase(uvm_phase phase);
                   i, target_analysis_fifo[i].size()))
   end
 
+  // IBI summary -- NEW, additive only.
+  `uvm_info("SB_SUMMARY", $sformatf({
+    "\n============= IBI SUMMARY =============\n",
+    "  IBI pass / fail            : %0d / %0d\n",
+    "========================================"},
+    ibi_pass, ibi_fail),
+    UVM_NONE)
+
+  if (ibi_fail != 0)
+    `uvm_error("SB_SUMMARY",
+      $sformatf("%0d IBI failure(s)", ibi_fail))
+
+  // Per-slave IBI FIFO drain check
+  foreach (ibi_analysis_fifo[i]) begin
+    if (ibi_analysis_fifo[i].size() != 0)
+      `uvm_error("SB_SUMMARY",
+        $sformatf("ibi_analysis_fifo[%0d] not empty: %0d leftover packet(s)",
+                  i, ibi_analysis_fifo[i].size()))
+  end
+
   if (apb_analysis_fifo.size() != 0)
     `uvm_error("SB_SUMMARY",
       $sformatf("APB FIFO not empty: %0d leftover packet(s)",
@@ -663,4 +766,5 @@ function void i3c_scoreboard::check_phase(uvm_phase phase);
 endfunction : check_phase
 
 `endif
+
 

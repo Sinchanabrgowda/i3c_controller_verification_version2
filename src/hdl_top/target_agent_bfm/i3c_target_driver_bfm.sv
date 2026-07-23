@@ -58,7 +58,8 @@ interface i3c_target_driver_bfm (
   endtask : wait_for_idle_state
 
   // SDR (non-DAA) transaction
-  task drive_data(inout i3c_transfer_bits_s dataPacketStruck,
+/*  
+task drive_data(inout i3c_transfer_bits_s dataPacketStruck,
                   input i3c_transfer_cfg_s  configPacketStruck);
     `uvm_info(name, "target txn started", UVM_HIGH)
     detect_start();
@@ -69,25 +70,76 @@ interface i3c_target_driver_bfm (
     if (dataPacketStruck.targetAddressStatus == ACK) begin
       `uvm_info(name, "targetAddressStatus is ACK", UVM_HIGH)
       if (dataPacketStruck.operation == WRITE)
-        sampleWriteDataAndDriveACK(dataPacketStruck, configPacketStruck);
-      else
+			begin
+        //sampleWriteDataAndDriveACK(dataPacketStruck, configPacketStruck);
+				sample_write_data(configPacketStruck,dataPacketStruck,0);
+							
+      detect_stop();
+
+      `uvm_info("stop_detect_sdr", "sdr stop detected", UVM_HIGH)
+			end
+			else
         driveReadDataAndSampleACK(dataPacketStruck, configPacketStruck);
-    end else begin
+      end 
+		else begin
       `uvm_info(name, "targetAddressStatus is NACK", UVM_HIGH)
       detect_stop();
     end
   endtask : drive_data
+*/
+
+task drive_data(
+    inout i3c_transfer_bits_s dataPacketStruck,
+    input i3c_transfer_cfg_s  configPacketStruck
+);
+
+  `uvm_info(name, "target txn started", UVM_HIGH)
+
+  detect_start();
+  sample_target_address(configPacketStruck, dataPacketStruck);
+  sample_operation(dataPacketStruck.operation);
+  driveAddressAck(dataPacketStruck.targetAddressStatus);
+
+  if (dataPacketStruck.targetAddressStatus == ACK) begin
+    `uvm_info(name, "targetAddressStatus is ACK", UVM_HIGH)
+
+   if (dataPacketStruck.operation == WRITE)
+	begin
+ 	 fork
+  	  begin
+   	   for (int i = 0; i < MAXIMUM_BYTES; i++) begin
+    	    sample_write_data(configPacketStruck, dataPacketStruck, i);
+    	  end
+    	end
+    join_none
+
+      detect_stop();
+      `uvm_info("stop_detect_sdr", "sdr stop detected", UVM_HIGH)
+
+    end
+    else begin
+      driveReadDataAndSampleACK(dataPacketStruck, configPacketStruck);
+    end
+  end
+  else begin
+    `uvm_info(name, "targetAddressStatus is NACK", UVM_HIGH)
+    detect_stop();
+  end
+
+endtask : drive_data
+
 
 task sampleWriteDataAndDriveACK(
       inout i3c_transfer_bits_s dataPacketStruck,
       input i3c_transfer_cfg_s  configPacketStruck);
-    `uvm_info(name, "sampleWriteDataAndDriveACK started", UVM_HIGH)
+				bit last_byte;
+			 	`uvm_info(name, "sampleWriteDataAndDriveACK started", UVM_HIGH)
     fork
       begin
         for (int i = 0; i < MAXIMUM_BYTES; i++) begin
 
           sample_write_data(configPacketStruck, dataPacketStruck, i);
-
+								//sample_write_data(configPacketStruck, dataPacketStruck, i, last_byte);
           `uvm_info(name,
             $sformatf("Sampled WDATA[%0d] = 0x%02h (%08b) status=%s",
                       i,
@@ -105,7 +157,8 @@ task sampleWriteDataAndDriveACK(
       end
     join_none
     `uvm_info(name, "sampleWriteDataAndDriveACK done", UVM_HIGH)
-    wrDetect_stop();
+    
+				wrDetect_stop();
     disable fork;
   endtask : sampleWriteDataAndDriveACK
 
@@ -251,7 +304,7 @@ task sampleWriteDataAndDriveACK(
 
   endtask : drive_daa_data
 
-  // ARB PHASE  drive 64-bit PID+BCR+DCR with open-drain arbitration
+  // ARB PHASE  drive 64-bit PID+BCR+DCR with open-drain arbitration
 
   task automatic drive_daa_arb_bits(
       input  bit [63:0] my_id,
@@ -624,7 +677,29 @@ end
     detectEdge_scl(NEGEDGE);
     drive_sda(1'b1);
   endtask : driveAddressAck
+//added here
 
+task sample_write_data(
+    input  i3c_transfer_cfg_s cfg_pkt,
+    inout  i3c_transfer_bits_s pkt,
+    input  int i);
+  bit [DATA_WIDTH-1:0] wdata;
+  state = WRITE_DATA;
+  for (int k = 0, bit_no = 0; k < DATA_WIDTH; k++) begin
+    bit_no = (cfg_pkt.dataTransferDirection == MSB_FIRST) ?
+             ((DATA_WIDTH - 1) - k) : k;
+    detectEdge_scl(POSEDGE);
+    wdata[bit_no] = sda_i;
+    pkt.no_of_i3c_bits_transfer++;
+  end
+  `uvm_info(name, $sformatf("data=0x%02h (%08b)", wdata, wdata), UVM_HIGH)
+  targetFIFOMemory.push_back(wdata);
+  pkt.writeData[i]       = wdata;
+  pkt.writeDataStatus[i] = ACK;
+  driveWdataAck(pkt.writeDataStatus[i]);   // drives the real ACK slot immediately
+endtask : sample_write_data
+	
+	/*
   task sample_write_data(
       input  i3c_transfer_cfg_s cfg_pkt,
       inout  i3c_transfer_bits_s pkt,
@@ -660,12 +735,17 @@ end
     pkt.writeData[i]      = wdata;
 
     pkt.writeDataStatus[i] = ACK;
-
+    
+    `uvm_info("debug_ack", $sformatf("driveAddressAck "), UVM_HIGH)
+					driveWdataAck(pkt.writeDataStatus[i]);
+		return;
   endtask : sample_write_data
-
+*/
   task driveWdataAck(input bit ack);
     state = ACK_NACK;
     detectEdge_scl(NEGEDGE);
+
+    `uvm_info("debug_ack1", $sformatf("driveAddressAck = %0d", ack), UVM_HIGH)
     drive_sda(ack);
     detectEdge_scl(POSEDGE);
     detectEdge_scl(NEGEDGE);
@@ -803,7 +883,7 @@ bit bus_bit=0;
     `uvm_info("CHECK HOT JOIN", $sformatf("HOT_JOIN: address ACK/NACK = %0b", ibi_ack), UVM_NONE)
 
     `uvm_info(name,
-      "HOT_JOIN: IBI address phase complete  controller will restart ENTDAA for hot-join",
+      "HOT_JOIN: IBI address phase complete  controller will restart ENTDAA for hot-join",
       UVM_NONE)
 
 //sample_daa_broadcast_Address();
@@ -869,6 +949,104 @@ task sample_daa_broadcast_Address();
       UVM_NONE)
   endtask : drive_hot_join_data
 
+  task automatic drive_ibi_request(
+      input  bit [6:0] my_dyn_addr,
+      output bit       ibi_ack_out);
+    bit [7:0] full_byte;
+    bit       bus_bit;
+
+    full_byte = {my_dyn_addr, 1'b1};  // dynamic addr + RnW=1 (target->ctrl read)
+
+    `uvm_info(name,
+      "IBI: waiting for stable bus idle before asserting IBI request",
+      UVM_NONE)
+    wait_for_stable_bus_idle();
+
+    `uvm_info(name,
+      "IBI: asserting IBI request (SDA 1->0 while SCL high)",
+      UVM_NONE)
+    drive_sda(1'b0);
+
+    detectEdge_scl(NEGEDGE);
+
+    `uvm_info(name,
+      $sformatf("IBI: driving address byte = 0x%0h (addr=0x%0h, RnW=1)",
+                full_byte, my_dyn_addr),
+      UVM_NONE)
+
+    for (int k = 7; k >= 0; k--) begin
+      drive_sda(full_byte[k]);
+      detectEdge_scl(POSEDGE);
+      bus_bit = sda_i;
+      `uvm_info("IBI_BUS_BIT", $sformatf("current bus bit=%b", bus_bit), UVM_LOW)
+      detectEdge_scl(NEGEDGE);
+      
+    end
+`uvm_info("IBI", $sformatf("done sending dynamic addr "), UVM_LOW)
+    drive_sda(1'b1);
+    sample_ack(ibi_ack_out);
+
+    `uvm_info("CHECK IBI",
+      $sformatf("IBI: address ACK/NACK = %0b", ibi_ack_out), UVM_NONE)
+  endtask : drive_ibi_request
+
+  task automatic drive_ibi_payload(input bit [7:0] mdb_in);
+       bit flag=0;
+	bit t_val=0;
+    `uvm_info(name,
+      $sformatf("IBI: driving Mandatory Data Byte = 0x%0h", mdb_in),UVM_NONE)
+
+  	
+    for (int k = 7; k >= 0; k--) 
+    begin
+      drive_sda(mdb_in[k]);
+      detectEdge_scl(NEGEDGE);
+    end
+  flag=~flag;
+   drive_sda(1'b1);          // release for T-bit/ACK slot
+
+   detectEdge_scl(POSEDGE);
+    `uvm_info("IBI_DEBUG_T", $sformatf("sending more data flag=%b ", flag),UVM_NONE)
+/*	
+     if(flag==1)
+        begin
+            drive_sda(1'b1); 
+            detectEdge_scl(POSEDGE);
+            t_val=sda_i;
+          `uvm_info("IBI_DEBUG_T", $sformatf("sending more data T=%b ", t_val),UVM_NONE)
+           detectEdge_scl(NEGEDGE);
+          drive_ibi_payload(8'h0a);
+	end
+       else
+        begin
+          drive_sda(1'b0);
+          detectEdge_scl(POSEDGE);
+          
+        end
+
+   */        
+    `uvm_info(name, "IBI: payload byte complete", UVM_NONE)
+  endtask : drive_ibi_payload
+
+  task drive_ibi_data(
+      input  bit [6:0] my_dyn_addr,
+      input  bit [7:0] mdb_in,
+      output bit       ibi_ack_out);
+
+    `uvm_info(name, "IBI: transaction started", UVM_NONE)
+
+    drive_ibi_request(my_dyn_addr, ibi_ack_out);
+
+    if (ibi_ack_out == ACK) begin
+      drive_ibi_payload(mdb_in);
+      detect_stop();
+      `uvm_info(name, "IBI: complete, controller issued STOP", UVM_NONE)
+    end else begin
+      `uvm_info(name,
+        "IBI: request NACKed by controller, no payload sent", UVM_NONE)
+    end
+
+  endtask : drive_ibi_data
 endinterface : i3c_target_driver_bfm
 
 `endif

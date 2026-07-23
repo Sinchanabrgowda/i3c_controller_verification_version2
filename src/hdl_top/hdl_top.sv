@@ -53,12 +53,13 @@ module hdl_top;
   pullup p_scl (I3C_SCL);
   pullup p_sda (I3C_SDA);
 
-  i3c_if #(.NO_OF_TARGETS(NO_OF_TARGETS)) intf_i3c (
-    .pclk   (clk),
-    .areset (rst),
-    .SCL    (I3C_SCL),
-    .SDA    (I3C_SDA)
-  );
+i3c_if #(.NO_OF_TARGETS(NO_OF_TARGETS)) intf_i3c (
+  .pclk         (clk),
+  .areset       (rst),
+  .SCL          (I3C_SCL),
+  .SDA          (I3C_SDA)
+  
+);
 
   apb_i3c_wrapper wrapper (
     .apb        (apb_intf),
@@ -88,16 +89,14 @@ module hdl_top;
     .sda_oe     (sda_oe)
   );
 //.scl_o      (scl_o),
+//assign I3C_SDA = (sda_oe && !sda_o) ? 1'b0 : 1'bz;
+
   apb_master_agent_bfm apb_master_agent_bfm_h (apb_intf);
 
   genvar i;
   generate
     for (i = 0; i < NO_OF_TARGETS; i++) begin : gen_target_bfm
-      i3c_target_agent_bfm #(
-        .target_ID(i)
-      ) i3c_target_agent_bfm_inst (
-        .intf (intf_i3c)
-      );
+      i3c_target_agent_bfm #(.target_ID(i)) i3c_target_agent_bfm_inst (.intf (intf_i3c));
     end
   endgenerate
 

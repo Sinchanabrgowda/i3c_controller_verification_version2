@@ -469,7 +469,69 @@ endtask : skip_daa_session_passively
     sample_daa_data(pkt, cfg);
   endtask : sample_hot_join_data
 
+  // IBI (In-Band Interrupt)
+
+  task sample_ibi_request(
+      output bit [6:0] ibi_addr_out,
+      output bit       ack_out);
+    bit [7:0] full_byte;
+
+    `uvm_info(name,
+      "IBI MON: waiting for IBI request (SDA fall while SCL high)",
+      UVM_NONE)
+    detect_start();
+
+    `uvm_info(name, "IBI MON: sampling IBI address byte", UVM_NONE)
+    detectEdge_scl(NEGEDGE);
+    for (int k = 7; k >= 0; k--) begin
+      detectEdge_scl(POSEDGE);
+      full_byte[k] = sda_i;
+    end
+
+    ibi_addr_out = full_byte[7:1];
+
+    // ACK slot -- driven by the controller for this read-direction byte.
+    detectEdge_scl(NEGEDGE);
+    detectEdge_scl(POSEDGE);
+    ack_out = sda_i;
+    detectEdge_scl(NEGEDGE);
+
+    `uvm_info(name,
+      $sformatf("IBI MON: addr=0x%0h ack=%0b", ibi_addr_out, ack_out),
+      UVM_NONE)
+  endtask : sample_ibi_request
+
+  task sample_ibi_payload(output bit [7:0] mdb_out);
+    for (int k = 7; k >= 0; k--) begin
+      detectEdge_scl(POSEDGE);
+      mdb_out[k] = sda_i;
+    end
+    detectEdge_scl(NEGEDGE);
+    detectEdge_scl(POSEDGE);   // T-bit/ACK slot, consumed not checked
+    detectEdge_scl(NEGEDGE);
+    `uvm_info(name,
+      $sformatf("IBI MON: MDB=0x%0h", mdb_out), UVM_NONE)
+  endtask : sample_ibi_payload
+
+  task sample_ibi_data(
+      output bit [6:0] ibi_addr_out,
+      output bit       ack_out,
+      output bit [7:0] mdb_out);
+
+    mdb_out = 8'h00;
+
+    sample_ibi_request(ibi_addr_out, ack_out);
+
+    if (ack_out == ACK) begin
+      sample_ibi_payload(mdb_out);
+      detect_stop();
+    end else begin
+      `uvm_info(name, "IBI MON: request NACKed, no payload phase", UVM_NONE)
+    end
+  endtask : sample_ibi_data
+
 endinterface : i3c_target_monitor_bfm
 
 `endif
+
 

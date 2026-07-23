@@ -18,16 +18,17 @@ class i3c_target_agent_config extends uvm_object;
 
  bit  pending_hot_join      = 0;
  bit [6:0] hotjoin_addr      = 7'h20;
- 
+
+ bit  pending_ibi            = 0;
+ bit [7:0] ibi_mdb           = 8'h17;
+
  
   bit                                daa_accept_address   = 1;
   bit [47:0] pid = 48'hAABBCCDDEEFF;  
   bit [7:0]  bcr = 8'h00;          
   bit [7:0]  dcr = 8'hC2;
- // Set by the hot-join virtual sequence on every target EXCEPT the one
-// currently hot-joining. While set, that target's monitor proxy stays
-// completely off the bus.
-bit hotjoin_in_progress_elsewhere = 0;
+
+bit hotjoin_in_progress_elsewhere = 0;   //i kept a flag so that only hot join device monitor only active during hot join process,so other remianing targets will be not active,flag=1 active,flag=0 not active
 
   extern function new(string name = "i3c_target_agent_config");
   extern function void do_print(uvm_printer printer);
@@ -48,14 +49,17 @@ function void i3c_target_agent_config::do_print(uvm_printer printer);
   printer.print_field  ("targetAddress",        targetAddress,
                          $bits(targetAddress),  UVM_HEX);
 
-  printer.print_field  ("target_id",            target_id,  32, UVM_DEC);
+    printer.print_field  ("target_id",            target_id,  32, UVM_DEC);
     printer.print_field  ("daa_accept_address",   daa_accept_address, 1, UVM_BIN);
     printer.print_field  ("pending_hot_join",     pending_hot_join, 1, UVM_BIN);
     printer.print_field  ("hotjoin_addr",         hotjoin_addr, 7, UVM_HEX);
-printer.print_field ("pid",                   pid, 48, UVM_HEX);
+    printer.print_field  ("pending_ibi",         pending_ibi, 1, UVM_BIN);
+    printer.print_field  ("ibi_mdb",             ibi_mdb, 8, UVM_HEX);
+    printer.print_field ("pid",                   pid, 48, UVM_HEX);
   printer.print_field ("bcr",                   bcr,  8, UVM_HEX);
   printer.print_field ("dcr",                   dcr,  8, UVM_HEX);
 endfunction : do_print
 
 `endif
+
 

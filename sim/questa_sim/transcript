@@ -17,20 +17,4 @@ add wave -position insertpoint  \
 waveform:/hdl_top/dut/scl_i
 add wave -position insertpoint  \
 waveform:/hdl_top/dut/sda_i
-add wave -position insertpoint  \
-waveform:/hdl_top/dut/x6/nack
-add wave -position insertpoint  \
-waveform:/hdl_top/dut/x6/pid
-add wave -position insertpoint  \
-waveform:/hdl_top/dut/x6/bcr
-add wave -position insertpoint  \
-waveform:/hdl_top/dut/x6/dcr
-add wave -position insertpoint  \
-waveform:/hdl_top/dut/x6/dyn_addr
-add wave -position insertpoint  \
-waveform:/hdl_top/dut/x6/state
-add wave -position insertpoint  \
-waveform:/hdl_top/dut/x6/be_done
-add wave -position insertpoint  \
-{waveform:/hdl_top/gen_target_bfm[3]/i3c_target_agent_bfm_inst/intf/sda_o}
 quit

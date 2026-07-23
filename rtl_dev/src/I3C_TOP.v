@@ -158,6 +158,7 @@ wire hotjoin_request;
 wire hotjoin_active;
 wire [70:0] dt_wr_data;
 
+     
 assign hdr_active = start_hdr | hdr_busy;
 
 assign sdr_active =
@@ -171,7 +172,15 @@ assign push_pull1 =
     hdr_active ? 1'b1 :
     sdr_active ? sdr_push_pull :
                  daa_push_pull;
+/*
 
+//fix
+assign push_pull1 =
+    hdr_active   ? 1'b1 :
+    sdr_active   ? sdr_push_pull :
+    ibi_active   ? 1'b0 :
+                   daa_push_pull;
+*/
 assign s_r1 =
     hdr_active ? 1'b0 :
     sdr_active ? start_r1 :
@@ -181,7 +190,6 @@ wire ibi_be_valid;
 wire ibi_be_rw;
 wire ibi_be_done;
 reg ibi_active;
-
 assign bus_idle = ~sdr_busy && ~daa_busy && ~be_busy1 && !hdr_busy1;
 
 always @(posedge clk or negedge rst_n) begin
