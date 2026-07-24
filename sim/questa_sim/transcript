@@ -12,9 +12,13 @@
 # //  is prohibited from disclosure under the Trade Secrets Act,
 # //  18 U.S.C. Section 1905.
 # //
-# i3c_daa_write_8b_test/waveform.wlf opened as dataset "waveform"
+# i3c_ibi_test/waveform.wlf opened as dataset "waveform"
 add wave -position insertpoint  \
 waveform:/hdl_top/dut/scl_i
 add wave -position insertpoint  \
 waveform:/hdl_top/dut/sda_i
+add wave -position insertpoint  \
+waveform:/hdl_top/dut/sda_o
+add wave -position insertpoint  \
+waveform:/hdl_top/dut/sda_oe
 quit

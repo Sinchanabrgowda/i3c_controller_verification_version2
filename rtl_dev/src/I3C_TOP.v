@@ -460,7 +460,9 @@ i3c_bit_engine x8 (
   .shift_hold       (shift_hold),
   .pid_done         (pid_done),
   .shift_done       (shift_done),
-  .hotjoin_req      (hotjoin_req)
+  .hotjoin_req      (hotjoin_req),
+.ibi_active       (ibi_active)
+
 );
 
 i3c_scl_gen x9 (

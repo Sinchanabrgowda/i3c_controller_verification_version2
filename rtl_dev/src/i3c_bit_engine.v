@@ -28,7 +28,9 @@ module i3c_bit_engine (
   output  reg         arbitration_lost,
   output  reg         pid_done,
   output  reg         shift_done,
-  input   wire        hotjoin_req
+  input   wire        hotjoin_req,
+  input   wire        ibi_active
+
 );
 
 localparam [2:0]
@@ -112,7 +114,13 @@ always @ (*) begin
 
       SHIFT  : next =  (bit_cnt == 0) && scl_fall ? ACK : SHIFT;
 
-      ACK    : next = scl_rise ? WAIT : ACK;                                    
+      //ACK    : next = scl_rise ? WAIT : ACK;                                    
+      ACK : begin
+       if (ibi_active)
+           next = scl_fall ? WAIT : ACK;  // hold ACK one more half cycle
+       else
+           next = scl_rise ? WAIT : ACK;  // existing behavior
+     end
 
       WAIT: begin
           if (pid_done )

@@ -1,0 +1,5 @@
+-html
+i3c_ibi_test/i3c_ibi_test_coverage.ucdb
+-htmldir
+i3c_ibi_test/html_cov_report
+-details
