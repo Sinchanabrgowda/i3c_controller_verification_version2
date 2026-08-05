@@ -16,14 +16,6 @@ class i3c_hot_join_test extends i3c_base_test;
     end
     i3c_env_cfg_h.has_daa           = 1;
 
-    // FIX: total real devices on the bus = NO_OF_TARGETS (3 via the
-    // initial DAA round + 1 via hot-join = NO_OF_TARGETS when
-    // NO_OF_TARGETS=4). The scoreboard counts every device that gets a
-    // dynamic address across BOTH the initial round and the hot-join
-    // round -- there is no 5th device on the bus.
-    // Was: NO_OF_TARGETS + 1, which produced
-    //   UVM_ERROR ... [SB_SUMMARY] DAA device count: expected 5, saw 4
-    // on every run regardless of whether the hot-join itself worked.
     i3c_env_cfg_h.no_of_daa_devices = NO_OF_TARGETS;
   endfunction
 

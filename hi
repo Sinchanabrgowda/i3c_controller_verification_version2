@@ -1,0 +1,34 @@
+3411524 Add HDR DDR DAA write simulation log
+669a7bf Updated IBI, HDR
+ea11669 updated IBI logic in target bfm
+0f56a8a removed a print statement in daa fsm
+b012cee updated monitor bfm and hot join logic implementation
+4aafbeb updated monitor bfm and hot join logic
+ac7b0da Updated Hot Join implementation
+de7b78a updated driver bfm hot join logic
+1f8cd3f updated hot join implementation
+4fd94d6 added hot join testcases and driver bfm logic
+ae809be modified files
+1fb84df new driver bfm
+9fa88dd new log
+61070b2 new log
+fd4f175 Updated I3C target driver and monitor proxy
+deb97fa Updated I3C target driver bfm stop logic
+c414e61 Updated DAA implementation and simulation results
+85b5899 new log
+e01ec58 new log
+ddac033 updated codes
+8513d6e new log
+bfc1446 new log
+477f675 new log
+a94d6e8 new driver bfm
+ad7dda1 new log
+863f4a3 Updated i3c_daa_write_8b_test log
+4308bb6 Updated i3c_daa_write_8b_test log
+0c140a8 Updated i3c_daa_write_8b_test log
+50210ae updated codes
+c5f5294 updated codes
+405c5e6 updated target driver bfm
+021a049 Initial commit ,added updated codes of multi slave
+3ae54b9 added version2 rtl codes
+bf6656d Initial I3C AVIP commit

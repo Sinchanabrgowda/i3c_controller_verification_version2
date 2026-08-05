@@ -1,18 +1,6 @@
 `ifndef I3C_TEST_PKG_INCLUDED_
 `define I3C_TEST_PKG_INCLUDED_
 
-// ============================================================================
-// FILE: i3c_test_pkg.sv  (MULTI-SLAVE – controller AVIP removed)
-//
-// Removed:
-//   - import i3c_controller_pkg::*;
-//   - import i3c_virtual_seq_pkg::*; (those sequences use controller agent)
-//
-// Kept:
-//   - APB master pkg (programs DUT registers)
-//   - target pkg    (slave AVIP)
-//   - RAL virtual seq pkg (DAA + SDR sequences)
-// ============================================================================
 package i3c_test_pkg;
 
   `include "uvm_macros.svh"
@@ -45,8 +33,14 @@ package i3c_test_pkg;
   `include "i3c_daa_read_8b_test.sv"
   `include "i3c_daa_write_read_write_read_8b_test.sv"
   `include "i3c_sdr_or_daa_write_8b_test.sv"
+
+//hot join
 `include "i3c_hot_join_test.sv"
+`include "i3c_hot_join_invalid_reserved_addr.sv"
+//ibi
 `include "i3c_ibi_test.sv"
+//`include "i3c_ibi_t0_test.sv"				
+
 endpackage : i3c_test_pkg
 
 `endif

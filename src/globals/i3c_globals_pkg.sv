@@ -93,6 +93,16 @@ package i3c_globals_pkg;
     bit [7:0]                        dcr;
     bit [6:0]                        dynamic_address;
     bit                              daa_ack;
+
+    // HDR-DDR (Optional Feature F001) additions - additive only.
+    bit [6:0]                        hdr_ddr_cmd_code;
+    bit                              hdr_ddr_cmd_ack;      // Target accepted (ACK=0) the Command
+    int                              hdr_ddr_num_words;    // number of 16-bit Data Words
+    bit [4:0]                        hdr_ddr_crc_calc;     // CRC-5 computed by this side
+    bit [4:0]                        hdr_ddr_crc_rcvd;     // CRC-5 seen/sent on the wire
+    bit                              hdr_ddr_crc_ok;
+    bit                              hdr_ddr_got_restart;  // session ended w/ HDR Restart Pattern
+    bit                              hdr_ddr_got_exit;     // session ended w/ HDR Exit Pattern
   } i3c_transfer_bits_s;
 
   typedef struct {
@@ -143,7 +153,41 @@ package i3c_globals_pkg;
     NACK = 1'b1
   } acknowledge_e;
 
+
+
+  parameter bit [7:0] ENTHDR0_CCC_CODE  = 8'h20;  // Enter HDR-DDR Mode CCC
+  parameter bit [3:0] HDR_DDR_CRC_TOKEN = 4'hC;   // Fixed upper nibble of the CRC Word
+  parameter bit [4:0] HDR_DDR_CRC5_INIT = 5'h1F;  // CRC-5 seed value 
+
+  parameter bit [1:0] HDR_DDR_PRE_CMD_OR_CRC = 2'b01; // Command Word / CRC Word follows
+  parameter bit [1:0] HDR_DDR_PRE_ACCEPT_LOW = 2'b10; // ACK / "more data" 
+  parameter bit [1:0] HDR_DDR_PRE_REJECT_HI  = 2'b11; // NACK / "continue" 
+
+  typedef enum bit [1:0] {
+    HDR_DDR_WORD_COMMAND  = 2'b00,
+    HDR_DDR_WORD_DATA     = 2'b01,
+    HDR_DDR_WORD_CRC      = 2'b10,
+    HDR_DDR_WORD_RESERVED = 2'b11
+  } hdr_ddr_word_type_e;
+
+  function automatic bit [4:0] i3c_hdr_ddr_crc5_next(input bit [4:0] crc_in,
+                                                       input bit       din);
+    bit next_crc0;
+    next_crc0 = din ^ crc_in[4];
+    i3c_hdr_ddr_crc5_next = {crc_in[3:2], next_crc0 ^ crc_in[1], crc_in[0], next_crc0};
+  endfunction : i3c_hdr_ddr_crc5_next
+
+  function automatic bit [1:0] i3c_hdr_ddr_parity(input bit [15:0] payload);
+    bit pa1, pa0;
+    pa1 = payload[15] ^ payload[13] ^ payload[11] ^ payload[9] ^
+          payload[7]  ^ payload[5]  ^ payload[3]  ^ payload[1];
+    pa0 = payload[14] ^ payload[12] ^ payload[10] ^ payload[8] ^
+          payload[6]  ^ payload[4]  ^ payload[2]  ^ payload[0] ^ 1'b1;
+    i3c_hdr_ddr_parity = {pa1, pa0};
+  endfunction : i3c_hdr_ddr_parity
+
 endpackage : i3c_globals_pkg
 
 `endif
+
 

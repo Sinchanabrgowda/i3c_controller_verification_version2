@@ -1,13 +1,6 @@
 `ifndef I3C_RAL_VIRTUAL_SEQ_PKG_INCLUDED_
 `define I3C_RAL_VIRTUAL_SEQ_PKG_INCLUDED_
 
-// ============================================================================
-// FILE: i3c_ral_virtual_seq_pkg.sv  (MULTI-SLAVE – controller AVIP removed)
-//
-// No controller sequencer import or include needed.
-// All sequences drive the DUT via APB (register writes) and respond on the
-// I3C bus via the target (slave) AVIP.
-// ============================================================================
 package i3c_ral_virtual_seq_pkg;
 
   `include "uvm_macros.svh"
@@ -51,6 +44,9 @@ package i3c_ral_virtual_seq_pkg;
   `include "i3c_sdr_or_daa_virtual_seq.sv"
 `include "i3c_hot_join_virtual_seq.sv"  //hot join seq
 `include "i3c_ibi_virtual_seq.sv"
+`include "i3c_hot_join_invalid_addr_virtual_seq.sv" 
+
+//`include "i3c_ibi_t0_virtual_seq.sv"
 endpackage : i3c_ral_virtual_seq_pkg
 
 `endif

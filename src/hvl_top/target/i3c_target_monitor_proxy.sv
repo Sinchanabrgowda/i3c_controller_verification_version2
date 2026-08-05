@@ -1,4 +1,3 @@
-//fixed
 `ifndef I3C_TARGET_MONITOR_PROXY_INCLUDED_
 `define I3C_TARGET_MONITOR_PROXY_INCLUDED_
 
@@ -8,7 +7,7 @@ class i3c_target_monitor_proxy extends uvm_component;
   i3c_target_agent_config            i3c_target_agent_cfg_h;
   virtual i3c_target_monitor_bfm     i3c_target_mon_bfm_h;
   uvm_analysis_port #(i3c_target_tx) target_analysis_port;
-  
+
   uvm_analysis_port #(i3c_target_tx) ibi_analysis_port;
   localparam bit [7:0] BCAST_7E_W  = 8'hFC;
   localparam bit [7:0] ENTDAA_CODE = 8'h07;
@@ -72,7 +71,7 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
   i3c_target_mon_bfm_h.sample_idle_state();
 
   forever begin
-    
+
     if (i3c_target_agent_cfg_h != null &&
         i3c_target_agent_cfg_h.hotjoin_in_progress_elsewhere) begin
       `uvm_info(get_type_name(),
@@ -129,35 +128,50 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
       bit [6:0] observed_ibi_dyn_addr;
       bit       observed_ibi_ack;
       bit [7:0] observed_ibi_mdb;
+      bit       observed_ibi_t1;
+      bit [7:0] observed_ibi_extra_data[];
+      bit       observed_ibi_extra_t_bits[];
       `uvm_info(get_type_name(),
         $sformatf("[target_id=%0d] Waiting to sample IBI transaction",
                   i3c_target_agent_cfg_h.target_id), UVM_HIGH)
+      // T-bit / N extra data bytes -- NEW, additive only. Per the I3C
+      // spec the TARGET drives the T-bit after every IBI data byte; the
+      // monitor is purely passive and just samples bytes until it
+      // observes T=0, so no pre-configured "expect more data" input is
+      // needed here (see i3c_target_monitor_bfm::sample_ibi_data).
       i3c_target_mon_bfm_h.sample_ibi_data(
-        observed_ibi_dyn_addr, observed_ibi_ack, observed_ibi_mdb);
+        observed_ibi_dyn_addr, observed_ibi_ack, observed_ibi_mdb,
+        observed_ibi_t1, observed_ibi_extra_data, observed_ibi_extra_t_bits);
       `uvm_info(get_type_name(),
-        $sformatf("[target_id=%0d] IBI BFM returned -> addr=0x%0h ack=%0b mdb=0x%0h",
+        $sformatf("[target_id=%0d] IBI BFM returned -> addr=0x%0h ack=%0b mdb=0x%0h T1=%0b extra_bytes=%0d",
                   i3c_target_agent_cfg_h.target_id,
-                  observed_ibi_dyn_addr, observed_ibi_ack, observed_ibi_mdb),
+                  observed_ibi_dyn_addr, observed_ibi_ack, observed_ibi_mdb,
+                  observed_ibi_t1, observed_ibi_extra_data.size()),
         UVM_NONE)
-      tx.txn_type        = i3c_target_tx::IBI;
-      tx.dynamic_address = observed_ibi_dyn_addr;
-      tx.daa_ack          = observed_ibi_ack;
-      tx.ibi_mdb          = observed_ibi_mdb;
+      tx.txn_type             = i3c_target_tx::IBI;
+      tx.dynamic_address      = observed_ibi_dyn_addr;
+      tx.daa_ack               = observed_ibi_ack;
+      tx.ibi_mdb               = observed_ibi_mdb;
+      tx.ibi_num_extra_bytes   = observed_ibi_extra_data.size();
+      tx.ibi_t1                = observed_ibi_t1;
+      tx.ibi_extra_data_sent   = observed_ibi_extra_data;
+      tx.ibi_extra_t_bits      = observed_ibi_extra_t_bits;
       i3c_target_agent_cfg_h.pending_ibi = 0;
       `uvm_info(get_type_name(),
-        $sformatf("[target_id=%0d] IBI tx -> txn_type=%s addr=0x%0h ack=%0b mdb=0x%0h",
+        $sformatf("[target_id=%0d] IBI tx -> txn_type=%s addr=0x%0h ack=%0b mdb=0x%0h extra_bytes_sent=%0d",
                   i3c_target_agent_cfg_h.target_id, tx.txn_type.name(),
-                  tx.dynamic_address, tx.daa_ack, tx.ibi_mdb), UVM_NONE)
+                  tx.dynamic_address, tx.daa_ack, tx.ibi_mdb,
+                  tx.ibi_extra_data_sent.size()), UVM_NONE)
       `uvm_info(get_type_name(),
         $sformatf("[target_id=%0d] --> writing to DEDICATED ibi_analysis_port (scoreboard): txn_type=%s",
                   i3c_target_agent_cfg_h.target_id, tx.txn_type.name()),
         UVM_NONE)
       ibi_analysis_port.write(tx);
-      
+
       continue;
     end else if (i3c_target_agent_cfg_h != null &&
         i3c_target_agent_cfg_h.has_daa) begin
-    
+
       bit hotjoin_interrupted;
       bit ibi_interrupted;
       hotjoin_interrupted = 0;

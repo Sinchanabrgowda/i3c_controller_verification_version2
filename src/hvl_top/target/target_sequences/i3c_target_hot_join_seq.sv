@@ -7,7 +7,7 @@ class i3c_target_hot_join_seq extends i3c_target_base_seq;
   bit [47:0] cfg_pid          = 48'h0;
   bit [7:0]  cfg_bcr          = 8'h0;
   bit [7:0]  cfg_dcr          = 8'h0;
-  bit [6:0]  cfg_hotjoin_addr = 7'h20;
+  bit [6:0]  cfg_hotjoin_addr = 7'h2;
 
   extern function new(string name = "i3c_target_hot_join_seq");
   extern task body();

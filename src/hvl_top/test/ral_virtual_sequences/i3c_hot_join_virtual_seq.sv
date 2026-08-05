@@ -8,10 +8,6 @@ class i3c_hot_join_virtual_seq extends top_virtual_base_seq;
   uvm_reg_data_t ctrl_val;
   uvm_reg_data_t ctrl_mirror;
 
-  // These are now SAFETY-NET timeouts only -- not relied on for
-  // correctness. Actual completion is tracked with done-flags below;
-  // these just stop the test from hanging forever if the DUT genuinely
-  // never finishes.
   int unsigned timeout_per_slave_ns = 50_000;
 
   bit [6:0] hotjoin_ibi_addr = 7'h02;
@@ -145,28 +141,11 @@ class i3c_hot_join_virtual_seq extends top_virtual_base_seq;
     i3c_env_cfg_h.i3c_target_agent_cfg_h[hot_join_idx].hotjoin_addr = hotjoin_ibi_addr;
     i3c_env_cfg_h.i3c_target_agent_cfg_h[hot_join_idx].pending_hot_join = 1;
 
-    // FIX: only target[hot_join_idx] is allowed to touch the bus for the
-    // duration of the hot-join transaction. Every already-assigned target's
-    // monitor proxy must go fully silent (no detect_start, no DAA sampling,
-    // no scoreboard reports) until this completes -- otherwise they keep
-    // re-entering the DAA-monitor state machine on every START/STOP the
-    // hot-join's ENTDAA restart generates, which is what was producing the
-    // "Draining stale post-round monitor report" noise and the illegal
-    // DYNADDR_RESERVED coverage hits for targets 0-2.
     for (int i = 0; i < num_targets; i++) begin
       if (i != hot_join_idx)
         i3c_env_cfg_h.i3c_target_agent_cfg_h[i].hotjoin_in_progress_elsewhere = 1;
     end
 
-    // FIX: was `fork tgt_hj_seq.start(...); join_none` followed by a blind
-    // `#(timeout_per_slave_ns * 2 * 1ns);` and then declaring "HOT JOIN
-    // complete" unconditionally -- the forked thread was never joined
-    // anywhere, so if the hot-join transaction (IBI + ENTDAA restart +
-    // arbitration + address assignment) took longer than that window, the
-    // virtual sequence -- and therefore the test's phase objection --
-    // could move on and end the simulation while the driver was still
-    // mid-transaction on the bus. Now we actually wait for tgt_hj_seq to
-    // finish, with a generous timeout as a safety net only.
     begin
       i3c_target_hot_join_seq tgt_hj_seq;
       bit hj_done;
