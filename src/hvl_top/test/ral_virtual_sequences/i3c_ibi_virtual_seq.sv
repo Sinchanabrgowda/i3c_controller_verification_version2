@@ -5,28 +5,20 @@ class i3c_ibi_virtual_seq extends top_virtual_base_seq;
   uvm_status_e   status;
   uvm_reg_data_t ctrl_val;
   uvm_reg_data_t ctrl_mirror;
-  // Safety-net timeouts only -- actual completion is tracked with
-  // done-flags, mirroring i3c_hot_join_virtual_seq.
+
+
   int unsigned timeout_per_slave_ns = 50_000;
-  // Which (already-DAA'd) target sends the IBI. Single-target scope only
-  // unless ibi_sweep_all_targets is set below.
+
+
   int unsigned ibi_target_idx = 0;
-  // IBI target sweep -- NEW, additive only. When set, after the one DAA
-  // round the sequence loops the IBI flow through every target index
-  // (0..no_of_targets-1) one at a time instead of just ibi_target_idx,
-  // confirming the request/ACK/T-bit/STOP flow works regardless of which
-  // target's dynamic address is doing the requesting. ibi_target_idx is
-  // ignored when this is set.
+  
+
   bit ibi_sweep_all_targets = 0;
   // Mandatory Data Byte the target sends with its IBI request.
   bit [7:0] ibi_mdb_payload = 8'h17;
-  // T-bit / N extra data bytes -- NEW, generalized (additive only,
-  // replaces the old hardcoded single-extra-byte send_second_ibi_byte /
-  // ibi_mdb2_payload scheme). Per the I3C spec the TARGET drives the
-  // T-bit after every IBI data byte; set ibi_num_extra_bytes to however
-  // many bytes beyond the MDB you want the target to loop through, and
-  // size ibi_extra_data to match. Left at 0 extra bytes by default -- see
-  // i3c_ibi_test for notes.
+  
+
+
   int unsigned ibi_num_extra_bytes = 0;
   bit [7:0]    ibi_extra_data[];
   function new(string name = "i3c_ibi_virtual_seq");
@@ -116,10 +108,9 @@ class i3c_ibi_virtual_seq extends top_virtual_base_seq;
         UVM_LOW)
     end
 //IBI FLOW
-    // Target sweep -- NEW, additive only. Default (ibi_sweep_all_targets
-    // ==0) keeps the original single-target range [ibi_target_idx,
-    // ibi_target_idx]; when set, sweeps every target index once, in
-    // order, reusing the exact same per-target IBI flow below.
+    // Target sweep
+
+
     begin
       int sweep_start_idx;
       int sweep_end_idx;
@@ -142,13 +133,8 @@ class i3c_ibi_virtual_seq extends top_virtual_base_seq;
           UVM_LOW)
         i3c_env_cfg_h.i3c_target_agent_cfg_h[cur_idx].ibi_mdb     = ibi_mdb_payload;
         i3c_env_cfg_h.i3c_target_agent_cfg_h[cur_idx].pending_ibi = 1;
-        // T-bit / N extra data bytes -- NEW, generalized (additive only,
-        // replaces the old ibi_want_more_data/ibi_data2 single-byte
-        // mirror). Mirror the knobs into the agent config purely for
-        // bookkeeping -- the monitor no longer needs a pre-configured
-        // count (it just observes T-bits and loops until T=0), but the
-        // scoreboard/coverage still read the config to know what the
-        // target was told to send.
+        // T-bit / N extra data bytes 
+
         i3c_env_cfg_h.i3c_target_agent_cfg_h[cur_idx].ibi_num_extra_bytes = ibi_num_extra_bytes;
         i3c_env_cfg_h.i3c_target_agent_cfg_h[cur_idx].ibi_extra_data      = ibi_extra_data;
         begin

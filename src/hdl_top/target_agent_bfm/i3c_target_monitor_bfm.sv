@@ -421,9 +421,8 @@ else
       $sformatf("IBI MON: addr=0x%0h ack=%0b", ibi_addr_out, ack_out),
       UVM_NONE)
   endtask : sample_ibi_request
-  // Samples one IBI data byte plus the following T-bit (9th clock).
-  // Per the I3C spec the TARGET drives the T-bit in this direction; the
-  // monitor is purely passive and just samples what it observes on SDA.
+
+
   task sample_ibi_payload_byte(
       output bit [7:0] data_out,
       output bit       t_bit_out);
@@ -441,11 +440,8 @@ else
                 t_bit_out ? "MORE DATA" : "NO MORE DATA/STOP"),
       UVM_NONE)
   endtask : sample_ibi_payload_byte
-  // Generalized N-extra-byte version -- NEW, additive replacement. The
-  // monitor is purely passive: it doesn't need to know in advance how
-  // many extra bytes are coming, it just keeps sampling bytes as long as
-  // it observes T=1, and stops the moment it samples T=0 -- exactly the
-  // "T=1 -> byte -> T-bit -> ..." loop from the I3C spec (4.3.6.2).
+
+
   task sample_ibi_data(
       output bit [6:0] ibi_addr_out,
       output bit       ack_out,

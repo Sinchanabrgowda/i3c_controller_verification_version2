@@ -822,12 +822,8 @@ task sample_daa_broadcast_Address();
       UVM_NONE)
   endtask : drive_ibi_payload_byte
 //IBI TASK
-  // Generalized N-extra-byte version -- NEW, additive replacement. The
-  // target decides up front how many extra bytes (num_extra_bytes) it
-  // wants to send beyond the MDB, and drives T=1 after every one of them
-  // except the last, where it drives T=0 and lets the controller issue
-  // STOP. num_extra_bytes==0 reproduces the original MDB-only behavior
-  // (T1=0 immediately after the MDB).
+
+
   task drive_ibi_data(
       input  bit [6:0] my_dyn_addr,
       input  bit [7:0] mdb_in,
@@ -844,8 +840,8 @@ task sample_daa_broadcast_Address();
     drive_ibi_request(my_dyn_addr, ibi_ack_out);
     if (ibi_ack_out == ACK)
     begin
-      // Byte 1: Mandatory Data Byte. The target itself decides T1:
-      // 1 if any extra bytes follow, 0 (end of data) otherwise.
+
+
       t1_out = (num_extra_bytes > 0);
       drive_ibi_payload_byte(mdb_in, t1_out);
       if (num_extra_bytes > 0) begin

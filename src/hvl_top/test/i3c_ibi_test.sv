@@ -24,14 +24,8 @@ class i3c_ibi_test extends i3c_base_test;
     ibiSeq.i3c_env_cfg_h    = i3c_env_cfg_h;
     ibiSeq.ibi_target_idx   = 0;
     ibiSeq.ibi_mdb_payload  = 8'h17;
-    // T-bit / N extra data bytes -- NEW, generalized (additive only,
-    // replaces the old hardcoded send_second_ibi_byte/ibi_mdb2_payload
-    // single-extra-byte scheme). The target drives T=1 after every extra
-    // byte except the last one (see i3c_target_driver_bfm::drive_ibi_data).
-    // Kept enabled here exactly like the original send_second_ibi_byte=1
-    // did: 1 extra byte, value 0x2A, target-driven T=1 then T=0. To
-    // exercise a longer multi-byte T=1 -> byte -> ... -> T=0 loop, just
-    // grow both together (array size must match the count), e.g.:
+
+
     //   ibiSeq.ibi_num_extra_bytes = 3;
     //   ibiSeq.ibi_extra_data      = '{8'h2A, 8'h3B, 8'h4C};
     ibiSeq.ibi_num_extra_bytes = 1;

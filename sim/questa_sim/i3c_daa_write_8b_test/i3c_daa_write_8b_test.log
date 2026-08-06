@@ -1,5 +1,5 @@
 # vsim -vopt work.hvl_top work.hdl_top -voptargs="+acc=npr" -sv_seed random -assertdebug "+UVM_TESTNAME=i3c_daa_write_8b_test" "+UVM_VERBOSITY=UVM_HIGH" "+define+" -l i3c_daa_write_8b_test/i3c_daa_write_8b_test.log -sva -coverage -c -do "log -r /*; add wave -r /*; coverage save -onexit -assert -directive -cvg -codeAll -testname i3c_daa_write_8b_test_seedrandom  i3c_daa_write_8b_test/i3c_daa_write_8b_test_coverage.ucdb; run -all; exit" -wlf i3c_daa_write_8b_test/waveform.wlf 
-# Start time: 22:55:43 on Aug 05,2026
+# Start time: 12:33:31 on Aug 06,2026
 # ** Note: (vsim-3812) Design is being optimized...
 # ** Note: (vopt-143) Recognized 1 FSM in module "i3c_bit_engine(fast)".
 # ** Note: (vopt-143) Recognized 1 FSM in module "i3c_sdr_fsm(fast)".
@@ -78,7 +78,7 @@
 # ** Warning: (vsim-3015) ../../rtl_dev/src/I3C_TOP.v(528): [PCDPC] - Port size (8) does not match connection size (1) for port 'rx_data'. The port definition is at: ../../rtl_dev/src/i3c_hdr_fsm.v(14).
 #    Time: 0 ns  Iteration: 0  Instance: /hdl_top/dut/x13 File: ../../rtl_dev/src/i3c_hdr_fsm.v
 # Loading /tools/mentor/questasim_10.6c/questasim/uvm-1.1d/linux/uvm_dpi.so
-# Sv_Seed = 2072884181
+# Sv_Seed = 1678119168
 # log -r /*
 #  add wave -r /*
 #  coverage save -onexit -assert -directive -cvg -codeAll -testname i3c_daa_write_8b_test_seedrandom  i3c_daa_write_8b_test/i3c_daa_write_8b_test_coverage.ucdb
@@ -4239,5 +4239,5 @@
 # ** Note: $finish    : /tools/mentor/questasim_10.6c/questasim/linux/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
 #    Time: 258490 ns  Iteration: 53  Instance: /hvl_top
 # Saving coverage database on exit...
-# End time: 22:55:50 on Aug 05,2026, Elapsed time: 0:00:07
+# End time: 12:33:36 on Aug 06,2026, Elapsed time: 0:00:05
 # Errors: 0, Warnings: 3
