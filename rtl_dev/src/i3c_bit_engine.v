@@ -1,4 +1,4 @@
-//BIT_ENGINE
+//bit engine
 module i3c_bit_engine (
   input   wire        clk,
   input   wire        rst_n,
@@ -32,7 +32,11 @@ module i3c_bit_engine (
   input   wire        ibi_adrs_active,
   input   wire        ibi_active,
   output  reg         ibi_tbit,
-  input   wire        hotjoin_req
+  input   wire        hotjoin_req,
+  input   wire        valid_adrs,
+  output reg        ibi_addr_cap_en,   // 1-cycle pulse: 7-bit addr ready
+  output reg [6:0]  ibi_addr_cap,      // captured target address
+  input  wire        ibi_ack_ok        // NEW: FSM says ACK this address
 );
 //assign sda_i = sda_oe ? sda_o : 1'b1; // debug
  
@@ -52,14 +56,12 @@ reg [2:0] byte_cnt;   // for GETPID
 reg       s_o, s_oe;   // signal hold registers (resolved combo loops)
 reg       sr_latch;    // helper for atart repeat
 reg       v_latch;
- 
+reg       ack_hold;
+reg       ibi_ack_value;
+reg       parity_reg;
  
 // SCL edge detection logic
 reg   scl_q, scl_qq;
-reg ack_hold;
-wire  parity_bit;
-assign parity_bit = ^shift_reg;
- 
 wire  scl_rise = (scl_q == 1'b1) && (scl_qq == 1'b0);
 wire  scl_fall = (scl_q == 1'b0) && (scl_qq == 1'b1);
  
@@ -87,12 +89,20 @@ always @(posedge clk or negedge rst_n) begin
 end
  
 always @(posedge clk or negedge rst_n) begin
-    if (!rst_n)
+    if (!rst_n) begin
+        ack_hold      <= 1'b0;
+        ibi_ack_value <= 1'b1;
+    end
+    else if (state == ACK && scl_rise && ibi_active && ibi_adrs_active) begin
+        ack_hold      <= 1'b1;
+ 
+        // Valid Hot-Join address = ACK
+        // Invalid address = NACK
+        ibi_ack_value <= (shift_reg[7:1] == 7'h02);
+    end
+    else if (ack_hold && scl_fall) begin
         ack_hold <= 1'b0;
-    else if (state == ACK && scl_rise && ibi_active && ibi_adrs_active)
-        ack_hold <= 1'b1;
-    else if (ack_hold && scl_fall)
-        ack_hold <= 1'b0;
+    end
 end
  
 always @(posedge clk or negedge rst_n) begin
@@ -106,7 +116,19 @@ always @(posedge clk or negedge rst_n) begin
       pid_done <= 1'b0;  
   end
 end
- 
+always @(posedge clk or negedge rst_n) begin
+  if (!rst_n) begin
+    ibi_addr_cap_en <= 1'b0;
+    ibi_addr_cap    <= 7'd0;
+  end else begin
+    ibi_addr_cap_en <= 1'b0; // default: pulse
+    if (state == SHIFT && rd_wr && ibi_adrs_active &&
+        bit_cnt == 3'd0 && scl_rise) begin
+      ibi_addr_cap_en <= 1'b1;
+      ibi_addr_cap    <= {shift_reg[6:0]}; // = new shift_reg[6:0]
+    end
+  end
+end
  
 always @ (posedge clk or negedge rst_n) begin
   if (!rst_n) state <= IDLE;
@@ -129,16 +151,17 @@ always @ (*) begin
       end
       SHIFT  : next =  (bit_cnt == 0) && scl_fall ? ACK   : SHIFT;
       ACK    : next = scl_rise                   ? WAIT  : ACK;
- 
       WAIT: begin
           if (hotjoin_req)
-            next = STOP;
+               next = STOP;
           else if (pid_done)
             next = STOP; 
           else if (shift_hold && rd_wr)
             next = PID_SHIFT;
           else if (s_r)
             next = IDLE;
+         else if (valid_adrs &&ibi_active && scl_fall)
+            next = STOP;
           else if (v_latch && scl_fall)
             next = SHIFT;
           else if (!v_latch && scl_fall)
@@ -162,7 +185,7 @@ always @ * begin
       PID_SHIFT  : {sda_oe, sda_o} = rd_wr ? 2'b01 : {1'b1, shift_reg[7]};
       ACK: begin
       if(!rd_wr)
-        {sda_oe,sda_o} = {1'b1, parity_bit}; // parity
+        {sda_oe,sda_o} = {1'b1, parity_reg}; // parity
       else
         {sda_oe,sda_o} = {1'b1, last_byte};  // T-bit
       end
@@ -177,26 +200,40 @@ always @ * begin
       START  : {sda_oe, sda_o} = {s_oe, s_o};
       SHIFT,
       PID_SHIFT  : sda_oe          = rd_wr ? 1'b0 : ~shift_reg[7];
-      //ACK    : sda_oe          = rd_wr ? 1'b1 : 1'b0;
       ACK: begin
-    if (rd_wr) begin
-        if (ibi_active && !ibi_adrs_active)
-            sda_oe = 1'b0;   // Payload phase -> release SDA for slave T-bit
-        else
-            sda_oe = 1'b1;   // Address phase -> existing behaviour
+      if (rd_wr) begin
+         if (ibi_active && ibi_adrs_active) begin
+            // Hot-Join address must be 7'h02
+            if (ibi_ack_ok || shift_reg[7:1] == 7'h02)
+                sda_oe = 1'b1;   // ACK
+            else
+                sda_oe = 1'b0;   // NACK
+        end
+        else if (ibi_active && !ibi_adrs_active) begin
+              sda_oe = 1'b0;       // Payload T-bit
+        end
+            else begin
+              sda_oe = 1'b1;
+        end
     end
-    else
+     else begin
+        sda_oe = ~parity_reg;
+      end
+   end
+    WAIT: begin
+    if (ack_hold && ibi_active) begin
+        if (ibi_ack_value || ibi_ack_ok)
+            sda_oe = 1'b1;   // ACK
+        else
+            sda_oe = 1'b0;   // NACK
+    end
+    else if (ibi_active && !ibi_tbit) begin
+        sda_oe = 1'b1;
+      end
+    else begin
         sda_oe = 1'b0;
-  end
-     // WAIT   : sda_oe          = 1'b0;
-     WAIT: begin
-    if (ack_hold && ibi_active && ibi_adrs_active)
-            sda_oe = rd_wr ? 1'b1 : 1'b0;
-    else if(ibi_active && !ibi_tbit)
-            sda_oe = 1'b1;
-     else
-             sda_oe = 1'b0;
-     end
+    end
+    end  
       STOP   : {sda_oe, sda_o} = {s_oe, s_o};
       default: {sda_oe, sda_o} = 2'b01;
     endcase
@@ -217,9 +254,10 @@ always @ (posedge clk or negedge rst_n) begin
     s_oe      <= 'b0;
     s_o       <= 1'b1;
     shift_done<=1'b0;
-	parity_error     <= 1'b0;
-	arbitration_lost <= 1'b0;
-	 byte_cnt <= 3'd0;
+	  parity_error     <= 1'b0;
+	  arbitration_lost <= 1'b0;
+	  byte_cnt <= 3'd0;
+	  parity_reg <='b0;
   end else begin
     // hold outputs for combo loop
     case (state)
@@ -230,16 +268,18 @@ always @ (posedge clk or negedge rst_n) begin
       bit_cnt   <= 3'd7;
       byte_cnt <= 3'd0;
       shift_reg <= rd_wr ? 8'b0 : tx_data;
+      if (!rd_wr)
+         parity_reg <= ^tx_data;
       busy <= valid;
       start_done<= valid ? 1'b1 : 1'b0;
       stop_done <= 1'b0;
-        if (sr_latch) begin
+      if (sr_latch) begin
           s_o     <= 1'b1;
           s_oe    <= 1'b1;
-        end else begin
+      end else begin
           s_o     <= 1'b1;
           s_oe    <= 1'b0;
-        end
+      end
       end
       START  : begin 
         busy <= 1'b1;
@@ -267,19 +307,15 @@ always @ (posedge clk or negedge rst_n) begin
        PID_SHIFT: begin
         busy <= 1'b1;
         shift_done<=1'b0;
- 
         if (rd_wr && scl_rise)
           shift_reg <= {shift_reg[6:0], sda_i};
- 
         if (scl_fall) begin
           if (bit_cnt == 0) begin
             bit_cnt <= 3'd7;
- 
             rx_data <= {shift_reg[6:0], sda_i};  
             shift_reg<='b0;
             shift_done<=1'b1;
             byte_cnt <= byte_cnt + 1;
- 
           end else begin
             bit_cnt <= bit_cnt - 1;
           end
@@ -289,7 +325,7 @@ always @ (posedge clk or negedge rst_n) begin
         busy <= 1'b1;
         if (push_pull) begin
           if (!rd_wr && scl_rise) begin
-              parity_error <= (sda_i != parity_bit);
+              parity_error <= (sda_i != parity_reg);
               nack <= 1'b0;
           end
           else if (rd_wr && scl_rise) begin
@@ -312,9 +348,12 @@ always @ (posedge clk or negedge rst_n) begin
         shift_reg <= rd_wr   ? 8'b0 : tx_data;
         busy       <= v_latch; 
         sr_latch  <= s_r     ? 1'b1 : sr_latch;
+         if (!rd_wr)
+        parity_reg <= ~(^tx_data);
       end
       STOP   : begin
-      ibi_tbit=0;
+      ibi_tbit<=1'b0;
+      parity_reg<=1'b0;
         busy <= 1'b0;
         s_oe <= 1'b1;             // Ensure SDA is driven
         if (!scl_i) s_o <= 1'b0;  // Hold SDA low until SCL is high

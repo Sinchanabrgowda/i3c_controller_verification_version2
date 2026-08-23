@@ -3,11 +3,11 @@
 
 class i3c_target_monitor_proxy extends uvm_component;
   `uvm_component_utils(i3c_target_monitor_proxy)
+
   i3c_target_tx                      tx;
   i3c_target_agent_config            i3c_target_agent_cfg_h;
   virtual i3c_target_monitor_bfm     i3c_target_mon_bfm_h;
   uvm_analysis_port #(i3c_target_tx) target_analysis_port;
-
   uvm_analysis_port #(i3c_target_tx) ibi_analysis_port;
   localparam bit [7:0] BCAST_7E_W  = 8'hFC;
   localparam bit [7:0] ENTDAA_CODE = 8'h07;
@@ -21,6 +21,7 @@ class i3c_target_monitor_proxy extends uvm_component;
   extern virtual task          run_phase(uvm_phase phase);
 endclass : i3c_target_monitor_proxy
 
+
 function i3c_target_monitor_proxy::new(
     string name = "i3c_target_monitor_proxy",
     uvm_component parent = null);
@@ -30,6 +31,7 @@ function i3c_target_monitor_proxy::new(
   tx = new();
 endfunction : new
 
+
 function void i3c_target_monitor_proxy::build_phase(uvm_phase phase);
   super.build_phase(phase);
 endfunction : build_phase
@@ -37,6 +39,7 @@ endfunction : build_phase
 function void i3c_target_monitor_proxy::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
 endfunction : connect_phase
+
 
 function void i3c_target_monitor_proxy::end_of_elaboration_phase(
     uvm_phase phase);
@@ -56,10 +59,12 @@ function void i3c_target_monitor_proxy::end_of_elaboration_phase(
   i3c_target_mon_bfm_h.i3c_target_mon_proxy_h = this;
 endfunction : end_of_elaboration_phase
 
+
 function void i3c_target_monitor_proxy::start_of_simulation_phase(
     uvm_phase phase);
   super.start_of_simulation_phase(phase);
 endfunction : start_of_simulation_phase
+
 
 task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
   i3c_transfer_bits_s struct_packet;
@@ -69,9 +74,7 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
               i3c_target_agent_cfg_h.target_id), UVM_HIGH)
   i3c_target_mon_bfm_h.wait_for_reset();
   i3c_target_mon_bfm_h.sample_idle_state();
-
   forever begin
-
     if (i3c_target_agent_cfg_h != null &&
         i3c_target_agent_cfg_h.hotjoin_in_progress_elsewhere) begin
       `uvm_info(get_type_name(),
@@ -80,18 +83,18 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
       wait (!i3c_target_agent_cfg_h.hotjoin_in_progress_elsewhere);
       continue;
     end
-
     tx = i3c_target_tx::type_id::create("tx");
     i3c_target_cfg_converter::from_class(i3c_target_agent_cfg_h, struct_cfg);
     i3c_target_seq_item_converter::from_class(tx, struct_packet);
     `uvm_info(get_type_name(),
-      $sformatf("[target_id=%0d] cfg snapshot -> targetAddress=0x%0h  pid=0x%0h  bcr=0x%0h  dcr=0x%0h  has_daa=%0b",
+      $sformatf("[target_id=%0d] cfg snapshot -> targetAddress=0x%0h  pid=0x%0h  bcr=0x%0h  dcr=0x%0h  has_daa=%0b  pending_sdr=%0b",
                 i3c_target_agent_cfg_h.target_id,
                 struct_cfg.targetAddress,
                 struct_cfg.pid,
                 struct_cfg.bcr,
                 struct_cfg.dcr,
-                i3c_target_agent_cfg_h.has_daa),
+                i3c_target_agent_cfg_h.has_daa,
+                i3c_target_agent_cfg_h.pending_sdr),
       UVM_NONE)
     if (i3c_target_agent_cfg_h != null &&
         i3c_target_agent_cfg_h.pending_hot_join) begin
@@ -112,7 +115,7 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
                   struct_packet.dynamic_address),
         UVM_NONE)
       i3c_target_seq_item_converter::to_class(struct_packet, tx);
-      tx.txn_type      = i3c_target_tx::DAA; // reuse existing DAA scoreboard/coverage path
+      tx.txn_type      = i3c_target_tx::DAA; 
       tx.hotjoin_addr  = observed_ibi_addr;
       i3c_target_agent_cfg_h.pending_hot_join = 0;
       `uvm_info(get_type_name(),
@@ -134,11 +137,7 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
       `uvm_info(get_type_name(),
         $sformatf("[target_id=%0d] Waiting to sample IBI transaction",
                   i3c_target_agent_cfg_h.target_id), UVM_HIGH)
-      // T-bit / N extra data bytes -- NEW, additive only. Per the I3C
-      // spec the TARGET drives the T-bit after every IBI data byte; the
-      // monitor is purely passive and just samples bytes until it
-      // observes T=0, so no pre-configured "expect more data" input is
-      // needed here (see i3c_target_monitor_bfm::sample_ibi_data).
+
       i3c_target_mon_bfm_h.sample_ibi_data(
         observed_ibi_dyn_addr, observed_ibi_ack, observed_ibi_mdb,
         observed_ibi_t1, observed_ibi_extra_data, observed_ibi_extra_t_bits);
@@ -167,15 +166,51 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
                   i3c_target_agent_cfg_h.target_id, tx.txn_type.name()),
         UVM_NONE)
       ibi_analysis_port.write(tx);
-
       continue;
     end else if (i3c_target_agent_cfg_h != null &&
-        i3c_target_agent_cfg_h.has_daa) begin
+        i3c_target_agent_cfg_h.pending_sdr) begin
 
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] Waiting to sample SDR transaction (pending_sdr gated)",
+                  i3c_target_agent_cfg_h.target_id), UVM_HIGH)
+      i3c_target_mon_bfm_h.sample_data(struct_packet, struct_cfg);
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] SDR BFM returned struct -> targetAddress=0x%0h  targetAddressStatus=%0b  operation=%0s  no_of_bits=%0d",
+                  i3c_target_agent_cfg_h.target_id,
+                  struct_packet.targetAddress,
+                  struct_packet.targetAddressStatus,
+                  struct_packet.operation ? "READ" : "WRITE",
+                  struct_packet.no_of_i3c_bits_transfer),
+        UVM_NONE)
+      if (struct_packet.operation == WRITE) begin
+        for (int b = 0; b < MAXIMUM_BYTES; b++) begin
+          if (b * DATA_WIDTH < struct_packet.no_of_i3c_bits_transfer) begin
+            `uvm_info(get_type_name(),
+              $sformatf("[target_id=%0d] SDR write data[%0d] = 0x%0h",
+                        i3c_target_agent_cfg_h.target_id, b,
+                        struct_packet.writeData[b]),
+              UVM_NONE)
+          end
+        end
+      end
+      i3c_target_seq_item_converter::to_class(struct_packet, tx);
+      i3c_target_agent_cfg_h.pending_sdr = 0;
+      `uvm_info(get_type_name(),
+        $sformatf("[target_id=%0d] SDR tx -> txn_type=%s  targetAddress=0x%0h  targetAddressStatus=%0b  operation=%0s",
+                  i3c_target_agent_cfg_h.target_id,
+                  tx.txn_type.name(),
+                  tx.targetAddress,
+                  tx.targetAddressStatus,
+                  tx.operation.name()),
+        UVM_NONE)
+    end else if (i3c_target_agent_cfg_h != null &&
+        i3c_target_agent_cfg_h.has_daa) begin
       bit hotjoin_interrupted;
       bit ibi_interrupted;
+      bit sdr_interrupted;
       hotjoin_interrupted = 0;
       ibi_interrupted     = 0;
+      sdr_interrupted     = 0;
       `uvm_info(get_type_name(),
         $sformatf("[target_id=%0d] Waiting to sample DAA transaction",
                   i3c_target_agent_cfg_h.target_id), UVM_HIGH)
@@ -191,6 +226,10 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
           wait (i3c_target_agent_cfg_h.pending_ibi);
           ibi_interrupted = 1;
         end
+        begin : abort_on_sdr
+          wait (i3c_target_agent_cfg_h.pending_sdr);
+          sdr_interrupted = 1;
+        end
       join_any
       disable fork;
       if (hotjoin_interrupted) begin
@@ -202,6 +241,12 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
       if (ibi_interrupted) begin
         `uvm_info(get_type_name(),
           $sformatf("[target_id=%0d] Aborting in-flight DAA sample - IBI requested on this target",
+                    i3c_target_agent_cfg_h.target_id), UVM_HIGH)
+        continue;
+      end
+      if (sdr_interrupted) begin
+        `uvm_info(get_type_name(),
+          $sformatf("[target_id=%0d] Aborting in-flight DAA sample - SDR requested on this target",
                     i3c_target_agent_cfg_h.target_id), UVM_HIGH)
         continue;
       end
@@ -228,7 +273,7 @@ task i3c_target_monitor_proxy::run_phase(uvm_phase phase);
         UVM_NONE)
     end else begin
       `uvm_info(get_type_name(),
-        $sformatf("[target_id=%0d] Waiting to sample SDR transaction",
+        $sformatf("[target_id=%0d] Waiting to sample SDR transaction (fallback, has_daa=0)",
                   i3c_target_agent_cfg_h.target_id), UVM_HIGH)
       i3c_target_mon_bfm_h.sample_data(struct_packet, struct_cfg);
       `uvm_info(get_type_name(),

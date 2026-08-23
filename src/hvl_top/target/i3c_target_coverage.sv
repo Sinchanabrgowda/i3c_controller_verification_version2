@@ -38,12 +38,33 @@ class i3c_target_coverage extends uvm_subscriber#(i3c_target_tx);
       bins READDATA_WIDTH_5 = {64};
       bins READDATA_WIDTH_6 = {[72:MAXIMUM_BITS]};
     }
+    // NOTE -- flagged, not changed: since the SDR write redesign in
+    // i3c_target_driver_bfm.sv/i3c_target_monitor_bfm.sv (no more
+    // per-byte ACK slot on write -- just data+parity, with
+    // writeDataStatus[i] unconditionally set to ACK by both the driver
+    // and the monitor), WRITEDATA_STATUS_ALL_NACK and WRITEDATA_STATUS_MIX
+    // below are now permanently unreachable -- writeDataStatus can never
+    // be anything but all-ACK anymore. A parity mismatch is logged
+    // ("PARITY MISMATCH") but not currently surfaced anywhere on
+    // i3c_target_tx, so there's no field left to build real write-status
+    // coverage from. Left as-is (additive-only scope) rather than
+    // deciding this for you -- if you want parity-mismatch coverage back,
+    // it would need a new field threaded through i3c_target_tx /
+    // driver+monitor BFM / proxies (happy to do that as a separate
+    // change if wanted).
     WRITEDATA_STATUS_CP : coverpoint packet.getWriteDataStatus() {
       option.comment = "writeData status";
       bins WRITEDATA_STATUS_ALL_ACK  = {2'b00};
       bins WRITEDATA_STATUS_ALL_NACK = {2'b11};
       bins WRITEDATA_STATUS_MIX      = {2'b01, 2'b10};
     }
+    // READDATA_STATUS_CP is still meaningful post-redesign: readDataStatus[i]
+    // now reflects the target's T-bit / controller-continue result per
+    // byte (ACK=continue, NACK=last byte or controller abort) instead of
+    // a traditional per-byte ACK -- MIX and ALL_NACK are the common case
+    // (a multi-byte read ends with NACK on its final byte by design),
+    // ALL_ACK is only reachable if a read runs the full MAXIMUM_BYTES
+    // with T=1 continuing through every byte.
     READDATA_STATUS_CP : coverpoint packet.getReadDataStatus() {
       option.comment = "readData status";
       bins READDATA_STATUS_ALL_ACK  = {2'b00};

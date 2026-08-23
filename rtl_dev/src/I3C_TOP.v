@@ -1,3 +1,4 @@
+///TOP
 `include "param.v"
 module I3C_TOP(
   input   wire          clk,
@@ -114,7 +115,9 @@ wire [6:0]  sdr_addr1;
 wire        parity_error;
 wire        arbitration_lost;
 wire        device_known;
- 
+wire        ibi_addr_cap_en;   // 1-cycle pulse: 7-bit addr ready
+wire [6:0]  ibi_addr_cap;      // captured target address
+wire        ibi_ack_ok;
 // device table interface
 wire         lookup_en;
 wire [6:0]   lookup_addr;
@@ -130,9 +133,9 @@ wire        irq;
 wire        bus_idle;
  
 //FOR DDR
-wire [1:0] mode;
-wire   cmd_mode;
-wire   start_hdr;
+wire [1:0]  mode;
+wire        cmd_mode;
+wire        start_hdr;
  
 wire        hdr_valid;
 wire        hdr_rw;
@@ -147,19 +150,17 @@ wire        hdr_start_sig;
 wire        hdr_stop_sig;
  
 //NEW SCL
-wire scl_start_sdr;
-wire scl_stop_sdr;
-wire push_pull_sdr;
+wire        scl_start_sdr;
+wire        scl_stop_sdr;
+wire        push_pull_sdr;
  
-wire scl_start_hdr;
-wire scl_stop_hdr;
-wire push_pull_hdr;
+wire        scl_start_hdr;
+wire        scl_stop_hdr;
+wire        push_pull_hdr;
  
-//Hot join
- 
-wire hotjoin_request;
+wire        hotjoin_request;
 wire [70:0] dt_wr_data;
- 
+wire        valid_adrs;
  
 assign hdr_active = start_hdr | hdr_busy;
 assign sdr_active =
@@ -180,15 +181,14 @@ assign s_r1 =
     sdr_active      ? start_r1 :
                       start_r2;
 //IBI
-wire ibi_be_valid;
-wire ibi_be_rw;
-wire ibi_be_done;
-reg ibi_active;
-wire ibi_tbit;
-wire ibi_reg_valid;
+wire  ibi_be_valid;
+wire  ibi_be_rw;
+wire  ibi_be_done;
+reg   ibi_active;
+wire  ibi_tbit;
+wire  ibi_reg_valid;
  
 assign bus_idle = ~sdr_busy && ~daa_busy && ~be_busy1 && !hdr_busy1;
- 
  
 always @(posedge clk or negedge rst_n) begin
   if (!rst_n)
@@ -203,7 +203,6 @@ end
  
 assign ibi_request     = ibi_request1 &  device_known;
 assign hotjoin_request = hotjoin_req & ~device_known;
- 
 assign start_daa_final = start_daa | hotjoin_req;
  
 ////////////////////////////////////////////////////////////////////////////////
@@ -240,15 +239,11 @@ assign sda_o =
 assign sda_oe =
     hdr_active ? sda_oe_hdr :
                  sda_oe_sdr;
-
- 
 assign scl_start_final =
     hdr_active ? hdr_start_sig : start;
- 
 assign scl_stop_final =
     hdr_active ? hdr_stop_sig : stop;
  
-    
 // Instantiate REG block
 i3c_reg_interface x1(
   .clk            (clk),
@@ -427,16 +422,19 @@ i3c_daa_fsm x6 (
  
 //BIT ENGINE + START?STOP GENERATOR
 i3c_device_table x7(
-  .clk           (clk),
-  .rst_n         (rst_n),
-  .wr_en         (dt_en), // write enable
-  .wr_data       (dt_wr_data),
-  .sdr_addr      (sdr_addr1),
-  .is_i3c_dyn    (is_i3c1),
-  .lookup_en     (lookup_en),
-  .lookup_addr   (lookup_addr),
-  .device_known  (device_known),
-  .rstdaa_done   (rstdaa_done)
+  .clk            (clk),
+  .rst_n          (rst_n),
+  .wr_en          (dt_en), // write enable
+  .wr_data        (dt_wr_data),
+  .sdr_addr       (sdr_addr1),
+  .is_i3c_dyn     (is_i3c1),
+  .lookup_en      (lookup_en),
+  .lookup_addr    (lookup_addr),
+  .device_known   (device_known),
+  .rstdaa_done    (rstdaa_done),
+  .ibi_addr_cap_en(ibi_addr_cap_en),
+  .ibi_addr_cap   (ibi_addr_cap),
+  .ibi_ack_ok     (ibi_ack_ok)
 );
  
 i3c_bit_engine x8 (
@@ -467,7 +465,11 @@ i3c_bit_engine x8 (
   .ibi_adrs_active  (ibi_adrs_active),
   .ibi_active       (ibi_active),
   .ibi_tbit         (ibi_tbit),
-  .hotjoin_req  (hotjoin_req)
+  .hotjoin_req      (hotjoin_req),
+  .valid_adrs       (valid_adrs),
+  .ibi_addr_cap_en(ibi_addr_cap_en),
+  .ibi_addr_cap   (ibi_addr_cap),
+  .ibi_ack_ok     (ibi_ack_ok)
 );
 //SCL GENERATOR/////////////////
 i3c_scl_gen x9 (
@@ -491,38 +493,38 @@ i3c_ibi_detector x10(
 );
  
 i3c_ibi_fsm x11(
-  .clk          (clk),
-  .rst_n        (rst_n),
-  .ibi_request  (ibi_request1),
- 
+  .clk              (clk),
+  .rst_n            (rst_n),
+  .ibi_request      (ibi_request1),
 // bit engine interface
-  .be_valid     (ibi_be_valid),//op
-  .be_rd_wr     (ibi_be_rw),//op
-  .be_rx_data   (be_rx_data),
-  .be_busy      (be_busy1),
-  .be_done      (be_done1),
-  .ibi_addr     (ibi_addr),
-  .ibi_payload  (ibi_payload),
-  .ibi_valid    (ibi_valid),
-  .lookup_en    (lookup_en),
-  .lookup_addr  (lookup_addr),
-  .device_known (device_known),
-  .hotjoin_req  (hotjoin_req),
+  .be_valid         (ibi_be_valid),//op
+  .be_rd_wr         (ibi_be_rw),//op
+  .be_rx_data       (be_rx_data),
+  .be_busy          (be_busy1),
+  .be_done          (be_done1),
+  .ibi_addr         (ibi_addr),
+  .ibi_payload      (ibi_payload),
+  .ibi_valid        (ibi_valid),
+  .lookup_en        (lookup_en),
+  .lookup_addr      (lookup_addr),
+  .device_known     (device_known),
+  .hotjoin_req      (hotjoin_req),
   .ibi_adrs_active  (ibi_adrs_active),
-  .daa_done     (daa_done),
+  .daa_done         (daa_done),
   .ibi_tbit         (ibi_tbit),
-  .ibi_reg_valid   (ibi_reg_valid)
+  .ibi_reg_valid    (ibi_reg_valid),
+  .nvalid_adrs      (valid_adrs)
 );
  
 i3c_ibi_regs x12(
-  .clk          (clk),
-  .rst_n        (rst_n),
-  .ibi_addr     (ibi_addr),
-  .ibi_payload  (ibi_payload),
-  .ibi_reg_valid    (ibi_reg_valid),
-  .irq          (irq),
-  .irq_addr     (irq_addr),
-  .irq_payload  (irq_payload)
+  .clk            (clk),
+  .rst_n          (rst_n),
+  .ibi_addr       (ibi_addr),
+  .ibi_payload    (ibi_payload),
+  .ibi_reg_valid  (ibi_reg_valid),
+  .irq            (irq),
+  .irq_addr       (irq_addr),
+  .irq_payload    (irq_payload)
 );
 //hdr FSM
 i3c_hdr_fsm x13 (
@@ -531,26 +533,20 @@ i3c_hdr_fsm x13 (
   .start_hdr    (start_hdr),
   .hdr_len      (sdr_len),
   .hdr_dir      (sdr_dir1),
- 
   .tx_data      (tx_rdata),
   .tx_valid     (tx_valid),
   .tx_ready     (tx_ready2),
- 
   .rx_data      (rx_wdata2),
   .rx_valid     (rx_valid2),
   .rx_ready     (rx_ready),
- 
   .hdr_valid    (hdr_valid),
   .hdr_rw       (hdr_rw),
   .hdr_tx_data  (hdr_tx_data),
- 
   .hdr_rx_data  (hdr_rx_data),
   .hdr_done     (hdr_done1),
   .hdr_busy     (hdr_busy1),
- 
   .hdr_start    (hdr_start_sig),
   .hdr_stop     (hdr_stop_sig),
- 
   .busy         (hdr_busy),
   .done         (hdr_done)
 );
@@ -558,21 +554,18 @@ i3c_hdr_fsm x13 (
 i3c_hdr_ddr_engine x14 (
   .clk          (clk),
   .rst_n        (rst_n),
- 
   .valid        (hdr_valid),
   .rw           (hdr_rw),
   .tx_data      (hdr_tx_data),
   .rx_data      (hdr_rx_data),
- 
-  .scl_i         (scl_i),
-  .sda_i         (sda_i),
-  .sda_o         (sda_o_hdr),
-  .sda_oe        (sda_oe_hdr),
- 
-  .hdr_start     (hdr_start_sig),
-  .hdr_stop      (hdr_stop_sig),
- 
-  .busy          (hdr_busy1),
-  .done          (hdr_done1)
+  .scl_i        (scl_i),
+  .sda_i        (sda_i),
+  .sda_o        (sda_o_hdr),
+  .sda_oe       (sda_oe_hdr),
+  .hdr_start    (hdr_start_sig),
+  .hdr_stop     (hdr_stop_sig),
+  .busy         (hdr_busy1),
+  .done         (hdr_done1)
 );
+ 
 endmodule

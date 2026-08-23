@@ -95,14 +95,14 @@ package i3c_globals_pkg;
     bit                              daa_ack;
 
     // HDR-DDR (Optional Feature F001) additions - additive only.
-    bit [6:0]                        hdr_ddr_cmd_code;
-    bit                              hdr_ddr_cmd_ack;      // Target accepted (ACK=0) the Command
-    int                              hdr_ddr_num_words;    // number of 16-bit Data Words
-    bit [4:0]                        hdr_ddr_crc_calc;     // CRC-5 computed by this side
-    bit [4:0]                        hdr_ddr_crc_rcvd;     // CRC-5 seen/sent on the wire
-    bit                              hdr_ddr_crc_ok;
-    bit                              hdr_ddr_got_restart;  // session ended w/ HDR Restart Pattern
-    bit                              hdr_ddr_got_exit;     // session ended w/ HDR Exit Pattern
+   // bit [6:0]                        hdr_ddr_cmd_code;
+    //bit                              hdr_ddr_cmd_ack;      // Target accepted (ACK=0) the Command
+    //int                              hdr_ddr_num_words;    // number of 16-bit Data Words
+    //bit [4:0]                        hdr_ddr_crc_calc;     // CRC-5 computed by this side
+    //bit [4:0]                        hdr_ddr_crc_rcvd;     // CRC-5 seen/sent on the wire
+    //bit                              hdr_ddr_crc_ok;
+    //bit                              hdr_ddr_got_restart;  // session ended w/ HDR Restart Pattern
+    //bit                              hdr_ddr_got_exit;     // session ended w/ HDR Exit Pattern
   } i3c_transfer_bits_s;
 
   typedef struct {
@@ -154,7 +154,7 @@ package i3c_globals_pkg;
   } acknowledge_e;
 
 
-
+/*
   parameter bit [7:0] ENTHDR0_CCC_CODE  = 8'h20;  // Enter HDR-DDR Mode CCC
   parameter bit [3:0] HDR_DDR_CRC_TOKEN = 4'hC;   // Fixed upper nibble of the CRC Word
   parameter bit [4:0] HDR_DDR_CRC5_INIT = 5'h1F;  // CRC-5 seed value 
@@ -185,7 +185,7 @@ package i3c_globals_pkg;
           payload[6]  ^ payload[4]  ^ payload[2]  ^ payload[0] ^ 1'b1;
     i3c_hdr_ddr_parity = {pa1, pa0};
   endfunction : i3c_hdr_ddr_parity
-
+*/
 endpackage : i3c_globals_pkg
 
 `endif

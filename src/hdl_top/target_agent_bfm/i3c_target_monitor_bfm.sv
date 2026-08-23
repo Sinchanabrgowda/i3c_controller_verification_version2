@@ -38,48 +38,114 @@ interface i3c_target_monitor_bfm (
       @(posedge pclk);
     state = IDLE;
   endtask : wait_for_idle_state
+
   task sample_data(inout i3c_transfer_bits_s struct_packet,
                    inout i3c_transfer_cfg_s  struct_cfg);
     detect_start();
     sample_target_address(struct_packet);
     sample_operation(struct_packet.operation);
     sampleAddressAck(struct_packet.targetAddressStatus);
+
+
     if (struct_packet.targetAddressStatus == ACK) begin
       if (struct_packet.operation == WRITE)
         sampleWriteDataAndAck(struct_packet, struct_cfg);
-      else
+      else begin
         sampleReadDataAndAck(struct_packet, struct_cfg);
+      end
     end else begin
       detect_stop();
     end
   endtask : sample_data
+
+
   task sampleWriteDataAndAck(inout i3c_transfer_bits_s pkt,
                               inout i3c_transfer_cfg_s  cfg);
-    fork
-      begin
-        for (int i = 0; i < MAXIMUM_BYTES; i++) begin
-          sample_write_data(cfg, pkt, i);
-          sampleWdataAck(pkt.writeDataStatus[i]);
-          if (pkt.writeDataStatus[i] == NACK) break;
+    bit parity_received;
+    bit parity_expected;
+    bit stop_seen;
+    stop_seen = 0;
+    for (int i = 0; i < MAXIMUM_BYTES; i++) begin
+      if (i == 0) begin
+        // Byte 0: entry point is bit[7] POSEDGE, no preceding parity edge.
+        sample_write_data(cfg, pkt, i);
+      end else begin
+        // Bytes 1+: launched from the safe (SCL-low) window left by the
+        // previous byte's parity trailing NEGEDGE.
+        fork
+          begin : stop_check
+            wrDetect_stop();
+            stop_seen = 1;
+          end : stop_check
+          begin : next_byte
+            sample_write_data(cfg, pkt, i);
+          end : next_byte
+        join_any
+        disable fork;
+        if (stop_seen) begin
+          `uvm_info(name,
+            $sformatf("SDR WRITE MON: STOP detected after byte[%0d]  transfer complete", i-1),
+            UVM_NONE)
+          break;
         end
       end
-    join_none
-    detect_stop();
-    disable fork;
+      `uvm_info(name,
+        $sformatf("SDR WRITE MON: byte[%0d] = 0x%02h (%08b)",
+                  i, pkt.writeData[i], pkt.writeData[i]),
+        UVM_NONE)
+      // Parity POSEDGE (9th clock).
+      detectEdge_scl(POSEDGE);
+      parity_received = sda_i;
+      parity_expected = ^pkt.writeData[i];
+      // Parity trailing NEGEDGE: SCL falls LOW -- safe window for the
+      // fork at the top of the next iteration.
+      detectEdge_scl(NEGEDGE);
+      `uvm_info(name,
+        $sformatf("SDR WRITE MON: byte[%0d]=0x%02h  parity_rx=%0b  ^data(exp)=%0b  %s",
+                  i, pkt.writeData[i], parity_received, parity_expected,
+                  (parity_received == parity_expected) ? "PARITY OK" : "PARITY MISMATCH"),
+        UVM_NONE)
+      pkt.writeDataStatus[i] = ACK;
+    end
+    if (!stop_seen) begin
+      `uvm_info(name, "SDR WRITE MON: all bytes sampled, waiting for STOP", UVM_NONE)
+      wrDetect_stop();
+    end
   endtask : sampleWriteDataAndAck
+
+
   task sampleReadDataAndAck(inout i3c_transfer_bits_s pkt,
                              inout i3c_transfer_cfg_s  cfg);
-    fork
-      begin
-        for (int i = 0; i < MAXIMUM_BYTES; i++) begin
-          sample_read_data(pkt, i, cfg.dataTransferDirection);
-          sampleReadAck(pkt.readDataStatus[i]);
-          if (pkt.readDataStatus[i] == NACK) break;
-        end
+    // bit continue_bit;   
+    bit tbit;
+    int total_bytes;
+    total_bytes = 0;
+    for (int i = 0; i < MAXIMUM_BYTES; i++) begin
+      sample_read_data(pkt, i, cfg.dataTransferDirection);
+      total_bytes++;
+      `uvm_info(name,
+        $sformatf("SDR READ MON: sampled byte[%0d]=0x%02h (%08b)",
+                  i, pkt.readData[i], pkt.readData[i]),
+        UVM_NONE)
+      // 9th bit: controller-driven T-bit -- monitor just samples 
+      detectEdge_scl(POSEDGE);
+      tbit = sda_i;
+      `uvm_info(name,
+        $sformatf("SDR READ MON: sampled controller T-bit=%0b (%s) after byte[%0d]",
+                  tbit, tbit ? "CONTINUE" : "TERMINATE", i),
+        UVM_NONE)
+      pkt.readDataStatus[i] = tbit ? ACK : NACK;
+      if (!tbit) begin
+        `uvm_info(name,
+          $sformatf("SDR READ MON: stopping after byte[%0d], waiting for STOP", i),
+          UVM_NONE)
+        break;
       end
-    join_none
-    detect_stop();
-    disable fork;
+    end
+    `uvm_info(name,
+      $sformatf("SDR READ MON: sampled %0d byte(s), waiting for STOP", total_bytes),
+      UVM_NONE)
+    wrDetect_stop();
   endtask : sampleReadDataAndAck
  bit has_address = 0;
 function bit is_addressed();
@@ -186,7 +252,7 @@ endfunction : is_addressed
       if (!got_rep_start) begin
         // STOP: DAA complete, this target was never assigned
         `uvm_info(name,
-          $sformatf("DAA MON: STOP detected after round %0d — target not assigned (pid=0x%0h)",
+          $sformatf("DAA MON: STOP detected after round %0d  target not assigned (pid=0x%0h)",
                     round, cfg.pid),
           UVM_NONE)
         // pkt already defaulted to NACK/0 at top
@@ -199,6 +265,8 @@ endfunction : is_addressed
       // Rep-START: loop to next round
     end
   endtask : sample_daa_data
+
+
 task automatic skip_daa_session_passively();
   bit [1:0] scl_loc;
   bit [1:0] sda_loc;
@@ -222,7 +290,7 @@ task automatic skip_daa_session_passively();
     detectEdge_scl(NEGEDGE); detectEdge_scl(POSEDGE);        // ACK/NACK
     detect_rep_start_or_stop(scl_loc, sda_loc, got_rep_start);
     detectEdge_scl(NEGEDGE);
-    if (!got_rep_start) return;   // STOP — session over
+    if (!got_rep_start) return;   // STOP  session over
   end
 endtask : skip_daa_session_passively
   // Detect Repeated-START: SDA falls while SCL=1
@@ -247,13 +315,13 @@ endtask : skip_daa_session_passively
       @(negedge pclk);
       scl_loc = {scl_loc[0], scl_i};
       sda_loc = {sda_loc[0], sda_i};
-      // SDA falls while SCL=1 → Rep-START
+      // SDA falls while SCL=1 ? Rep-START
       if (scl_loc == 2'b11 && sda_loc == 2'b10) begin
          `uvm_info(name,$sformatf("DAA repeated start detected@ time=%0t", $time),UVM_NONE)
                                                         got_rep_start = 1;
         return;
       end
-      // SDA rises while SCL=1 → STOP
+      // SDA rises while SCL=1 ? STOP
       if (scl_loc == 2'b11 && sda_loc == 2'b01) begin
         `uvm_info(name, "DAA MON: STOP detected", UVM_HIGH)
         got_rep_start = 0;
@@ -286,6 +354,35 @@ endtask : skip_daa_session_passively
     end while (!(sda_d == POSEDGE && scl_d == 2'b11));
   `uvm_info(name,$sformatf(" stop detected@ time=%0t", $time),UVM_NONE)
   endtask : detect_stop
+
+
+  task wrDetect_stop();
+    bit [1:0] scl_d;
+    bit [1:0] sda_d;
+    scl_d = {scl_i, scl_i};
+    sda_d = {sda_i, sda_i};
+    forever begin
+      do begin
+        @(negedge pclk);
+        #1;
+        scl_d = {scl_d[0], scl_i};
+        sda_d = {sda_d[0], sda_i};
+      end while (!(sda_d == 2'b01 && scl_d == 2'b11));
+      @(negedge pclk);
+      #1;
+      scl_d = {scl_d[0], scl_i};
+      sda_d = {sda_d[0], sda_i};
+      if (scl_d == 2'b10) begin
+        `uvm_info(name,
+          "wrDetect_stop MON: ignoring false STOP candidate (SCL fell = inter-byte transition)",
+          UVM_HIGH)
+        continue;
+      end
+      state = STOP;
+      `uvm_info(name, "wrDetect_stop MON: STOP condition confirmed", UVM_HIGH)
+      return;
+    end
+  endtask : wrDetect_stop
   task sample_target_address(inout i3c_transfer_bits_s pkt);
     bit [TARGET_ADDRESS_WIDTH-1:0] addr;
     state = ADDRESS;
@@ -325,6 +422,8 @@ endtask : skip_daa_session_passively
     end
     pkt.writeData[i] = wdata;
   endtask : sample_write_data
+
+
   task sampleWdataAck(output bit ack);
     state = ACK_NACK;
     detectEdge_scl(NEGEDGE);
@@ -346,6 +445,8 @@ endtask : skip_daa_session_passively
     end
     pkt.readData[i] = rdata;
   endtask : sample_read_data
+
+
   task sampleReadAck(output bit ack);
     state = ACK_NACK;
     detectEdge_scl(POSEDGE);
@@ -359,7 +460,9 @@ endtask : skip_daa_session_passively
       scl_loc_m = {scl_loc_m[0], scl_i};
     end while (!(scl_loc_m == edgeSCL));
   endtask : detectEdge_scl
-  // HOT JOIN monitoring — NEW, additive only.
+
+
+  // HOT JOIN monitoring  
   task sample_hot_join_ibi(output bit [6:0] ibi_addr_out ,output bit ack);
     bit [7:0] full_byte;
     //bit       ack;
@@ -374,7 +477,7 @@ endtask : skip_daa_session_passively
       full_byte[k] = sda_i;
     end
     ibi_addr_out = full_byte[7:1];
-    // ACK slot — driven by the controller for this read-direction byte.
+    // ACK slot  driven by the controller for this read-direction byte.
     detectEdge_scl(NEGEDGE);
     detectEdge_scl(POSEDGE);
     ack = sda_i;
@@ -384,6 +487,8 @@ endtask : skip_daa_session_passively
                 ibi_addr_out, ack),
       UVM_NONE)
   endtask : sample_hot_join_ibi
+
+
   task sample_hot_join_data(
       inout  i3c_transfer_bits_s pkt,
       inout  i3c_transfer_cfg_s  cfg,
@@ -421,8 +526,6 @@ else
       $sformatf("IBI MON: addr=0x%0h ack=%0b", ibi_addr_out, ack_out),
       UVM_NONE)
   endtask : sample_ibi_request
-
-
   task sample_ibi_payload_byte(
       output bit [7:0] data_out,
       output bit       t_bit_out);
@@ -440,8 +543,6 @@ else
                 t_bit_out ? "MORE DATA" : "NO MORE DATA/STOP"),
       UVM_NONE)
   endtask : sample_ibi_payload_byte
-
-
   task sample_ibi_data(
       output bit [6:0] ibi_addr_out,
       output bit       ack_out,
@@ -478,203 +579,6 @@ else
       `uvm_info(name, "IBI MON: request NACKed, no payload phase", UVM_NONE)
     end
   endtask : sample_ibi_data
- /*
-        task automatic sample_hdr_ddr_enthdr0();
-    bit [7:0] ccc_byte;
-    `uvm_info(name, "HDR-DDR MON: waiting for START (ENTHDR0 entry)", UVM_HIGH)
-    detect_start();
-    // 0x7E + W (8 bits) + ACK slot
-    detectEdge_scl(NEGEDGE);
-    for (int k = 7; k >= 0; k--)
-      detectEdge_scl(POSEDGE);
-    detectEdge_scl(NEGEDGE);
-    detectEdge_scl(POSEDGE);   // ACK
-    detectEdge_scl(NEGEDGE);
-    for (int k = 7; k >= 0; k--) begin
-      detectEdge_scl(POSEDGE);
-      ccc_byte[k] = sda_i;
-    end
-    `uvm_info(name,
-      $sformatf("HDR-DDR MON: CCC byte = 0x%0h (expect 0x%0h ENTHDR0)",
-                ccc_byte, ENTHDR0_CCC_CODE), UVM_NONE)
-    detectEdge_scl(NEGEDGE);   // SCL low after CCC byte's 8th bit
-    detectEdge_scl(POSEDGE);   // T-Bit clock edge
-    detectEdge_scl(NEGEDGE);   // T-Bit falling edge = HDR-DDR mode begins
-  endtask : sample_hdr_ddr_enthdr0
-  task automatic sample_hdr_ddr_command_word(
-      inout  i3c_transfer_bits_s pkt,
-      input  i3c_transfer_cfg_s  cfg,
-      inout  bit [4:0]           crc_state,
-      output bit                 addr_match);
-    bit [15:0] payload;
-    bit        pa1, pa0;
-    bit [1:0]  parity_calc;
-    detectEdge_scl(POSEDGE);   // PRE1
-    detectEdge_scl(NEGEDGE);   // PRE0
-    for (int i = 15; i >= 0; i--) begin
-      detectEdge_scl(i[0] ? POSEDGE : NEGEDGE);
-      payload[i] = sda_i;
-      crc_state = i3c_hdr_ddr_crc5_next(crc_state, payload[i]);
-    end
-    detectEdge_scl(POSEDGE); pa1 = sda_i;
-    detectEdge_scl(NEGEDGE); pa0 = sda_i;
-    parity_calc = i3c_hdr_ddr_parity(payload);
-    pkt.operation        = payload[15] ? READ : WRITE;
-    pkt.hdr_ddr_cmd_code = payload[14:8];
-    pkt.targetAddress    = payload[7:1];
-    addr_match = (payload[7:1] == cfg.targetAddress) &&
-                 ({pa1, pa0} == parity_calc);
-    `uvm_info(name,
-      $sformatf("HDR-DDR MON CMD: rw=%s cmd_code=0x%0h addr=0x%0h addr_match=%0b",
-                operationType_e'(pkt.operation).name(), pkt.hdr_ddr_cmd_code, pkt.targetAddress,
-                addr_match), UVM_NONE)
-        endtask : sample_hdr_ddr_command_word
-  task automatic sample_hdr_ddr_word0_handshake(output bit accepted);
-    bit pre1, pre0;
-    detectEdge_scl(POSEDGE); pre1 = sda_i;
-    detectEdge_scl(NEGEDGE); pre0 = sda_i;
-    accepted = (pre0 == 1'b0);
-  endtask : sample_hdr_ddr_word0_handshake
-  task automatic sample_hdr_ddr_continue_preamble(output bit crc_next);
-    bit pre1, pre0;
-    detectEdge_scl(POSEDGE); pre1 = sda_i;
-    detectEdge_scl(NEGEDGE); pre0 = sda_i;
-    crc_next = (pre1 == 1'b0);
-  endtask : sample_hdr_ddr_continue_preamble
-  task automatic sample_hdr_ddr_data_payload(
-      inout i3c_transfer_bits_s pkt,
-      inout bit [4:0]           crc_state,
-      input int                 word_idx);
-    bit [15:0] payload;
-    for (int i = 15; i >= 0; i--) begin
-      detectEdge_scl(i[0] ? POSEDGE : NEGEDGE);
-      payload[i] = sda_i;
-      crc_state = i3c_hdr_ddr_crc5_next(crc_state, payload[i]);
-    end
-    detectEdge_scl(POSEDGE);   // PA1
-    detectEdge_scl(NEGEDGE);   // PA0
-    if (2*word_idx+1 < MAXIMUM_BYTES) begin
-      if (pkt.operation == WRITE) begin
-        pkt.writeData[2*word_idx]   = payload[15:8];
-        pkt.writeData[2*word_idx+1] = payload[7:0];
-      end else begin
-        pkt.readData[2*word_idx]   = payload[15:8];
-        pkt.readData[2*word_idx+1] = payload[7:0];
-      end
-    end
-    pkt.no_of_i3c_bits_transfer += 16;
-  endtask : sample_hdr_ddr_data_payload
-  task automatic sample_hdr_ddr_crc_word(
-      inout i3c_transfer_bits_s pkt,
-      input bit [4:0]           crc_calc);
-    bit [3:0] token;
-    bit [4:0] crc_rcvd;
-    for (int i = 3; i >= 0; i--) begin
-      detectEdge_scl(i[0] ? POSEDGE : NEGEDGE);
-      token[i] = sda_i;
-    end
-    for (int i = 4; i >= 0; i--) begin
-      detectEdge_scl(i[0] ? NEGEDGE : POSEDGE);
-      crc_rcvd[i] = sda_i;
-    end
-    detectEdge_scl(NEGEDGE);   // setup bit
-    pkt.hdr_ddr_crc_calc = crc_calc;
-    pkt.hdr_ddr_crc_rcvd = crc_rcvd;
-    pkt.hdr_ddr_crc_ok   = (crc_rcvd == crc_calc);
-    if (token != HDR_DDR_CRC_TOKEN)
-      `uvm_warning(name,
-        $sformatf("HDR-DDR MON: CRC token=0x%0h, expected 0x%0h", token, HDR_DDR_CRC_TOKEN))
-    if (pkt.hdr_ddr_crc_ok)
-      `uvm_info(name, $sformatf("HDR-DDR MON: CRC OK (0x%0h)", crc_rcvd), UVM_NONE)
-    else
-      `uvm_error(name,
-        $sformatf("HDR-DDR MON: CRC MISMATCH observed=0x%0h calc=0x%0h", crc_rcvd, crc_calc))
-  endtask : sample_hdr_ddr_crc_word
-  // Identical (already purely observational) algorithm as the driver
-  // BFM's detector - see i3c_target_driver_bfm.sv for the spec reference
-  // and abstraction-level notes.
-  task automatic detect_hdr_exit_or_restart_pattern(
-      output bit is_restart,
-      output bit is_exit);
-    int fall_count;
-    bit prev_sda;
-    is_restart = 0;
-    is_exit    = 0;
-    fall_count = 0;
-    prev_sda   = sda_i;
-    forever begin
-      @(negedge pclk);
-      if (scl_i == 1'b1) begin
-        if (fall_count == 2 && sda_i == 1'b1) begin
-          is_restart = 1;
-          `uvm_info(name, "HDR-DDR MON: HDR Restart Pattern detected", UVM_NONE)
-        end
-        return;
-      end
-      if (prev_sda == 1'b1 && sda_i == 1'b0) begin
-        fall_count++;
-        if (fall_count >= 4) begin
-          is_exit = 1;
-          `uvm_info(name, "HDR-DDR MON: HDR Exit Pattern detected", UVM_NONE)
-          return;
-        end
-      end
-      prev_sda = sda_i;
-    end
-  endtask : detect_hdr_exit_or_restart_pattern
-  // Top-level orchestrator - called from i3c_target_monitor_proxy for the
-  // pending_hdr_ddr flag, mirroring how sample_data()/sample_daa_data()
-  // are called for SDR/DAA.
-  task automatic sample_hdr_ddr_data(
-      inout i3c_transfer_bits_s pkt,
-      inout i3c_transfer_cfg_s  cfg,
-      input bit                 skip_enthdr0 = 1'b0);
-    bit [4:0] crc_state;
-    bit       addr_match;
-    bit       accepted;
-    bit       crc_next;
-    bit       is_restart, is_exit;
-    int       word_idx;
-    int       max_words;
-    crc_state                 = HDR_DDR_CRC5_INIT;
-    pkt.no_of_i3c_bits_transfer = 0;
-    pkt.hdr_ddr_got_restart    = 0;
-    pkt.hdr_ddr_got_exit       = 0;
-    if (!skip_enthdr0)
-      sample_hdr_ddr_enthdr0();
-    else
-      `uvm_info(name,
-        "HDR-DDR MON: chained Command Word after HDR Restart Pattern - skipping ENTHDR0 sampling",
-        UVM_NONE)
-    sample_hdr_ddr_command_word(pkt, cfg, crc_state, addr_match);
-    sample_hdr_ddr_word0_handshake(accepted);
-    pkt.hdr_ddr_cmd_ack = accepted ? ACK : NACK;
-    if (accepted) begin
-      sample_hdr_ddr_data_payload(pkt, crc_state, 0);
-      word_idx  = 1;
-      max_words = MAXIMUM_BYTES/2;   // Monitor has no a-priori word count;
-      forever begin
-        sample_hdr_ddr_continue_preamble(crc_next);
-        if (crc_next) break;
-        sample_hdr_ddr_data_payload(pkt, crc_state, word_idx);
-        word_idx++;
-        if (word_idx >= max_words) begin
-          `uvm_warning(name, "HDR-DDR MON: word-count safety cap reached, forcing CRC")
-          break;
-        end
-      end
-      pkt.hdr_ddr_num_words = word_idx;
-      sample_hdr_ddr_crc_word(pkt, crc_state);
-    end else begin
-      `uvm_info(name,
-        "HDR-DDR MON: Command ignored (address mismatch) - no data phase",
-        UVM_NONE)
-    end
-    detect_hdr_exit_or_restart_pattern(is_restart, is_exit);
-    pkt.hdr_ddr_got_restart = is_restart;
-    pkt.hdr_ddr_got_exit    = is_exit;
-  endtask : sample_hdr_ddr_data
-*/
+ 
 endinterface : i3c_target_monitor_bfm
 `endif
-//added

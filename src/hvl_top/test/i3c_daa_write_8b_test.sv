@@ -1,5 +1,3 @@
-
-
 class i3c_daa_write_8b_test extends i3c_base_test;
   `uvm_component_utils(i3c_daa_write_8b_test)
 
@@ -53,4 +51,3 @@ class i3c_daa_write_8b_test extends i3c_base_test;
   endtask
 
 endclass
-

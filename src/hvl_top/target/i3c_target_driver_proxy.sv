@@ -1,7 +1,9 @@
 `ifndef I3C_TARGET_DRIVER_PROXY_INCLUDED_
 `define I3C_TARGET_DRIVER_PROXY_INCLUDED_
+
 class i3c_target_driver_proxy extends uvm_driver #(i3c_target_tx);
   `uvm_component_utils(i3c_target_driver_proxy)
+
   i3c_target_agent_config  i3c_target_agent_cfg_h;
   virtual i3c_target_driver_bfm i3c_target_drv_bfm_h;
     static int daa_count = 0;
@@ -11,13 +13,18 @@ class i3c_target_driver_proxy extends uvm_driver #(i3c_target_tx);
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
   extern virtual task          run_phase(uvm_phase phase);
 endclass : i3c_target_driver_proxy
+
+
 function i3c_target_driver_proxy::new(string name = "i3c_target_driver_proxy",
                                       uvm_component parent = null);
   super.new(name, parent);
 endfunction : new
+
+
 function void i3c_target_driver_proxy::build_phase(uvm_phase phase);
   super.build_phase(phase);
 endfunction : build_phase
+
 function void i3c_target_driver_proxy::end_of_elaboration_phase(uvm_phase phase);
   string bfm_key;
   super.end_of_elaboration_phase(phase);
@@ -33,6 +40,7 @@ function void i3c_target_driver_proxy::end_of_elaboration_phase(uvm_phase phase)
   end
   i3c_target_drv_bfm_h.i3c_target_drv_proxy_h = this;
 endfunction : end_of_elaboration_phase
+
 task i3c_target_driver_proxy::run_phase(uvm_phase phase);
   i3c_transfer_bits_s struct_packet;
   i3c_transfer_cfg_s  struct_cfg;

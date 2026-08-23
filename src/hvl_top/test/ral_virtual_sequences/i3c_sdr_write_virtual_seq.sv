@@ -1,66 +1,58 @@
-// ============================================================================
-// FILE: i3c_sdr_write_virtual_seq.sv  (MULTI-SLAVE VERSION)
-//
-// SDR write to target[0] (which has the lowest PID and wins the first DAA
-// round – so it has the first assigned dynamic address 0x08).
-// Uses p_sequencer.i3c_target_seqr_h[0].
-// If you want to write to a different target, create a derived class and
-// override target_idx.
-// ============================================================================
 `ifndef I3C_SDR_WRITE_VIRTUAL_SEQ_INCLUDED_
 `define I3C_SDR_WRITE_VIRTUAL_SEQ_INCLUDED_
-
 class i3c_sdr_write_virtual_seq extends top_virtual_base_seq;
   `uvm_object_utils(i3c_sdr_write_virtual_seq)
-
   uvm_status_e   status;
   uvm_reg_data_t ctrl_val;
   uvm_reg_data_t ctrl_mirror;
-  uvm_reg_data_t wdatab_mirror;
-
-  bit [7:0] wdata;
-  rand bit [7:0] transfer_len;
-
-  // Which target slave to use for the SDR side (default: 0)
   int unsigned target_idx = 0;
-
+  rand bit [7:0] wdata_bytes [0:7];
+  rand int unsigned transfer_len;
   constraint len_c {
-    transfer_len == 1;
+    transfer_len inside {[1:8]};
   }
-
+  constraint wdata_val_c {
+    foreach (wdata_bytes[i]) {
+      wdata_bytes[i] inside {[8'h01:8'hFF]};
+    }
+  }
   function new(string name = "i3c_sdr_write_virtual_seq");
     super.new(name);
   endfunction
-
   task body();
     i3c_target_writeOperationWith8bitsData_seq target_seq_write;
-
     if (i3c_env_cfg_h == null)
       `uvm_fatal("CFG_NULL",
         "i3c_env_cfg_h is NULL inside i3c_sdr_write_virtual_seq")
     if (i3c_env_cfg_h.regBlockHandle == null)
       `uvm_fatal("RAL_NULL",
         "regBlockHandle is NULL inside i3c_sdr_write_virtual_seq")
-
     super.body();
-
     if (!this.randomize()) begin
-      `uvm_error(get_type_name(), "Sequence randomization failed — using defaults")
-      wdata        = 8'hA5;
-      transfer_len = 8'd1;
-    end else begin
-      `uvm_info(get_type_name(),
-        $sformatf("Randomized: wdata=0x%0x len=%0d", wdata, transfer_len),
-        UVM_LOW)
+      `uvm_error(get_type_name(), "Randomization failed - using defaults")
+      transfer_len    = 2;
+      wdata_bytes[0]  = 8'h44;
+      wdata_bytes[1]  = 8'hBE;
     end
-
     `uvm_info(get_type_name(),
-      $sformatf("Starting SDR WRITE to target[%0d] addr=0x%0h",
+      $sformatf("SDR WRITE to target[%0d] addr=0x%0h len=%0d bytes",
                 target_idx,
-                i3c_env_cfg_h.i3c_target_agent_cfg_h[target_idx].targetAddress),
+                i3c_env_cfg_h.i3c_target_agent_cfg_h[target_idx].targetAddress,
+                transfer_len),
       UVM_LOW)
-
-    // Launch target-side sequence on the correct sequencer
+    for (int i = 0; i < transfer_len; i++)
+      `uvm_info(get_type_name(),
+        $sformatf("  planned payload[%0d] = 0x%02h", i, wdata_bytes[i]),
+        UVM_LOW)
+    // -----------------------------------------------------------------
+    // pending_sdr -- ADDED. Missing from this expanded version (the
+    // multi-byte rewrite dropped it). Tells the monitor proxy the next
+    // START is an SDR frame, not another DAA broadcast -- has_daa stays
+    // 1 for the whole test, so without this the proxy would keep
+    // calling sample_daa_data() and misparse this write as a DAA
+    // session. Same pattern used everywhere else in this test suite.
+    // -----------------------------------------------------------------
+    i3c_env_cfg_h.i3c_target_agent_cfg_h[target_idx].pending_sdr = 1;
     fork
       begin
         target_seq_write =
@@ -70,44 +62,57 @@ class i3c_sdr_write_virtual_seq extends top_virtual_base_seq;
           p_sequencer.i3c_target_seqr_h[target_idx]);
       end
     join_none
-
-    // Write data byte
-    i3c_env_cfg_h.regBlockHandle.wdatab_inst.write(status, 8'h44);
-
-    // Program CTRL register: SDR write to the dynamic address of target[target_idx]
+    for (int i = 0; i < transfer_len; i++) begin
+      `uvm_info(get_type_name(),
+        $sformatf("Pushing WDATAB[%0d] = 0x%02h to RTL FIFO", i, wdata_bytes[i]),
+        UVM_LOW)
+      i3c_env_cfg_h.regBlockHandle.wdatab_inst.write(
+        status, uvm_reg_data_t'(wdata_bytes[i]),
+        UVM_FRONTDOOR, .parent(this));
+      if (status != UVM_IS_OK)
+        `uvm_error(get_type_name(),
+          $sformatf("WDATAB write[%0d]=0x%02h failed status=%s",
+                    i, wdata_bytes[i], status.name()))
+      else
+        `uvm_info(get_type_name(),
+          $sformatf("WDATAB[%0d] write OK", i), UVM_LOW)
+    end
+    `uvm_info(get_type_name(),
+      $sformatf("All %0d bytes loaded into WDATAB FIFO", transfer_len),
+      UVM_LOW)
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_addr.set(
       i3c_env_cfg_h.i3c_target_agent_cfg_h[target_idx].targetAddress);
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_len.set(transfer_len);
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_dir.set(1'b0);   // WRITE
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_type.set(2'd0);  // SDR
-     i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_ccc.set(8'd0); 
-   i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_mode.set(1'b0);  
-  i3c_env_cfg_h.regBlockHandle.ctrl_inst.start.set(1'b1);
-
+    i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_ccc.set(8'd0);
+    i3c_env_cfg_h.regBlockHandle.ctrl_inst.cmd_mode.set(1'b0);
+    i3c_env_cfg_h.regBlockHandle.ctrl_inst.start.set(1'b1);
     ctrl_val = i3c_env_cfg_h.regBlockHandle.ctrl_inst.get();
     `uvm_info("CTRL_DEBUG",
-      $sformatf("CTRL before SDR write = 0x%0h", ctrl_val), UVM_LOW)
-
+      $sformatf("CTRL before SDR write = 0x%0h  addr=0x%0h len=%0d",
+                ctrl_val,
+                i3c_env_cfg_h.i3c_target_agent_cfg_h[target_idx].targetAddress,
+                transfer_len),
+      UVM_LOW)
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.update(status, .parent(this));
-
-    ctrl_mirror = i3c_env_cfg_h.regBlockHandle.ctrl_inst.get_mirrored_value();
+    ctrl_mirror =
+      i3c_env_cfg_h.regBlockHandle.ctrl_inst.get_mirrored_value();
     `uvm_info("CTRL_DEBUG",
-      $sformatf("CTRL mirrored after SDR write = 0x%0h", ctrl_mirror), UVM_LOW)
-
+      $sformatf("CTRL mirrored after write = 0x%0h", ctrl_mirror), UVM_LOW)
     i3c_env_cfg_h.regBlockHandle.ctrl_inst.mirror(status, UVM_NO_CHECK);
-
-    wdatab_mirror = i3c_env_cfg_h.regBlockHandle.wdatab_inst.get_mirrored_value();
-    `uvm_info("WDATAB_DEBUG",
-      $sformatf("WDATAB mirrored = 0x%0h", wdatab_mirror), UVM_LOW)
-
-    #5000;
-
+    #(5000 * (transfer_len + 2));
+    // -----------------------------------------------------------------
+    // pending_sdr -- ADDED. Belt-and-braces clear (the proxy already
+    // clears it itself once sampling completes, but this covers the
+    // case where the frame never completed within the wait window
+    // above). Same redundant-clear pattern used elsewhere.
+    // -----------------------------------------------------------------
+    i3c_env_cfg_h.i3c_target_agent_cfg_h[target_idx].pending_sdr = 0;
     `uvm_info(get_type_name(),
-      $sformatf("SDR WRITE to target[%0d] complete", target_idx), UVM_LOW)
-
+      $sformatf("SDR WRITE to target[%0d] complete (%0d bytes)",
+                target_idx, transfer_len),
+      UVM_LOW)
   endtask : body
-
 endclass : i3c_sdr_write_virtual_seq
-
 `endif
-
